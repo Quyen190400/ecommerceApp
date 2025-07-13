@@ -2,13 +2,10 @@ spring:
   application:
     name: ecommerceApp
   datasource:
-    url: jdbc:sqlserver://localhost:1433;DatabaseName=GreenteaShop;encrypt=true;trustServerCertificate=true;createDatabaseIfNotExist=true;characterEncoding=UTF-8;useUnicode=true
-    username: nthquyen
-    password: nthquyen #Quyen190400!
-#    url: jdbc:sqlserver://beui-sqlserver:1433;databaseName=greenteashop;encrypt=true;trustServerCertificate=true;createDatabaseIfNotExist=true;characterEncoding=UTF-8;useUnicode=true
-#    username: sa
-#    password: YourStrong@Password1
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: jdbc:mysql://localhost:3306/greenteashop?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&createDatabaseIfNotExist=true&useUnicode=true&characterEncoding=UTF-8&useLegacyDatetimeCode=false&zeroDateTimeBehavior=convertToNull&charset=utf8mb4
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
   thymeleaf:
     cache: false
   jpa:
@@ -17,7 +14,7 @@ spring:
     show-sql: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.SQLServerDialect
+        dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
         connection:
           characterEncoding: UTF-8
@@ -27,4 +24,19 @@ spring:
     enabled: true
     locations: classpath:db/migration
     baseline-on-migrate: true
+
+# Server Configuration
+server:
+  port: 8080
+
+# File Upload Configuration
+upload:
+  dir: uploads/images
+
+# Logging Configuration
+logging:
+  level:
+    org.springframework.jdbc: INFO
+    org.hibernate.SQL: INFO
+    com.beui.ecommerceApp: DEBUG
 

@@ -1,0 +1,61 @@
+#version: '3.8'
+#
+#services:
+#  # MySQL cho test local
+#  beui-mysql:
+#    image: mysql:8.0
+#    container_name: beui-mysql-test
+#    environment:
+#      - MYSQL_ROOT_PASSWORD=YourStrong@Password1
+#      - MYSQL_DATABASE=greenteashop
+#      - MYSQL_USER=greentea_user
+#      - MYSQL_PASSWORD=greentea_pass
+#    ports:
+#      - "3306:3306"
+#    volumes:
+#      - mysql-data-test:/var/lib/mysql
+#      - ./src/main/resources/create_tables_mysql.sql:/docker-entrypoint-initdb.d/create_tables.sql:ro
+#    networks:
+#      - beui-network-test
+#    healthcheck:
+#      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pYourStrong@Password1"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#    command: --default-authentication-plugin=mysql_native_password
+#
+#  # Test app với image đã build
+#  greentea-app-test:
+#    image: nthquyen1904/greentea-app:latest
+#    container_name: greentea-app-mysql-test
+#    depends_on:
+#      beui-mysql:
+#        condition: service_healthy
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:mysql://beui-mysql:3306/greenteashop?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+#      - SPRING_DATASOURCE_USERNAME=greentea_user
+#      - SPRING_DATASOURCE_PASSWORD=greentea_pass
+#      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+#      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+#      - SPRING_JPA_SHOW_SQL=true
+#      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+#      - SERVER_PORT=8080
+#    ports:
+#      - "8080:8080"
+#    volumes:
+#      - ./uploads/images:/app/uploads/images
+#    networks:
+#      - beui-network-test
+#    healthcheck:
+#      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 40s
+#
+#volumes:
+#  mysql-data-test:
+#
+#networks:
+#  beui-network-test:
+#    driver: bridge

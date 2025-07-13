@@ -38,7 +38,6 @@ public class WebController {
 
     @GetMapping("/")
     public String home(Model model, HttpServletRequest request) {
-        System.out.println("🏠 Home page requested");
         List<Product> products = productService.getAllProducts();
         model.addAttribute("allProducts", products);
 

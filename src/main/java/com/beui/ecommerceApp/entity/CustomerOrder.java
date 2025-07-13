@@ -23,22 +23,22 @@ public class CustomerOrder {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
     
-    @Column(name = "status", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "status", nullable = false, columnDefinition = "VARCHAR(255)")
     private String status;
     
-    @Column(name = "shipping_address", columnDefinition = "NTEXT")
+    @Column(name = "shipping_address", columnDefinition = "TEXT")
     private String shippingAddress;
     
-    @Column(name = "shipping_method", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "shipping_method", columnDefinition = "VARCHAR(255)")
     private String shippingMethod;
     
-    @Column(name = "phone_number", columnDefinition = "NVARCHAR(20)")
+    @Column(name = "phone_number", columnDefinition = "VARCHAR(20)")
     private String phoneNumber;
     
-    @Column(name = "payment_method", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "payment_method", columnDefinition = "VARCHAR(255)")
     private String paymentMethod;
     
-    @Column(name = "order_notes", columnDefinition = "NTEXT")
+    @Column(name = "order_notes", columnDefinition = "TEXT")
     private String orderNotes;
     
     @Column(name = "created_at")
