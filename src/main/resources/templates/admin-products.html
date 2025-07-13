@@ -294,46 +294,47 @@
 </div>
 </div>
 
+<script th:src="@{/js/auth-forms.js}"></script>
 <script th:src="@{/js/user-dropdown.js}"></script>
 <script th:src="@{/js/admin-products.js}"></script>
 <script th:src="@{/js/theme-toggle.js}"></script>
-<script>
-let adminWarningShown = false;
-document.addEventListener('DOMContentLoaded', function() {
-    fetch('/api/auth/me', { credentials: 'include' })
-        .then(res => res.json())
-        .then(data => {
-            if (!data || !data.roles) {
-                // Chưa đăng nhập
-                document.getElementById('adminProductsContent').style.display = 'none';
-                if (!adminWarningShown && window.showToast) {
-                    window.showToast('Bạn cần đăng nhập tài khoản admin để truy cập trang này!', 'warning');
-                    adminWarningShown = true;
-                }
-                if (window.showAuthModal) {
-                    window.showAuthModal('login');
-                }
-                setTimeout(function() {
-                    window.location.href = '/';
-                }, 2000);
-            } else {
-                document.getElementById('adminProductsContent').style.display = '';
-            }
-        })
-        .catch(() => {
-            document.getElementById('adminProductsContent').style.display = 'none';
-            if (!adminWarningShown && window.showToast) {
-                window.showToast('Bạn cần đăng nhập tài khoản admin để truy cập trang này!', 'warning');
-                adminWarningShown = true;
-            }
-            if (window.showAuthModal) {
-                window.showAuthModal('login');
-            }
-            setTimeout(function() {
-                window.location.href = '/';
-            }, 2000);
-        });
-});
-</script>
+<!--<script>-->
+<!--let adminWarningShown = false;-->
+<!--document.addEventListener('DOMContentLoaded', function() {-->
+<!--    fetch('/api/auth/me', { credentials: 'include' })-->
+<!--        .then(res => res.json())-->
+<!--        .then(data => {-->
+<!--            if (!data || !data.roles) {-->
+<!--                // Chưa đăng nhập-->
+<!--                document.getElementById('adminProductsContent').style.display = 'none';-->
+<!--                if (!adminWarningShown && window.showToast) {-->
+<!--                    window.showToast('Bạn cần đăng nhập tài khoản admin để truy cập trang này!', 'warning');-->
+<!--                    adminWarningShown = true;-->
+<!--                }-->
+<!--                if (window.showAuthModal) {-->
+<!--                    window.showAuthModal('login');-->
+<!--                }-->
+<!--                setTimeout(function() {-->
+<!--                    window.location.href = '/';-->
+<!--                }, 2000);-->
+<!--            } else {-->
+<!--                document.getElementById('adminProductsContent').style.display = '';-->
+<!--            }-->
+<!--        })-->
+<!--        .catch(() => {-->
+<!--            document.getElementById('adminProductsContent').style.display = 'none';-->
+<!--            if (!adminWarningShown && window.showToast) {-->
+<!--                window.showToast('Bạn cần đăng nhập tài khoản admin để truy cập trang này!', 'warning');-->
+<!--                adminWarningShown = true;-->
+<!--            }-->
+<!--            if (window.showAuthModal) {-->
+<!--                window.showAuthModal('login');-->
+<!--            }-->
+<!--            setTimeout(function() {-->
+<!--                window.location.href = '/';-->
+<!--            }, 2000);-->
+<!--        });-->
+<!--});-->
+<!--</script>-->
 </body>
 </html> 

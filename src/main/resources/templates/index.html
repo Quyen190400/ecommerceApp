@@ -673,9 +673,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="error-message" id="registerConfirmPasswordError"></span>
                     </div>
                     
-                    <div class="form-group checkbox-group">
+                    <div class="form-group checkbox-group" style="display:none">
                         <label class="checkbox-label">
-                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                            <input type="checkbox" id="agreeTerms" name="agreeTerms" required checked>
                             <span class="checkmark"></span>
                             Tôi đồng ý với <a href="/terms" target="_blank">điều khoản & chính sách</a>
                         </label>
@@ -814,6 +814,7 @@ document.addEventListener('DOMContentLoaded', setupGuideBtnNav);
         const urlParams = new URLSearchParams(window.location.search);
         const isExpired = urlParams.get('expired') === 'true';
         if (isExpired && !window.isLoggedIn) {
+            window.location.href = `/`;
             showAuthModal('login');
         }
     });
