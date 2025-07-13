@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Trà Đạo</title>
+    <link rel="stylesheet" th:href="@{/css/tea-home.css}">
+    <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --main-bg: #E6F2E6;
+            --header-green: #2C6E49;
+            --main-green: #40916C;
+            --sub-green: #A3B18A;
+            --card-border: #A3B18A;
+            --btn-outline: #95D5B2;
+            --btn-light-bg: #EDF6F9;
+            --btn-light-text: #1B4332;
+            --main-text: #1E1E1E;
+            --white: #FFFFFF;
+        }
+        body {
+            background: var(--main-bg);
+            color: var(--main-text);
+        }
+        .navbar {
+            background: var(--header-green) !important;
+            border-bottom: 1.5px solid var(--sub-green) !important;
+        }
+        .logo-text {
+            color: var(--white) !important;
+        }
+        .nav-link {
+            color: var(--white) !important;
+            transition: color 0.2s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--btn-outline) !important;
+        }
+        .main-btn, .btn-primary {
+            background: var(--main-green) !important;
+            color: var(--white) !important;
+            border-radius: 8px !important;
+            border: none !important;
+            font-weight: 700;
+            transition: background 0.2s, color 0.2s;
+        }
+        .main-btn:hover, .btn-primary:hover {
+            background: var(--header-green) !important;
+            color: var(--white) !important;
+        }
+        .btn-outline, .btn-secondary {
+            background: var(--btn-light-bg) !important;
+            color: var(--btn-light-text) !important;
+            border: 1.2px solid var(--btn-outline) !important;
+            border-radius: 8px !important;
+            font-weight: 700;
+        }
+        .btn-outline:hover, .btn-secondary:hover {
+            background: var(--main-green) !important;
+            color: var(--white) !important;
+        }
+        .login-card, .card {
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 12px;
+            box-shadow: none;
+        }
+        .login-title, .card-title {
+            color: var(--main-text);
+            font-weight: 700;
+        }
+        /* Responsive giữ nguyên layout, chỉ đổi màu */
+    </style>
+</head>
+<body class="light-theme" >
+<script>
+(function() {
+  try {
+    var theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark-theme');
+      document.body && document.body.classList.add('dark-theme');
+    }
+  } catch(e){}
+})();
+</script>
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="authModal" style="opacity: 1; visibility: visible;">
+        <div class="auth-container">
+            <!-- Close Button -->
+            <button class="auth-close-btn" id="authCloseBtn" onclick="window.location.href='/'">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <!-- Auth Header -->
+            <div class="auth-header">
+                <h1>Đăng nhập</h1>
+            </div>
+            
+            <!-- Error Message -->
+            <div class="error-message" th:if="${param.error}">
+                <i class="fas fa-exclamation-circle"></i>
+                Email hoặc mật khẩu không đúng
+            </div>
+            
+            <!-- Success Message (Logout) -->
+            <div th:if="${param.logout}">
+                <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(function() {
+                            let toast = document.getElementById('toast');
+                            if (toast) {
+                                toast.className = 'toast success show';
+                                toast.querySelector('.toast-message').textContent = 'Bạn đã đăng xuất thành công';
+                                setTimeout(() => { toast.classList.remove('show'); }, 3000);
+                            }
+                        }, 200);
+                    });
+                </script>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="auth-form active" id="loginForm">
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label for="loginEmail">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </label>
+                        <input type="email" id="loginEmail" name="email" required 
+                               placeholder="Nhập email của bạn">
+                        <span class="error-message" id="loginEmailError"></span>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i>
+                            Mật khẩu
+                        </label>
+                        <div class="password-input">
+                            <input type="password" id="loginPassword" name="password" required
+                                   placeholder="Nhập mật khẩu">
+                            <button type="button" class="password-toggle" id="loginPasswordToggle">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <span class="error-message" id="loginPasswordError"></span>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe" name="remember-me">
+                            <span class="checkmark"></span>
+                            Ghi nhớ đăng nhập
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="auth-submit-btn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Đăng nhập
+                    </button>
+                </form>
+                
+                <div class="auth-links">
+                    <a href="#" class="forgot-password">Quên mật khẩu?</a>
+                    <span class="auth-divider">|</span>
+                    <a href="/register" class="register-link">Chưa có tài khoản? Đăng ký ngay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    
+    <script th:src="@{/js/auth-forms.js}"></script>
+    <script th:src="@{/js/user-dropdown.js}"></script>
+    <script th:src="@{/js/theme-toggle.js}"></script>
+</body>
+</html> 

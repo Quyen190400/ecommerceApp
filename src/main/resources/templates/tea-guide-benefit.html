@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Trà theo công dụng - Beui Tea</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/tea-home.css">
+  <link rel="stylesheet" href="/css/auth-forms.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      background: #f6f8f4;
+      font-family: 'Roboto', 'Noto Serif SC', serif;
+      color: #23272f;
+    }
+    
+    /* Dark Theme Support */
+    body.dark-theme {
+      background: #1e1e1e;
+      color: #f1f1f1;
+    }
+    
+    body.dark-theme .tea-benefit-page {
+      background: #2a2a2a;
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark-theme .benefit-banner {
+      background: #1a1a1a;
+    }
+    
+    body.dark-theme .banner-title {
+      color: #ffffff;
+      text-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);
+    }
+    
+    body.dark-theme .banner-icon {
+      color: #6b8e23;
+      opacity: 0.4;
+    }
+    
+    body.dark-theme .benefit-desc {
+      color: #cccccc;
+    }
+    
+    body.dark-theme .chip {
+      background: #3e5c3a;
+      color: #ffffff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.dark-theme .benefit-filter select {
+      background: #2a2a2a;
+      color: #ffffff;
+      border-color: #444a57;
+    }
+    
+    body.dark-theme .benefit-filter select:focus {
+      border-color: #6b8e23;
+    }
+    
+    body.dark-theme .product-card {
+      background: #2a2a2a;
+      border-color: #444a57;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.dark-theme .product-card:hover {
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    
+    body.dark-theme .product-name {
+      color: #ffffff;
+    }
+    
+    body.dark-theme .product-desc {
+      color: #cccccc;
+    }
+    
+    body.dark-theme .product-price {
+      color: #6b8e23;
+    }
+    
+    body.dark-theme .view-btn {
+      background: #3e5c3a;
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.dark-theme .view-btn:hover {
+      background: linear-gradient(135deg, #2e3d23 0%, #6b8e23 100%);
+      color: #ffffff;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark-theme .empty-message {
+      color: #cccccc;
+    }
+    
+    body.dark-theme .empty-message i {
+      color: #6b8e23;
+      opacity: 0.8;
+    }
+    
+    body.dark-theme .back-btn,
+    body.dark-theme .all-products-btn {
+      background: #3e5c3a;
+      color: #ffffff;
+    }
+    
+    body.dark-theme .back-btn:hover,
+    body.dark-theme .all-products-btn:hover {
+      background: #6b8e23;
+      color: #ffffff;
+    }
+    
+    body.dark-theme .pagination button {
+      background: #2a2a2a;
+      color: #ffffff;
+      border-color: #444a57;
+    }
+    
+    body.dark-theme .pagination button.active,
+    body.dark-theme .pagination button:hover {
+      background: #3e5c3a;
+      color: #ffffff;
+    }
+    
+    .tea-benefit-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px 60px 24px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 4px 32px rgba(60, 80, 60, 0.07);
+      position: relative;
+      min-height: 80vh;
+      overflow: hidden;
+      margin-top: 55px; /* hạ toàn bộ trang xuống dưới header, điều chỉnh giá trị nếu cần */
+    }
+    .benefit-banner {
+      width: 100%;
+      min-height: 240px;
+      background: #f6f8f4; /* chỉ giữ màu nền, không set ảnh ở đây */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-radius: 18px 18px 0 0;
+      margin-bottom: 8px;
+    }
+    .benefit-banner .banner-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      width: 100%;
+      padding: 48px 0 32px 0;
+    }
+    .benefit-banner .banner-title {
+      font-size: 2.7rem;
+      font-weight: 800;
+      color: #3e5c3a;
+      text-shadow: 0 2px 16px rgba(60,80,60,0.08);
+      margin-bottom: 0;
+    }
+    .benefit-banner .banner-icon {
+      font-size: 3.2rem;
+      color: #A3B18A;
+      opacity: 0.22;
+      position: absolute;
+      right: 40px;
+      top: 30px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .benefit-desc {
+      font-size: 1.18rem;
+      color: #5a6d5a;
+      margin: 28px 0 10px 0;
+      text-align: center;
+      letter-spacing: 0.01em;
+      line-height: 1.7;
+      font-weight: 400;
+    }
+    .benefit-chips {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 15px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      background: #e6f2e6;
+      color: #3e5c3a;
+      border-radius: 16px;
+      padding: 6px 18px;
+      font-size: 1rem;
+      font-weight: 500;
+      box-shadow: 0 1px 4px rgba(60,80,60,0.06);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .benefit-filter {
+      display: none !important;
+    }
+    .benefit-filter select {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1.5px solid #A3B18A;
+      background: #f8f8f5;
+      font-size: 1rem;
+      color: #3e5c3a;
+      outline: none;
+      transition: border 0.2s;
+    }
+    .benefit-filter select:focus {
+      border-color: #3e5c3a;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 56px 24px; /* tăng khoảng cách dọc giữa các hàng card */
+      margin-bottom: 40px;
+      margin-top: 10px;
+    }
+    @media (max-width: 900px) {
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .tea-benefit-page { padding: 0 4vw; }
+      .products-grid { grid-template-columns: 1fr; gap: 20px; }
+      .benefit-banner .banner-title { font-size: 1.5rem; }
+    }
+    .product-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 230px;
+      max-height: 370px;
+      background: #f9faf7;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px rgba(62, 92, 58, 0.07);
+      padding: 18px 14px 18px 14px;
+      transition: box-shadow 0.2s, transform 0.2s;
+      border: 1.5px solid #e1e5e9;
+      position: relative;
+      /* khoảng cách giữa các card đã có qua gap của grid */
+    }
+    .product-card:hover {
+      box-shadow: 0 8px 32px rgba(62, 92, 58, 0.13);
+      transform: translateY(-4px) scale(1.025);
+      z-index: 2;
+    }
+    .product-image {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(60,60,60,0.04);
+      background: #fff;
+    }
+    .product-name {
+      min-height: 32px;
+      text-align: center;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-desc {
+      max-height: 60px;
+      min-height: 40px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.97rem;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .product-price {
+      font-weight: 700;
+      color: #3e5c3a;
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      margin-top: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .view-btn {
+      padding: 6px 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(62, 92, 58, 0.08);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 0;
+      min-width: 110px;
+      max-width: 160px;
+      justify-content: center;
+    }
+    .view-btn:hover {
+      background: linear-gradient(135deg, #2e3d23 0%, #A3B18A 100%);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(62, 92, 58, 0.13);
+    }
+    .empty-message {
+      text-align: center;
+      color: #888;
+      font-size: 1.15rem;
+      margin: 60px 0 30px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    .empty-message i {
+      font-size: 3rem;
+      color: #A3B18A;
+      opacity: 0.7;
+    }
+    .empty-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .back-btn, .all-products-btn {
+      display: inline-block;
+      background: #A3B18A;
+      color: #23272f;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 1.08rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+    .back-btn:hover, .all-products-btn:hover {
+      background: #3e5c3a;
+      color: #fff;
+    }
+  </style>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    if (localStorage.getItem('theme') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+    /*]]>*/
+  </script>
+</head>
+<body>
+    <!-- Include Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+<div class="tea-benefit-page">
+  <div class="benefit-banner">
+    <div class="banner-content">
+      <div class="banner-title" id="benefitTitle">Trà theo công dụng</div>
+      <div class="benefit-desc" id="benefitDesc"></div>
+    </div>
+    <span class="banner-icon" id="benefitIcon"><i class="fas fa-leaf"></i></span>
+  </div>
+  <div class="benefit-chips" id="benefitChips"></div>
+  <div class="benefit-filter" >
+    <select id="filterType">
+      <option value="">Tất cả loại trà</option>
+      <option value="xanh">Trà xanh</option>
+      <option value="thao-moc">Thảo mộc</option>
+      <option value="den">Trà đen</option>
+      <option value="oolong">Oolong</option>
+      <option value="dung-cu">Dụng cụ</option>
+    </select>
+    <select id="filterOrigin">
+      <option value="">Tất cả xuất xứ</option>
+      <option value="viet-nam">Việt Nam</option>
+      <option value="trung-quoc">Trung Quốc</option>
+      <option value="nhat-ban">Nhật Bản</option>
+    </select>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+  <!-- Thêm phân trang phía dưới grid sản phẩm -->
+  <div class="pagination" id="pagination" style="display: flex; justify-content: center; gap: 8px; margin-bottom: 32px;"></div>
+  <div class="empty-message" id="emptyMessage" style="display:none;">
+    <i class="fas fa-mug-hot"></i>
+    <span id="emptyText"></span>
+    <div class="empty-actions">
+      <a href="/#tea-guide" class="back-btn"><i class="fas fa-arrow-left"></i> Quay lại gợi ý trà</a>
+      <a href="/products" class="all-products-btn"><i class="fas fa-list"></i> Xem tất cả sản phẩm</a>
+    </div>
+  </div>
+</div>
+<script>
+// Mock data nhóm công dụng
+const benefitData = {
+  "an-than": {
+    title: "Trà An Thần - Giúp ngủ ngon, thư giãn",
+    desc: "Trà An Thần giúp thư giãn tinh thần, cải thiện giấc ngủ, giảm stress hiệu quả. Các loại trà này thường chứa thảo mộc tự nhiên giúp an thần, hỗ trợ giấc ngủ sâu và mang lại cảm giác thư thái sau ngày dài.",
+    icon: "fa-moon",
+    chips: ["Ngủ ngon", "Thư giãn", "Giảm stress"]
+  },
+  "giam-can": {
+    title: "Trà Giảm Cân - Thanh lọc cơ thể",
+    desc: "Hỗ trợ giảm cân, thanh lọc, tốt cho sức khỏe và vóc dáng.",
+    icon: "fa-leaf",
+    chips: ["Giảm cân", "Thanh lọc", "Đốt mỡ"]
+  },
+  "thao-moc": {
+    title: "Trà Thảo Mộc - Tự nhiên, an lành",
+    desc: "Thảo mộc tự nhiên giúp làm dịu thần kinh, hỗ trợ tiêu hóa, tăng cường sức khỏe.",
+    icon: "fa-seedling",
+    chips: ["Tự nhiên", "Tiêu hóa", "An lành"]
+  },
+  "dung-cu": {
+    title: "Dụng Cụ Trà Đạo - Tinh tế, sang trọng",
+    desc: "Bộ ấm chén, phụ kiện trà đạo tinh xảo, nâng tầm trải nghiệm thưởng trà.",
+    icon: "fa-mug-hot",
+    chips: ["Trà cụ", "Tinh tế", "Sang trọng"]
+  }
+};
+// Biến products toàn cục
+let products = [];
+// Mock data sản phẩm theo từng nhóm benefit
+const mockProductsByBenefit = {
+  "an-than": [
+    {
+      id: 1,
+      name: "Trà hoa cúc an thần",
+      price: 89000,
+      image: "/uploads/images/tra-hoa-cuc.jpg",
+      description: "Trà hoa cúc giúp thư giãn, ngủ ngon, giảm stress.",
+      health_benefit: "an thần, thư giãn, ngủ ngon",
+      tea_type: "thao-moc",
+      origin: "viet-nam"
+    },
+    {
+      id: 2,
+      name: "Trà sen Tây Hồ",
+      price: 159000,
+      image: "/uploads/images/tra-sen-tay-ho.jpg",
+      description: "Trà sen thơm ngát, giúp thư giãn và an thần.",
+      health_benefit: "an thần, thư giãn",
+      tea_type: "xanh",
+      origin: "viet-nam"
+    },
+    {
+      id: 3,
+      name: "Trà an thần ban đêm",
+      price: 125000,
+      image: "/uploads/images/tra-thu-gian.jpg",
+      description: "Kết hợp thảo mộc tự nhiên giúp ngủ sâu, giảm căng thẳng.",
+      health_benefit: "an thần, ngủ ngon",
+      tea_type: "thao-moc",
+      origin: "viet-nam"
+    },
+    {
+      id: 4,
+      name: "Trà hoa nhài thư giãn",
+      price: 99000,
+      image: "/uploads/images/tra-thu-gian2.jpg",
+      description: "Hương hoa nhài dịu nhẹ, hỗ trợ thư giãn tinh thần.",
+      health_benefit: "an thần, thư giãn",
+      tea_type: "thao-moc",
+      origin: "viet-nam"
+    },
+    {
+      id: 5,
+      name: "Trà thảo mộc ngủ ngon",
+      price: 112000,
+      image: "/uploads/images/tra-hoa-cuc1.jpg",
+      description: "Thảo mộc tự nhiên giúp an thần, hỗ trợ giấc ngủ sâu.",
+      health_benefit: "an thần, ngủ ngon",
+      tea_type: "thao-moc",
+      origin: "viet-nam"
+    },
+    {
+      id: 6,
+      name: "Trà oolong thư giãn",
+      price: 135000,
+      image: "/uploads/images/tra-oolong.jpg",
+      description: "Oolong nhẹ dịu, giúp giảm stress, thư giãn đầu óc.",
+      health_benefit: "an thần, thư giãn",
+      tea_type: "oolong",
+      origin: "trung-quoc"
+    }
+  ],
+  // Có thể bổ sung các nhóm khác nếu muốn
+  "giam-can": [],
+  "thao-moc": [],
+  "dung-cu": []
+};
+function getBenefitType() {
+  // Ưu tiên lấy từ query string (?benefit=an-than)
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('benefit')) return params.get('benefit');
+  // Nếu không có, lấy từ path
+  const path = window.location.pathname;
+  const match = path.match(/tea-guide\/?([a-zA-Z0-9-]+)?/);
+  return match && match[1] ? match[1] : null;
+}
+function formatPrice(price) {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+}
+function removeVietnameseTones(str) {
+  return str.normalize('NFD').replace(/[  -]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/\s+/g, ' ');
+}
+// Thêm logic phân trang JS
+const PAGE_SIZE = 6;
+let currentPage = 1;
+function renderPagination(totalItems) {
+  const totalPages = Math.ceil(totalItems / PAGE_SIZE);
+  const paginationEl = document.getElementById('pagination');
+  if (totalPages <= 1) {
+    paginationEl.style.display = 'none';
+    return;
+  }
+  paginationEl.style.display = 'flex';
+  paginationEl.innerHTML = '';
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+    btn.onclick = () => {
+      currentPage = i;
+      filterProducts();
+    };
+    paginationEl.appendChild(btn);
+  }
+}
+// Sửa filterProducts để phân trang
+function filterProducts() {
+  const gridEl = document.getElementById('productsGrid');
+  const emptyEl = document.getElementById('emptyMessage');
+  const emptyText = document.getElementById('emptyText');
+  let filtered = products;
+  if (filterType.value) filtered = filtered.filter(p => p.tea_type === filterType.value);
+  if (filterOrigin.value) filtered = filtered.filter(p => p.origin === filterOrigin.value);
+  renderPagination(filtered.length);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const paged = filtered.slice(start, end);
+  if (paged.length === 0) {
+    gridEl.innerHTML = "";
+    emptyText.textContent = "Hiện chưa có sản phẩm nào phù hợp.";
+    emptyEl.style.display = "flex";
+    return;
+  }
+  emptyEl.style.display = "none";
+  gridEl.innerHTML = paged.map(p => `
+    <div class="product-card">
+      <img src="${p.image}" alt="${p.name}" class="product-image" onerror="this.src='/images/product-placeholder.jpg'">
+      <div class="product-name">${p.name}</div>
+      <div class="product-desc">${p.description}</div>
+      <div class="product-price">${formatPrice(p.price)}</div>
+      <a href="/product/${p.id}" class="view-btn"><i class="fas fa-eye"></i> Xem chi tiết</a>
+    </div>
+  `).join('');
+}
+// Map benefitType sang ảnh banner riêng
+const benefitBannerImages = {
+  "an-than": "/uploads/images/banner-an-than.jpg",
+  "giam-can": "/uploads/images/banner-giam-can.jpg",
+  "thao-moc": "/uploads/images/banner-thao-moc.jpg",
+  "dung-cu": "/uploads/images/banner-dung-cu.jpg"
+  // Thêm các benefit khác nếu có
+};
+function renderPage() {
+  const benefitType = getBenefitType();
+  const benefit = benefitData[benefitType];
+  // Đổi ảnh banner theo benefit
+  const bannerEl = document.querySelector('.benefit-banner');
+  const bannerImg = benefitBannerImages[benefitType] || "/uploads/images/banner-tea.jpg";
+  if (bannerEl) {
+    bannerEl.style.backgroundImage = `linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0.2) 100%), url('${bannerImg}')`;
+    bannerEl.style.backgroundPosition = 'center';
+    bannerEl.style.backgroundRepeat = 'no-repeat';
+    bannerEl.style.backgroundSize = 'cover';
+  }
+  // KHÔNG gán let products = ... ở đây nữa!
+  const titleEl = document.getElementById('benefitTitle');
+  const descEl = document.getElementById('benefitDesc');
+  const iconEl = document.getElementById('benefitIcon');
+  const gridEl = document.getElementById('productsGrid');
+  const emptyEl = document.getElementById('emptyMessage');
+  const emptyText = document.getElementById('emptyText');
+  const chipsEl = document.getElementById('benefitChips');
+  // Filter phụ
+  const filterType = document.getElementById('filterType');
+  const filterOrigin = document.getElementById('filterOrigin');
+
+  if (!benefit) {
+    titleEl.textContent = "Không tìm thấy nhóm trà";
+    descEl.textContent = "";
+    iconEl.innerHTML = '<i class="fas fa-leaf"></i>';
+    chipsEl.innerHTML = '';
+    gridEl.innerHTML = "";
+    emptyText.textContent = "Nhóm trà này không tồn tại hoặc chưa được hỗ trợ.";
+    emptyEl.style.display = "flex";
+    return;
+  }
+  titleEl.textContent = benefit.title;
+  descEl.textContent = benefit.desc;
+  iconEl.innerHTML = `<i class=\"fas ${benefit.icon}\"></i>`;
+  // Chips
+  chipsEl.innerHTML = (benefit.chips||[]).map(chip => `<span class=\"chip\"><i class=\"fas fa-leaf\"></i> ${chip}</span>`).join('');
+
+  filterType.onchange = filterProducts;
+  filterOrigin.onchange = filterProducts;
+  // Thử fetch từ backend
+  fetch(`/api/products/benefit/${benefitType}`)
+    .then(res => res.ok ? res.json() : [])
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        products = data.map(p => ({
+          id: p.id,
+          name: p.name,
+          price: p.price,
+          image: p.imageUrl ? '/uploads/images/' + p.imageUrl : '/uploads/images/product-placeholder.jpg',
+          description: p.description || p.shortDescription || '',
+          health_benefit: p.healthBenefit || '',
+          tea_type: p.teaType || '',
+          origin: p.origin || ''
+        }));
+      } else {
+        products = [];
+      }
+      filterProducts();
+    })
+    .catch(() => {
+      products = [];
+      filterProducts();
+    });
+}
+document.addEventListener('DOMContentLoaded', renderPage);
+</script>
+<script th:src="@{/js/user-dropdown.js}"></script>
+<script th:src="@{/js/auth-forms.js}"></script>
+<script th:src="@{/js/theme-toggle.js}"></script>
+</body>
+</html> 

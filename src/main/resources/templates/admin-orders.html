@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý đơn hàng - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/tea-home.css}">
+    <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<!--    &lt;!&ndash; Bootstrap CSS chỉ cho modal &ndash;&gt;-->
+<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">-->
+    <style>
+        :root {
+            --main-bg: #f9fafb;
+            --main-bg-dark: #23272f;
+            --header-green: #2C6E49;
+            --main-green: #40916C;
+            --sub-green: #A3B18A;
+            --card-border: #A3B18A;
+            --btn-outline: #95D5B2;
+            --btn-light-bg: #EDF6F9;
+            --btn-light-text: #1B4332;
+            --highlight: #1B9C85;
+            --highlight2: #43AA8B;
+            --main-text: #1E1E1E;
+            --white: #FFFFFF;
+            --white-dark: #23272f;
+            --mint-bg: #e6f6f2;
+            --block-green: #D8F3DC;
+            --block-green-dark: #2a2e38;
+            --block-orange: #FFE5B4;
+            --block-orange-dark: #3a2e1a;
+            --block-blue: #B5EAEA;
+            --block-blue-dark: #1e2a3a;
+            --block-done: #B7E4C7;
+            --block-done-dark: #1e3a2a;
+            --block-border: #b7e4c7;
+            --block-border-dark: #444a57;
+            --order-header: #f0f4ef;
+            --order-header-dark: #23272f;
+            --badge-pending: #ffe5b4;
+            --badge-pending-dark: #3a2e1a;
+            --badge-shipping: #b5eaea;
+            --badge-shipping-dark: #1e2a3a;
+            --badge-done: #b7e4c7;
+            --badge-done-dark: #1e3a2a;
+            --badge-cancel: #f8d7da;
+            --badge-cancel-dark: #3a1e1e;
+            --badge-pending-text: #b26a00;
+            --badge-shipping-text: #1976d2;
+            --badge-done-text: #2c6e49;
+            --badge-cancel-text: #b71c1c;
+            --card-bg-dark: #23272f;
+            --card-bg-dark-2: #262a33;
+            --card-border-dark: #444a57;
+            --input-bg-dark: #23272f;
+            --input-border-dark: #444a57;
+            --input-text-dark: #f1f1f1;
+            --stat-block-pending-dark: #3a2e1a;
+            --stat-block-shipping-dark: #1e2a3a;
+            --stat-block-done-dark: #1e3a2a;
+            --btn-success-dark: #40916C;
+            --btn-primary-dark: #43AA8B;
+            --btn-warning-dark: #23272f;
+            --btn-danger-dark: #b71c1c;
+            --btn-outline-dark: #23272f;
+            --btn-outline-border-dark: #444a57;
+            --badge-pending-dark: #3a2e1a;
+            --badge-shipping-dark: #1e2a3a;
+            --badge-done-dark: #1e3a2a;
+            --badge-cancel-dark: #3a1e1e;
+            --badge-text-dark: #f1f1f1;
+            --empty-bg-dark: #23272f;
+            --empty-text-dark: #aaa;
+            --shadow-dark: 0 2px 12px rgba(0,0,0,0.18);
+        }
+        body {
+            background: var(--main-bg);
+            color: var(--main-text);
+        }
+        body.dark-theme {
+            background: var(--main-bg-dark);
+            color: #f1f1f1;
+        }
+        /* Chỉ giữ lại các style cho phần admin-orders-page, xóa các style liên quan đến header/navbar */
+        .admin-orders-page {
+            padding-top: 50px; /* Đảm bảo header không đè lên nội dung */
+            padding-bottom: 50px;
+            min-height: 100vh;
+            background: transparent;
+        }
+        .admin-orders-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 24px;
+            padding-right: 24px;
+            padding-bottom: 40px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+        body.dark-theme .admin-orders-container {
+            background: var(--white-dark);
+            color: #f1f1f1;
+            box-shadow: var(--shadow-dark);
+        }
+        .admin-orders-page .admin-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .admin-orders-page .admin-header h1 {
+            color: var(--header-green);
+            font-size: 3.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: center;
+            letter-spacing: 1px;
+        }
+        .admin-orders-page .admin-header h1 i {
+            color: var(--main-green);
+            font-size: 2.4rem;
+        }
+        .admin-orders-page .admin-header p {
+            color: var(--header-green);
+            font-size: 1.25rem;
+            margin-bottom: 0;
+            font-weight: 500;
+            text-align: center;
+        }
+        .admin-orders-page .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 28px;
+            margin-bottom: 36px;
+        }
+        .admin-orders-page .stat-card {
+            background: var(--white);
+            border: 1.5px solid var(--card-border);
+            border-radius: 12px;
+            padding: 32px 0 24px 0;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-orders-page .stat-number {
+            font-size: 2.6rem;
+            font-weight: bold;
+            color: var(--highlight);
+            margin-bottom: 8px;
+        }
+        .admin-orders-page .stat-label {
+            color: var(--header-green);
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        /* Màu nền đậm hơn cho từng trạng thái */
+        .admin-orders-page .stat-card:nth-child(1) { background: var(--sub-pink); border-color: var(--main-green); }
+        .admin-orders-page .stat-card:nth-child(2) { background: #FFF8E1; border-color: #FFD54F; }
+        .admin-orders-page .stat-card:nth-child(3) { background: #E3F2FD; border-color: #90CAF9; }
+        .admin-orders-page .stat-card:nth-child(4) { background: #E8F5E9; border-color: var(--main-green); }
+        .admin-orders-page .filters-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .admin-orders-page .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .admin-orders-page .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-orders-page .filter-label {
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .admin-orders-page .filter-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .admin-orders-page .filter-btn {
+            background: var(--main-green);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .admin-orders-page .filter-btn:hover {
+            background: #2e3d23;
+        }
+
+        .admin-orders-page .orders-list {
+            background: var(--white);
+            border-radius: 14px;
+            padding: 28px 18px;
+            box-shadow: none;
+        }
+        .admin-orders-page .order-card {
+            border: 1.5px solid var(--card-border);
+            border-radius: 12px;
+            padding: 22px 18px 0 18px;
+            margin-bottom: 28px;
+            background: var(--white);
+            transition: border 0.2s;
+            box-shadow: none;
+            cursor: pointer;
+            position: relative;
+        }
+        .admin-orders-page .order-card.active, .admin-orders-page .order-card:hover {
+            border: 2px solid var(--main-green);
+        }
+        .admin-orders-page .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1.2px solid var(--btn-outline);
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+        }
+        .admin-orders-page .order-id {
+            color: var(--header-green);
+            font-size: 1.18rem;
+            font-weight: 700;
+        }
+        .admin-orders-page .order-date, .admin-orders-page .order-customer {
+            color: var(--header-green);
+            font-size: 1.01rem;
+            font-weight: 500;
+        }
+        .admin-orders-page .order-status {
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 16px;
+            margin-left: 8px;
+            display: inline-block;
+        }
+        .admin-orders-page .order-status.status-pending {
+            background: var(--btn-light-bg);
+            color: var(--btn-light-text);
+            border: 1.2px solid var(--btn-outline);
+        }
+        .admin-orders-page .order-status.status-shipping {
+            background: var(--highlight2);
+            color: var(--white);
+            border: 1.2px solid var(--highlight2);
+        }
+        .admin-orders-page .order-status.status-completed {
+            background: var(--main-green);
+            color: var(--white);
+            border: 1.2px solid var(--main-green);
+        }
+        .admin-orders-page .order-status.status-cancelled {
+            background: #FFEBEE;
+            color: #C62828;
+            border: 1.2px solid #EF9A9A;
+        }
+        .admin-orders-page .order-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 12px;
+        }
+        .admin-orders-page .detail-label {
+            font-weight: 600;
+            color: var(--header-green);
+        }
+        .admin-orders-page .detail-value {
+            font-weight: 700;
+            color: var(--main-text);
+        }
+        .admin-orders-page .order-items {
+            margin-top: 12px;
+            background: var(--btn-light-bg);
+            border-radius: 8px;
+            padding: 10px 8px 8px 8px;
+        }
+        .admin-orders-page .item-name {
+            font-weight: 600;
+            color: var(--header-green);
+        }
+        .admin-orders-page .item-details {
+            color: var(--header-green);
+            font-size: 0.97rem;
+        }
+        .admin-orders-page .item-total {
+            font-weight: 700;
+            color: var(--highlight);
+        }
+        .admin-orders-page .order-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 14px;
+            padding-top: 10px;
+            border-top: 1.2px solid var(--btn-outline);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .admin-orders-page .action-btn, .admin-orders-page .confirm-status-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            min-width: 120px;
+            min-height: 40px;
+            padding: 0 22px;
+            border-radius: 8px !important;
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            text-transform: none !important;
+            box-shadow: none;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+            border: none;
+            background: var(--main-green);
+            color: var(--white);
+            cursor: pointer;
+            white-space: nowrap;
+            line-height: 1.2;
+        }
+        .admin-orders-page .action-btn.btn-success, .admin-orders-page .confirm-status-btn {
+            background: var(--main-green) !important;
+            color: var(--white) !important;
+        }
+        .admin-orders-page .action-btn.btn-success:hover, .admin-orders-page .confirm-status-btn:hover {
+            background: var(--header-green) !important;
+            color: var(--white) !important;
+            box-shadow: none;
+        }
+        .admin-orders-page .action-btn.btn-primary {
+            background: var(--highlight2) !important;
+            color: var(--white) !important;
+        }
+        .admin-orders-page .action-btn.btn-primary:hover {
+            background: var(--main-green) !important;
+            color: var(--white) !important;
+        }
+        .admin-orders-page .btn-warning {
+            background: var(--btn-light-bg);
+            color: var(--btn-light-text);
+            border: 1.2px solid var(--btn-outline);
+        }
+        .admin-orders-page .btn-warning:hover {
+            background: var(--highlight2);
+            color: var(--white);
+        }
+        .admin-orders-page .btn-danger {
+            background: #C62828;
+            color: #fff;
+        }
+        .admin-orders-page .btn-danger:hover {
+            background: #EF9A9A;
+        }
+        .admin-orders-page .btn-outline {
+            background: var(--btn-light-bg);
+            color: var(--btn-light-text);
+            border: 1.2px solid var(--btn-outline);
+        }
+        .admin-orders-page .btn-outline:hover {
+            background: var(--main-green);
+            color: var(--white);
+        }
+        .admin-orders-page .loading, .admin-orders-page .no-orders {
+            text-align: center;
+            padding: 32px 0 16px 0;
+            color: var(--header-green);
+            font-size: 1.08rem;
+        }
+        /* Hiệu ứng sổ/thu gọn chi tiết đơn hàng */
+        .admin-orders-page .order-details, .admin-orders-page .order-items, .admin-orders-page .order-actions { transition: max-height 0.3s, opacity 0.3s; overflow: hidden; }
+        .admin-orders-page .order-card .order-details, .admin-orders-page .order-card .order-items, .admin-orders-page .order-card .order-actions { max-height: 0; opacity: 0; pointer-events: none; }
+        .admin-orders-page .order-card.active .order-details, .admin-orders-page .order-card.active .order-items, .admin-orders-page .order-card.active .order-actions { max-height: 1000px; opacity: 1; pointer-events: auto; }
+
+        @media (max-width: 600px) {
+            .admin-orders-page .status-actions {
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px !important;
+            }
+            .admin-orders-page .status-actions select, .admin-orders-page .status-actions .confirm-status-btn {
+                width: 100% !important;
+            }
+        }
+        /* PHẦN CSS: Thay đổi màu nền, block, card, filter, badge */
+        .admin-orders-page .admin-stats {
+            display: flex;
+            gap: 24px;
+            margin: 32px 0 24px 0;
+            flex-wrap: wrap;
+        }
+        .admin-orders-page .admin-stat-block {
+            flex: 1 1 180px;
+            min-width: 180px;
+            background: var(--block-green);
+            border-radius: 18px;
+            box-shadow: 0 2px 12px rgba(60,80,60,0.07);
+            padding: 22px 18px 18px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            border: 1.5px solid var(--block-border);
+            position: relative;
+        }
+        .admin-orders-page .admin-stat-block.pending { background: var(--block-orange); }
+        .admin-orders-page .admin-stat-block.shipping { background: var(--block-blue); }
+        .admin-orders-page .admin-stat-block.done { background: var(--block-done); }
+        .admin-orders-page .admin-stat-block .stat-icon {
+            font-size: 2.1rem;
+            opacity: 0.22;
+            position: absolute;
+            right: 18px;
+            top: 18px;
+        }
+        .admin-orders-page .admin-stat-block .stat-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .admin-orders-page .admin-stat-block .stat-value {
+            font-size: 2.1rem;
+            font-weight: 800;
+            color: #2c6e49;
+        }
+
+        /* FILTER BOX */
+        .admin-orders-page .admin-filter-box {
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(60,80,60,0.07);
+            padding: 18px 18px 10px 18px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 18px;
+        }
+        .admin-orders-page .admin-filter-box select {
+            border-radius: 8px;
+            border: 1.5px solid #A3B18A;
+            padding: 8px 16px;
+            font-size: 1rem;
+            color: #3e5c3a;
+            background: #f8f8f5;
+            margin-right: 8px;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .admin-orders-page .admin-filter-box select:focus {
+            border-color: #3e5c3a;
+        }
+        .admin-orders-page .admin-filter-box .filter-btn {
+            background: linear-gradient(135deg, #3e5c3a 0%, #A3B18A 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 22px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            box-shadow: 0 2px 8px rgba(62, 92, 58, 0.08);
+        }
+        .admin-orders-page .admin-filter-box .filter-btn:hover {
+            background: linear-gradient(135deg, #2e3d23 0%, #A3B18A 100%);
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px rgba(62, 92, 58, 0.13);
+        }
+
+        /* ORDER CARD */
+        .admin-orders-page .order-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(60,80,60,0.07);
+            margin-bottom: 28px;
+            border: 1.5px solid #e1e5e9;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+        .admin-orders-page .order-card:hover {
+            box-shadow: 0 8px 32px rgba(62, 92, 58, 0.13);
+        }
+        .admin-orders-page .order-card-header {
+            background: var(--order-header);
+            padding: 16px 22px 12px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1.5px solid #e1e5e9;
+        }
+        .admin-orders-page .order-id {
+            font-weight: 700;
+            color: #2c3e50;
+            font-size: 1.08rem;
+        }
+        .admin-orders-page .order-date {
+            color: #888;
+            font-size: 0.98rem;
+            margin-left: 18px;
+        }
+        .admin-orders-page .order-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 16px;
+            padding: 6px 18px;
+            margin-left: 10px;
+        }
+        .admin-orders-page .order-status-badge.pending {
+            background: var(--badge-pending);
+            color: var(--badge-pending-text);
+        }
+        .admin-orders-page .order-status-badge.shipping {
+            background: var(--badge-shipping);
+            color: var(--badge-shipping-text);
+        }
+        .admin-orders-page .order-status-badge.done {
+            background: var(--badge-done);
+            color: var(--badge-done-text);
+        }
+        .admin-orders-page .order-status-badge.cancel {
+            background: var(--badge-cancel);
+            color: var(--badge-cancel-text);
+        }
+        .admin-orders-page .order-card-body {
+            padding: 18px 22px 18px 22px;
+        }
+        @media (max-width: 900px) {
+            .admin-orders-page .admin-stats { flex-direction: column; gap: 12px; }
+            .admin-orders-page .admin-stat-block { min-width: 0; width: 100%; }
+            .admin-orders-page .order-card-header, .admin-orders-page .order-card-body { padding: 14px 10px; }
+        }
+        @media (max-width: 600px) {
+            .admin-orders-page .admin-stats { gap: 8px; }
+            .admin-orders-page .admin-filter-box { flex-direction: column; gap: 10px; padding: 12px 6vw 6px 6vw; }
+            .admin-orders-page .order-card { margin-bottom: 18px; }
+            .admin-orders-page .order-card-header, .admin-orders-page .order-card-body { padding: 10px 4vw; }
+        }
+        /* EMPTY STATE */
+        .admin-orders-page .empty-orders {
+            text-align: center;
+            color: #888;
+            font-size: 1.15rem;
+            margin: 60px 0 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+        .admin-orders-page .empty-orders i {
+            font-size: 3rem;
+            color: #A3B18A;
+            opacity: 0.7;
+        }
+        .admin-orders-page .empty-orders .empty-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .admin-orders-page .empty-orders .reload-btn, .admin-orders-page .empty-orders .all-orders-btn {
+            display: inline-block;
+            background: #A3B18A;
+            color: #23272f;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 1.08rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .admin-orders-page .empty-orders .reload-btn:hover, .admin-orders-page .empty-orders .all-orders-btn:hover {
+            background: #3e5c3a;
+            color: #fff;
+        }
+        /* --- DARK THEME SUPPORT --- */
+        body.dark-theme .admin-orders-container {
+            background: var(--white-dark);
+            color: #f1f1f1;
+            box-shadow: var(--shadow-dark);
+        }
+        body.dark-theme .admin-orders-page .admin-header h1,
+        body.dark-theme .admin-orders-page .admin-header p {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .admin-stats {
+            /* giữ nguyên layout */
+        }
+        body.dark-theme .admin-orders-page .admin-stat-block {
+            background: var(--block-green-dark);
+            border-color: var(--block-border-dark);
+        }
+        body.dark-theme .admin-orders-page .admin-stat-block.pending {
+            background: var(--block-orange-dark);
+        }
+        body.dark-theme .admin-orders-page .admin-stat-block.shipping {
+            background: var(--block-blue-dark);
+        }
+        body.dark-theme .admin-orders-page .admin-stat-block.done {
+            background: var(--block-done-dark);
+        }
+        body.dark-theme .admin-orders-page .admin-stat-block .stat-label {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .admin-stat-block .stat-value {
+            color: #fff;
+        }
+        body.dark-theme .admin-orders-page .admin-filter-box {
+            background: var(--white-dark);
+            box-shadow: var(--shadow-dark);
+        }
+        body.dark-theme .admin-orders-page .admin-filter-box select,
+        body.dark-theme .admin-orders-page .admin-filter-box .filter-input {
+            background: var(--input-bg-dark);
+            color: var(--input-text-dark);
+            border: 1.5px solid var(--input-border-dark);
+        }
+        body.dark-theme .admin-orders-page .admin-filter-box select:focus,
+        body.dark-theme .admin-orders-page .admin-filter-box .filter-input:focus {
+            border-color: var(--main-green);
+        }
+        body.dark-theme .admin-orders-page .admin-filter-box .filter-btn {
+            background: linear-gradient(135deg, #23272f 0%, #43AA8B 100%);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(60,80,60,0.18);
+        }
+        body.dark-theme .admin-orders-page .admin-filter-box .filter-btn:hover {
+            background: linear-gradient(135deg, #40916C 0%, #43AA8B 100%);
+        }
+        body.dark-theme .admin-orders-page .orders-list {
+            background: var(--card-bg-dark);
+        }
+        body.dark-theme .admin-orders-page .order-card {
+            background: var(--card-bg-dark-2);
+            border-color: var(--card-border-dark);
+            color: #f1f1f1;
+            box-shadow: var(--shadow-dark);
+        }
+        body.dark-theme .admin-orders-page .order-card.active,
+        body.dark-theme .admin-orders-page .order-card:hover {
+            border: 2px solid var(--main-green);
+        }
+        body.dark-theme .admin-orders-page .order-header {
+            border-bottom: 1.2px solid var(--btn-outline-border-dark);
+        }
+        body.dark-theme .admin-orders-page .order-id,
+        body.dark-theme .admin-orders-page .order-date,
+        body.dark-theme .admin-orders-page .order-customer {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .order-status.status-pending {
+            background: var(--badge-pending-dark);
+            color: var(--badge-text-dark);
+            border: 1.2px solid var(--badge-pending-dark);
+        }
+        body.dark-theme .admin-orders-page .order-status.status-shipping {
+            background: var(--badge-shipping-dark);
+            color: var(--badge-text-dark);
+            border: 1.2px solid var(--badge-shipping-dark);
+        }
+        body.dark-theme .admin-orders-page .order-status.status-completed {
+            background: var(--badge-done-dark);
+            color: var(--badge-text-dark);
+            border: 1.2px solid var(--badge-done-dark);
+        }
+        body.dark-theme .admin-orders-page .order-status.status-cancelled {
+            background: var(--badge-cancel-dark);
+            color: var(--badge-text-dark);
+            border: 1.2px solid var(--badge-cancel-dark);
+        }
+        body.dark-theme .admin-orders-page .order-details {
+            background: var(--card-bg-dark);
+        }
+        body.dark-theme .admin-orders-page .detail-label {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .detail-value {
+            color: #fff;
+        }
+        body.dark-theme .admin-orders-page .order-items {
+            background: var(--input-bg-dark);
+        }
+        body.dark-theme .admin-orders-page .item-name {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .item-details {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .item-total {
+            color: #43AA8B;
+        }
+        body.dark-theme .admin-orders-page .order-actions {
+            border-top: 1.2px solid var(--btn-outline-border-dark);
+        }
+        body.dark-theme .admin-orders-page .action-btn,
+        body.dark-theme .admin-orders-page .confirm-status-btn {
+            background: #23272f !important;
+            color: #f1f1f1 !important;
+            border: 1.2px solid var(--main-green);
+        }
+        body.dark-theme .admin-orders-page .action-btn.btn-success,
+        body.dark-theme .admin-orders-page .confirm-status-btn {
+            background: #40916C !important;
+            color: #fff !important;
+        }
+        body.dark-theme .admin-orders-page .action-btn.btn-success:hover,
+        body.dark-theme .admin-orders-page .confirm-status-btn:hover {
+            background: #43AA8B !important;
+        }
+        body.dark-theme .admin-orders-page .action-btn.btn-primary {
+            background: #43AA8B !important;
+            color: #fff !important;
+        }
+        body.dark-theme .admin-orders-page .action-btn.btn-primary:hover {
+            background: #40916C !important;
+        }
+        body.dark-theme .admin-orders-page .btn-warning {
+            background: #23272f;
+            color: #b7e4c7;
+            border: 1.2px solid #444a57;
+        }
+        body.dark-theme .admin-orders-page .btn-warning:hover {
+            background: #43AA8B;
+            color: #fff;
+        }
+        body.dark-theme .admin-orders-page .btn-danger {
+            background: #b71c1c;
+            color: #fff;
+        }
+        body.dark-theme .admin-orders-page .btn-danger:hover {
+            background: #ef9a9a;
+        }
+        body.dark-theme .admin-orders-page .btn-outline {
+            background: #23272f;
+            color: #b7e4c7;
+            border: 1.2px solid #444a57;
+        }
+        body.dark-theme .admin-orders-page .btn-outline:hover {
+            background: #40916C;
+            color: #fff;
+        }
+        body.dark-theme .admin-orders-page .loading,
+        body.dark-theme .admin-orders-page .no-orders {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .empty-orders {
+            color: #aaa;
+        }
+        body.dark-theme .admin-orders-page .empty-orders i {
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .empty-orders .reload-btn,
+        body.dark-theme .admin-orders-page .empty-orders .all-orders-btn {
+            background: #23272f;
+            color: #b7e4c7;
+        }
+        body.dark-theme .admin-orders-page .empty-orders .reload-btn:hover,
+        body.dark-theme .admin-orders-page .empty-orders .all-orders-btn:hover {
+            background: #40916C;
+            color: #fff;
+        }
+        /* Toast dark mode */
+        body.dark-theme .toast {
+            background: #23272f;
+            color: #fff;
+            border-left: 4px solid #43AA8B;
+        }
+        body.dark-theme .toast .toast-message {
+            color: #fff;
+        }
+        body.dark-theme .toast .toast-close {
+            color: #b7e4c7;
+        }
+        body.dark-theme .toast .toast-close:hover {
+            background: #40916C;
+            color: #fff;
+        }
+    </style>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<script>
+(function() {
+  try {
+    var theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark-theme');
+      document.body && document.body.classList.add('dark-theme');
+    }
+  } catch(e){}
+})();
+</script>
+<div th:replace="~{fragments/header :: header}"></div>
+<div class="admin-orders-page">
+    <div class="admin-orders-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-shopping-cart"></i> Quản lý đơn hàng</h1>
+            <p>Quản lý và theo dõi tất cả đơn hàng trong hệ thống</p>
+        </div>
+
+        <!-- Stats Section -->
+        <div class="admin-stats">
+            <div class="admin-stat-block">
+                <span class="stat-label"><i class="fas fa-list stat-icon"></i> Tổng đơn</span>
+                <span class="stat-value" id="totalOrders">0</span>
+            </div>
+            <div class="admin-stat-block pending">
+                <span class="stat-label"><i class="fas fa-clock stat-icon"></i> Chờ xử lý</span>
+                <span class="stat-value" id="pendingOrders">0</span>
+            </div>
+            <div class="admin-stat-block shipping">
+                <span class="stat-label"><i class="fas fa-truck stat-icon"></i> Đang giao</span>
+                <span class="stat-value" id="shippingOrders">0</span>
+            </div>
+            <div class="admin-stat-block done">
+                <span class="stat-label"><i class="fas fa-check-circle stat-icon"></i> Hoàn thành</span>
+                <span class="stat-value" id="completedOrders">0</span>
+            </div>
+        </div>
+
+        <div class="admin-filter-box">
+            <select id="filterStatus" class="filter-select">
+                <option value="ALL">Tất cả trạng thái</option>
+                <option value="PENDING">Chờ xử lý</option>
+                <option value="SHIPPING">Đang giao</option>
+                <option value="COMPLETED">Hoàn thành</option>
+                <option value="CANCELLED">Đã hủy</option>
+            </select>
+            <input id="filterOrderId" class="filter-input" type="hidden" placeholder="Nhập mã đơn hàng...">
+            <button id="filterBtn" class="filter-btn"><i class="fas fa-search"></i> Lọc</button>
+        </div>
+        <div id="ordersList"></div>
+    </div>
+</div>
+
+    <!-- Modal xác nhận cập nhật trạng thái -->
+    <div id="confirmStatusModal" class="custom-modal" style="display:none;position:fixed;z-index:9999;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.18);align-items:center;justify-content:center;">
+      <div class="custom-modal-content" style="background:#fff;border-radius:16px;max-width:400px;width:90vw;padding:32px 24px 24px 24px;box-shadow:0 4px 32px rgba(0,0,0,0.13);position:relative;text-align:center;">
+        <span class="custom-modal-close" style="position:absolute;top:16px;right:18px;font-size:1.4rem;cursor:pointer;" onclick="closeConfirmStatusModal()">&times;</span>
+        <div style="font-size:2.2rem;color:#43AA8B;margin-bottom:10px;"><i class="fas fa-check-circle"></i></div>
+        <h3 style="font-size:1.25rem;font-weight:700;margin-bottom:12px;color:#2C6E49;">Xác nhận cập nhật trạng thái</h3>
+        <div id="confirmStatusModalBody" style="margin-bottom:24px;font-size:1.08rem;color:#222;"></div>
+        <div style="display:flex;gap:16px;justify-content:center;">
+          <button id="cancelStatusBtn" class="action-btn btn-outline" style="min-width:100px;" onclick="closeConfirmStatusModal()">Hủy</button>
+          <button id="confirmStatusBtn" class="action-btn btn-success" style="min-width:100px;">Xác nhận</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nhúng modal đăng nhập/đăng ký -->
+    <div th:replace="~{fragments/auth-modal :: authModal}"></div>
+    <script th:src="@{/js/auth-forms.js}"></script>
+    <script th:src="@{/js/user-dropdown.js}"></script>
+    <script th:src="@{/js/theme-toggle.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Helper: Định dạng giá tiền VND
+        function formatPrice(price) {
+            if (typeof price !== 'number') price = Number(price) || 0;
+            return price.toLocaleString('vi-VN') + '₫';
+        }
+        // Helper: Trả về class cho trạng thái đơn hàng
+        function getStatusClass(status) {
+            switch (status) {
+                case 'PENDING': return 'status-pending';
+                case 'SHIPPING': return 'status-shipping';
+                case 'COMPLETED': return 'status-completed';
+                case 'CANCELLED': return 'status-cancelled';
+                default: return '';
+            }
+        }
+        // Helper: Trả về text cho trạng thái đơn hàng
+        function getStatusText(status) {
+            switch (status) {
+                case 'PENDING': return 'Chờ xử lý';
+                case 'SHIPPING': return 'Đang giao';
+                case 'COMPLETED': return 'Hoàn thành';
+                case 'CANCELLED': return 'Đã hủy';
+                default: return status;
+            }
+        }
+        // Helper: Trả về icon cho trạng thái đơn hàng
+        function getStatusIcon(status) {
+            switch (status) {
+                case 'PENDING': return '<i class="fas fa-hourglass-half"></i>';
+                case 'SHIPPING': return '<i class="fas fa-shipping-fast"></i>';
+                case 'COMPLETED': return '<i class="fas fa-check-circle"></i>';
+                case 'CANCELLED': return '<i class="fas fa-times-circle"></i>';
+                default: return '';
+            }
+        }
+
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileUserBtn = document.getElementById('mobileUserBtn');
+            const mobileUserMenu = document.getElementById('mobileUserMenu');
+
+            // Toggle mobile menu
+            if (mobileMenuBtn && mobileMenu) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    mobileMenuBtn.classList.toggle('active');
+                    mobileMenu.classList.toggle('show');
+                });
+            }
+
+            // Toggle mobile user dropdown
+            if (mobileUserBtn && mobileUserMenu) {
+                mobileUserBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    mobileUserMenu.classList.toggle('show');
+                });
+            }
+
+            // Close mobile menu when clicking outside
+            document.addEventListener('click', function(e) {
+                if (mobileMenu && !mobileMenu.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                    mobileMenu.classList.remove('show');
+                    mobileMenuBtn.classList.remove('active');
+                }
+                
+                if (mobileUserMenu && !mobileUserMenu.contains(e.target) && !mobileUserBtn.contains(e.target)) {
+                    mobileUserMenu.classList.remove('show');
+                }
+            });
+
+            // Close mobile menu when clicking on a link
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    mobileMenu.classList.remove('show');
+                    mobileMenuBtn.classList.remove('active');
+                });
+            });
+
+            // Navbar scroll effect
+            const navbar = document.querySelector('.navbar');
+            if (navbar) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                });
+            }
+        });
+
+        // Load orders when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrders();
+            loadStats();
+        });
+
+        // Load all orders for admin
+        function loadOrders() {
+            const ordersList = document.getElementById('ordersList');
+            ordersList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải đơn hàng...</div>';
+
+            fetch('/api/orders/admin', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success && data.orders) {
+                    displayOrders(data.orders);
+                } else {
+                    ordersList.innerHTML = '<div class="no-orders">Không có đơn hàng nào</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading orders:', error);
+                ordersList.innerHTML = '<div class="no-orders">Lỗi khi tải đơn hàng</div>';
+            });
+        }
+
+        // Display orders in the list
+        function displayOrders(orders) {
+            const ordersList = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                ordersList.innerHTML = '<div class="no-orders">Không có đơn hàng nào</div>';
+                return;
+            }
+
+            let html = '<div class="orders-list">';
+            orders.forEach(order => {
+                html += createOrderCard(order);
+            });
+            html += '</div>';
+            
+            ordersList.innerHTML = html;
+
+            // Gắn lại event listener cho các order-card vừa render
+            document.querySelectorAll('.order-card').forEach(function(card) {
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.action-btn, .confirm-status-btn, select, button, input, label')) return;
+                    card.classList.toggle('active');
+                });
+            });
+        }
+
+        // Create order card HTML
+        function createOrderCard(order) {
+            const statusClass = getStatusClass(order.status);
+            const statusText = getStatusText(order.status);
+            const orderDate = new Date(order.orderDate).toLocaleDateString('vi-VN');
+            
+            let itemsHtml = '';
+            order.orderItems.forEach(item => {
+                const price = Number(item.unitPrice ?? item.price) || 0;
+                const quantity = Number(item.quantity) || 0;
+                let imgSrc = (item.productImage && item.productImage !== 'null' && item.productImage !== '')
+                    ? `/uploads/images/${item.productImage}`
+                    : (item.product && item.product.image && item.product.image !== 'null' && item.product.image !== ''
+                        ? `/uploads/images/${item.product.image}`
+                        : '/uploads/images/product-placeholder.jpg');
+                itemsHtml += `
+                    <div class="order-item" style="align-items:center;gap:16px;">
+                        <img src="${imgSrc}" alt="${item.product ? item.product.name : ''}" class="item-image" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1.5px solid #e1e5e9;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);" onerror="this.src='/uploads/images/product-placeholder.jpg'">
+                        <div class="item-info">
+                            <div class="item-name">${item.product ? item.product.name : ''}</div>
+                            <div class="item-details">Số lượng: ${quantity} x ${formatPrice(price)}</div>
+                        </div>
+                        <div class="item-total">${formatPrice(quantity * price)}</div>
+                    </div>
+                `;
+            });
+
+            let actionsHtml = '';
+            if (order.status === 'PENDING') {
+                actionsHtml += `
+                    <button class="action-btn btn-success" style="order:1;" onclick="updateOrderStatus(${order.id}, 'SHIPPING')">
+                        <i class="fas fa-shipping-fast"></i> Bắt đầu giao
+                    </button>
+                `;
+            } else if (order.status === 'SHIPPING') {
+                actionsHtml += `
+                    <button class="action-btn btn-success" style="order:1;" disabled>
+                        <i class="fas fa-shipping-fast"></i> Đang giao
+                    </button>
+                `;
+            }
+            
+            let statusSelectHtml = '';
+            if (order.status !== 'COMPLETED' && order.status !== 'CANCELLED') {
+                statusSelectHtml = `
+                    <div class="status-actions" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                        <select class="filter-input" id="statusSelect-${order.id}" style="order:2;border-radius:6px;padding:6px 14px;font-size:14px;" onchange="onStatusSelectChange(${order.id}, '${order.status}')">
+                            <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Chờ xử lý</option>
+                            <option value="SHIPPING" ${order.status === 'SHIPPING' ? 'selected' : ''}>Đang giao</option>
+                            <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
+                            <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
+                        </select>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <div class="order-id">Đơn hàng #${order.id}</div>
+                            <div class="order-date">Ngày đặt: ${orderDate}</div>
+                            <div class="order-customer">Khách hàng: ${order.user.fullName} (${order.user.email})</div>
+                        </div>
+                        <span class="order-status ${statusClass}">${getStatusIcon(order.status)} ${getStatusText(order.status)}</span>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Địa chỉ giao hàng:</span>
+                            <span class="detail-value">${order.shippingAddress}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Số điện thoại:</span>
+                            <span class="detail-value">${order.phoneNumber}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Tổng tiền:</span>
+                            <span class="detail-value">${formatPrice(order.totalAmount)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Phương thức thanh toán:</span>
+                            <span class="detail-value">${order.paymentMethod}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="order-items">
+                        <h4>Sản phẩm:</h4>
+                        ${itemsHtml}
+                    </div>
+                    
+                    <div class="order-actions">
+                        ${actionsHtml}
+                        ${statusSelectHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Update order status
+        function updateOrderStatus(orderId, newStatus) {
+            // Không hiển thị popup nếu trạng thái là PENDING hoặc orderId không hợp lệ
+            if (!orderId || newStatus === 'PENDING') return;
+            const statusText = getStatusText(newStatus);
+            showConfirmStatusModal(orderId, newStatus, statusText);
+        }
+
+        // Load statistics
+        function loadStats() {
+            fetch('/api/orders/stats', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('totalOrders').textContent = data.stats.total || 0;
+                    document.getElementById('pendingOrders').textContent = data.stats.pending || 0;
+                    document.getElementById('shippingOrders').textContent = data.stats.shipping || 0;
+                    document.getElementById('completedOrders').textContent = data.stats.completed || 0;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading stats:', error);
+            });
+        }
+
+        // Show confirmation modal (custom)
+        function showConfirmStatusModal(orderId, newStatus, statusText) {
+            const modal = document.getElementById('confirmStatusModal');
+            const modalBody = document.getElementById('confirmStatusModalBody');
+            modalBody.innerHTML = `Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng thành <b>\"${statusText}\"</b>?`;
+            modal.style.display = 'flex';
+            const confirmBtn = document.getElementById('confirmStatusBtn');
+            confirmBtn.onclick = function() {
+                performUpdateOrderStatus(orderId, newStatus);
+            };
+        }
+        function closeConfirmStatusModal() {
+            document.getElementById('confirmStatusModal').style.display = 'none';
+        }
+
+        function performUpdateOrderStatus(orderId, newStatus) {
+            fetch(`/api/orders/${orderId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: newStatus })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.status === newStatus) {
+                    showToast('Cập nhật trạng thái thành công!', 'success');
+                    loadOrders();
+                    loadStats();
+                    // Đóng modal xác nhận
+                    closeConfirmStatusModal();
+                } else {
+                    showToast('Lỗi: ' + (data.message || 'Không thể cập nhật trạng thái'), 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating order status:', error);
+                showToast('Lỗi khi cập nhật trạng thái đơn hàng', 'error');
+            });
+        }
+
+        // Lọc đơn hàng theo trạng thái
+        function filterOrders() {
+            const status = document.getElementById('filterStatus').value;
+            const ordersList = document.getElementById('ordersList');
+            ordersList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Đang tải đơn hàng...</div>';
+            let url = '/api/orders/filter';
+            if (status && status !== 'ALL') {
+                url += '?status=' + encodeURIComponent(status);
+            }
+            fetch(url, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Network response was not ok');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success && data.orders) {
+                    displayOrders(data.orders);
+                } else {
+                    ordersList.innerHTML = '<div class="no-orders">Không có đơn hàng nào</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error loading orders:', error);
+                ordersList.innerHTML = '<div class="no-orders">Lỗi khi tải đơn hàng</div>';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('filterBtn').addEventListener('click', filterOrders);
+            document.getElementById('filterStatus').addEventListener('change', filterOrders);
+        });
+
+        // Tự động reload danh sách đơn hàng và thống kê mỗi 5 giây
+        setInterval(function() {
+            if (typeof loadOrders === 'function') {
+                loadOrders();
+                if (typeof loadStats === 'function') loadStats();
+            }
+        }, 5000);
+
+        // Show toast notification
+    </script>
+    <!-- Toast notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <span class="toast-icon"></span>
+            <span class="toast-message"></span>
+            <button class="toast-close" onclick="this.parentElement.parentElement.classList.remove('show')">&times;</button>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (sessionStorage.getItem('loginSuccess')) {
+                    window.showToast('Đăng nhập thành công!', 'success');
+                    sessionStorage.removeItem('loginSuccess');
+                }
+                if (sessionStorage.getItem('logoutSuccess')) {
+                    window.showToast('Đăng xuất thành công!', 'success');
+                    sessionStorage.removeItem('logoutSuccess');
+                }
+            }, 200);
+        });
+    </script>
+</body>
+</html> 

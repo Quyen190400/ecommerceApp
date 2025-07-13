@@ -1,0 +1,149 @@
+<!-- Header Fragment -->
+<header class="navbar" th:fragment="header" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="navbar-container">
+        <!-- Logo -->
+        <div class="navbar-logo">
+            <a href="/" class="logo-link">
+                <span class="logo-text">BEUI</span>
+            </a>
+        </div>
+        <!-- Navigation Menu -->
+        <nav class="navbar-menu">
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/#art" class="nav-link">Nghệ thuật trà</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/#products" class="nav-link">Sản phẩm</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/#contact" class="nav-link">Liên hệ</a>
+                </li>
+            </ul>
+        </nav>
+        <!-- Right Side Actions -->
+        <div class="navbar-actions">
+            <!-- Search Icon -->
+            <button class="action-btn search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <!-- Cart Icon -->
+            <a href="#" class="action-btn cart-btn" id="cartBtn" onclick="handleCartClick(event)">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </a>
+            <!-- User Menu -->
+            <div class="user-menu" id="userMenu">
+                <!-- Show login/register links when not authenticated -->
+                <div class="auth-links" th:if="${isAuthenticated == null || !isAuthenticated}">
+                    <a href="#" class="auth-link" id="headerLoginBtn">Đăng nhập</a>
+                    <span class="auth-divider">|</span>
+                    <a href="#" class="auth-link" id="headerRegisterBtn">Đăng ký</a>
+                </div>
+                <!-- Show user dropdown when authenticated -->
+                <div class="user-dropdown" th:if="${isAuthenticated != null && isAuthenticated}" id="userDropdown">
+                    <button class="user-dropdown-btn" id="userDropdownBtn">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name" th:text="${currentUser != null ? currentUser.fullName : (currentUser != null ? currentUser.username : 'Tài khoản')}">Username</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <div class="dropdown-header">
+                            <i class="fas fa-user-circle"></i>
+                            <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="/orders" class="dropdown-item">
+                            <i class="fas fa-box"></i>
+                            <span>Đơn hàng của tôi</span>
+                        </a>
+                        <a href="/admin/orders" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Quản lý đơn hàng</span>
+                        </a>
+                        <a href="/admin/products" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
+                            <i class="fas fa-boxes"></i>
+                            <span>Quản lý sản phẩm</span>
+                        </a>
+                        <button class="dropdown-item theme-toggle-btn" id="themeToggleBtn">
+                            <i class="fas fa-moon"></i>
+                            <span>Chế độ tối / sáng</span>
+                        </button>
+                        <button class="dropdown-item logout-btn" onclick="logout(); return false;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Đăng xuất</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </div>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav-list">
+            <li class="mobile-nav-item">
+                <a href="/" class="mobile-nav-link">Trang chủ</a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="/#tea-art" class="mobile-nav-link">Nghệ thuật trà</a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="/#products" class="mobile-nav-link">Sản phẩm</a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="/#contact" class="mobile-nav-link">Liên hệ</a>
+            </li>
+            <!-- Auth links for mobile -->
+            <li class="mobile-nav-item" th:if="${isAuthenticated == null || !isAuthenticated}">
+                <a href="#" class="mobile-nav-link" id="mobileLoginBtn">Đăng nhập</a>
+            </li>
+            <li class="mobile-nav-item" th:if="${isAuthenticated == null || !isAuthenticated}">
+                <a href="#" class="mobile-nav-link" id="mobileRegisterBtn">Đăng ký</a>
+            </li>
+            <!-- User dropdown for mobile -->
+            <li class="mobile-nav-item" th:if="${isAuthenticated != null && isAuthenticated}">
+                <div class="mobile-user-dropdown">
+                    <button class="mobile-user-btn" id="mobileUserBtn">
+                        <i class="fas fa-user-circle"></i>
+                        <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="mobile-user-menu" id="mobileUserMenu">
+                        <div class="mobile-dropdown-header">
+                            <i class="fas fa-user-circle"></i>
+                            <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
+                        </div>
+                        <div class="mobile-dropdown-divider"></div>
+                        <a href="/orders" class="mobile-dropdown-item">
+                            <i class="fas fa-box"></i>
+                            <span>Đơn hàng của tôi</span>
+                        </a>
+                        <a href="/admin/orders" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
+                            <i class="fas fa-clipboard-list"></i>
+                            <span>Quản lý đơn hàng (Admin)</span>
+                        </a>
+                        <a href="/admin/products" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
+                            <i class="fas fa-boxes"></i>
+                            <span>Quản lý sản phẩm</span>
+                        </a>
+                        <button class="mobile-dropdown-item theme-toggle-btn" id="mobileThemeToggleBtn">
+                            <i class="fas fa-moon"></i>
+                            <span>Chế độ tối / sáng</span>
+                        </button>
+                        <button class="mobile-dropdown-item logout-btn" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Đăng xuất</span>
+                        </button>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</header> 

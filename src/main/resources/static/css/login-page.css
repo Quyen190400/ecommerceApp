@@ -1,0 +1,33 @@
+/* Nền gradient xanh rêu - be cho trang login */
+.login-page {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #e8f0e6 0%, #f5f5ef 100%);
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* (Tùy chọn) Thêm họa tiết lá trà mờ ở góc */
+.login-page::before {
+    content: '';
+    position: absolute;
+    left: -60px;
+    bottom: -60px;
+    width: 320px;
+    height: 320px;
+    background: url('/images/tea-leaf-bg.png') no-repeat center center;
+    background-size: contain;
+    opacity: 0.08;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.login-page .login-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* ... giữ nguyên các style còn lại ... */ 

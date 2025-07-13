@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${product.name} + ' - Trà Đạo'">Chi tiết sản phẩm</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/tea-home.css}">
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}">
+    <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
+    <script th:inline="javascript">
+      /*<![CDATA[*/
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+      }
+      /*]]>*/
+    </script>
+</head>
+<body>
+    <!-- Include Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <div class="breadcrumb-container">
+            <a href="/" class="breadcrumb-link">Trang chủ</a>
+            <span class="breadcrumb-separator">/</span>
+            <a href="/#products" class="breadcrumb-link">Sản phẩm</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="breadcrumb-current" th:text="${product.name}">Tên sản phẩm</span>
+        </div>
+    </div>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail">
+        <div class="product-detail-container">
+            <!-- Product Images -->
+            <div class="product-images">
+                <div class="main-image">
+                    <img th:src="@{|/uploads/images/${product.imageUrl}|}" th:alt="${product.name}" id="mainImage">
+                </div>
+            </div>
+
+            <!-- Product Info -->
+            <div class="product-info">
+                <h1 class="product-title" th:text="${product.name}">Tên sản phẩm</h1>
+                
+                <!-- Price -->
+                <div class="product-price">
+                    <span class="current-price" th:text="${'₫' + #numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')}">₫450.000</span>
+                </div>
+
+                <!-- Product Meta -->
+                <div class="product-meta">
+                    <div class="meta-item" th:if="${product.origin != null}">
+                        <span class="meta-label">Xuất xứ:</span>
+                        <span class="meta-value" th:text="${product.origin}">Thái Nguyên</span>
+                    </div>
+                    <div class="meta-item" th:if="${product.teaType != null}">
+                        <span class="meta-label">Loại trà:</span>
+                        <span class="meta-value" th:text="${product.teaType}">Trà xanh</span>
+                    </div>
+                    <div class="meta-item" th:if="${product.tasteNote != null}">
+                        <span class="meta-label">Đặc điểm hương vị:</span>
+                        <span class="meta-value" th:text="${product.tasteNote}">Đậm đà, hậu ngọt</span>
+                    </div>
+                </div>
+
+                <!-- Stock Status -->
+                <div class="stock-status">
+                    <span class="status-label">Tình trạng:</span>
+                    <span class="status-value" th:class="${product.stockQuantity > 0 ? 'in-stock' : 'out-of-stock'}" 
+                          th:text="${product.stockQuantity > 0 ? 'Còn hàng (' + product.stockQuantity + ' sản phẩm)' : 'Hết hàng'}">
+                        Còn hàng
+                    </span>
+                </div>
+
+                <!-- Quantity Selector -->
+                <div class="quantity-selector" th:if="${product.stockQuantity > 0}">
+                    <label for="quantity">Số lượng:</label>
+                    <div class="quantity-controls">
+                        <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                        <input type="number" id="quantity" value="1" min="1" th:max="${product.stockQuantity}">
+                        <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="product-actions" th:if="${product.stockQuantity > 0}">
+                    <button class="add-to-cart-btn" onclick="addToCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        Thêm vào giỏ hàng
+                    </button>
+                    <button class="buy-now-btn" onclick="buyNow()">
+                        <i class="fas fa-bolt"></i>
+                        Mua ngay
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Details Tabs -->
+    <section class="product-tabs">
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" onclick="showTab('description')">Mô tả</button>
+                <button class="tab-btn" onclick="showTab('usage')" th:if="${product.usageGuide != null}">Cách sử dụng</button>
+                <button class="tab-btn" onclick="showTab('benefits')" th:if="${product.healthBenefit != null}">Lợi ích</button>
+                <button class="tab-btn" onclick="showTab('details')">Thông tin chi tiết</button>
+            </div>
+            
+            <div class="tabs-content">
+                <!-- Description Tab -->
+                <div id="description" class="tab-content active">
+                    <h3>Mô tả sản phẩm</h3>
+                    <p th:text="${product.description}">Mô tả sản phẩm...</p>
+                </div>
+                
+                <!-- Usage Guide Tab -->
+                <div id="usage" class="tab-content" th:if="${product.usageGuide != null}">
+                    <h3>Cách sử dụng</h3>
+                    <div class="usage-guide" th:utext="${product.usageGuide}">
+                        <p>Hướng dẫn cách sử dụng...</p>
+                    </div>
+                </div>
+                
+                <!-- Health Benefits Tab -->
+                <div id="benefits" class="tab-content" th:if="${product.healthBenefit != null}">
+                    <h3>Lợi ích sức khỏe</h3>
+                    <div class="health-benefits" th:utext="${product.healthBenefit}">
+                        <p>Các lợi ích sức khỏe...</p>
+                    </div>
+                </div>
+                
+                <!-- Product Details Tab -->
+                <div id="details" class="tab-content">
+                    <h3>Thông tin chi tiết</h3>
+                    <div class="details-grid">
+                        <div class="detail-item" th:if="${product.origin != null}">
+                            <span class="detail-label">Xuất xứ:</span>
+                            <span class="detail-value" th:text="${product.origin}">Thái Nguyên, Việt Nam</span>
+                        </div>
+                        <div class="detail-item" th:if="${product.teaType != null}">
+                            <span class="detail-label">Loại trà:</span>
+                            <span class="detail-value" th:text="${product.teaType}">Trà xanh</span>
+                        </div>
+                        <div class="detail-item" th:if="${product.tasteNote != null}">
+                            <span class="detail-label">Đặc điểm hương vị:</span>
+                            <span class="detail-value" th:text="${product.tasteNote}">Đậm đà, hậu ngọt</span>
+                        </div>
+                        <div class="detail-item" th:if="${product.stockQuantity != null}">
+                            <span class="detail-label">Số lượng tồn kho:</span>
+                            <span class="detail-value" th:text="${product.stockQuantity}">50</span>
+                        </div>
+                        <div class="detail-item" th:if="${product.soldCount != null}">
+                            <span class="detail-label">Đã bán:</span>
+                            <span class="detail-value" th:text="${product.soldCount}">10</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTop">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script th:src="@{/js/tea-home.js}"></script>
+    <script th:src="@{/js/user-dropdown.js}"></script>
+    <script th:src="@{/js/auth-forms.js}"></script>
+    <script th:src="@{/js/product-detail.js}"></script>
+    <script th:src="@{/js/theme-toggle.js}"></script>
+    <div th:replace="~{fragments/auth-modal :: authModal}"></div>
+
+    <!-- Popup Buy Now Form -->
+    <div id="buyNowModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close" onclick="closeBuyNowModal()">&times;</span>
+        <h3>Đặt hàng nhanh</h3>
+        <form id="buyNowForm" onsubmit="submitBuyNowForm(event)">
+          <div class="form-group">
+            <label for="buyNowAddress">Địa chỉ giao hàng *</label>
+            <textarea id="buyNowAddress" name="address" rows="2" required placeholder="Nhập địa chỉ giao hàng"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="buyNowPhone">Số điện thoại *</label>
+            <input type="tel" id="buyNowPhone" name="phone" required placeholder="Nhập số điện thoại">
+          </div>
+          <div class="form-group">
+            <label for="buyNowPayment">Phương thức thanh toán *</label>
+            <select id="buyNowPayment" name="paymentMethod" required>
+              <option value="COD">Thanh toán khi nhận hàng (COD)</option>
+              <option value="BANK">Chuyển khoản ngân hàng</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="buyNowReceiveMethod">Phương thức nhận hàng *</label>
+            <select id="buyNowReceiveMethod" name="receiveMethod" required>
+              <option value="DELIVERY">Giao tận nhà</option>
+              <option value="STORE_PICKUP">Nhận tại cửa hàng</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="buyNowNote">Ghi chú</label>
+            <textarea id="buyNowNote" name="note" rows="2" placeholder="Ghi chú thêm (không bắt buộc)"></textarea>
+          </div>
+          <button type="submit" class="main-btn">Xác nhận đặt hàng</button>
+        </form>
+      </div>
+    </div>
+</body>
+</html> 
