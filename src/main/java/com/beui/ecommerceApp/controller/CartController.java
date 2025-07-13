@@ -155,17 +155,22 @@ public class CartController {
         Cart cart = cartOpt.get();
         List<CartItem> items = cartService.getCartItems(cart.getId());
         
-        // Cập nhật totals từ items thực tế
-        int totalItems = items.stream().mapToInt(CartItem::getQuantity).sum();
-        BigDecimal totalPrice = items.stream()
+        // Filter out hidden products
+        List<CartItem> visibleItems = items.stream()
+                .filter(item -> item.getProduct().getStatus() != null && item.getProduct().getStatus())
+                .collect(Collectors.toList());
+        
+        // Cập nhật totals từ items thực tế (chỉ visible items)
+        int totalItems = visibleItems.stream().mapToInt(CartItem::getQuantity).sum();
+        BigDecimal totalPrice = visibleItems.stream()
                 .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         // Cập nhật cart totals trong database
         cartService.updateCartTotals(cart.getId());
         
-        // Convert to DTOs
-        CartResponse cartResponse = convertToCartResponse(cart, items);
+        // Convert to DTOs (chỉ visible items)
+        CartResponse cartResponse = convertToCartResponse(cart, visibleItems);
         
         Map<String, Object> response = new HashMap<>();
         response.put("cart", cartResponse);
