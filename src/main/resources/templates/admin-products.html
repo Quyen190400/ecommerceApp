@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý sản phẩm - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/tea-home.css}" />
+    <link rel="stylesheet" th:href="@{/css/product-detail.css}" />
+    <link rel="stylesheet" th:href="@{/css/orders.css}" />
+    <link rel="stylesheet" th:href="@{/css/auth-forms.css}" />
+    <link rel="stylesheet" th:href="@{/css/login-page.css}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        .admin-products-container { max-width: 1200px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 8px #0001; padding: 32px; }
+        .admin-products-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .admin-products-header h2 { color: #2e5c3b; font-weight: 700; }
+        .btn-add-product { background: #2e5c3b; color: #fff; border: none; border-radius: 6px; padding: 10px 20px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-add-product:hover { background: #3e7c4b; }
+        .admin-products-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+        .admin-products-table th, .admin-products-table td { padding: 10px 8px; border-bottom: 1px solid #e0e0e0; text-align: center; }
+        .admin-products-table th { background: #f5f5f5; color: #2e5c3b; font-weight: 700; }
+        .admin-products-table td img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
+        .badge-status { padding: 4px 12px; border-radius: 12px; font-size: 0.95em; font-weight: 600; }
+        .badge-active { background: #e6f9ed; color: #2e5c3b; }
+        .badge-inactive { background: #eee; color: #888; }
+        .badge-outstock { background: #f8d7da; color: #a94442; margin-left: 6px; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 1.1em; margin: 0 4px; transition: color 0.2s; }
+        .action-btn.edit { color: #2e5c3b; }
+        .action-btn.delete { color: #d9534f; }
+        .action-btn.toggle { color: #888; }
+        .action-btn.toggle.active { color: #2e5c3b; }
+        .pagination { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+        .pagination button { background: #f5f5f5; border: none; border-radius: 4px; padding: 6px 12px; color: #2e5c3b; font-weight: 600; cursor: pointer; }
+        .pagination button.active, .pagination button:hover { background: #2e5c3b; color: #fff; }
+        /* Overlay for modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.35);
+            z-index: 2000;
+            display: none;
+            transition: background 0.2s;
+        }
+        .modal.show, .modal-overlay.show { display: block !important; }
+        .modal {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 2001;
+            display: none;
+            overflow: auto;
+        }
+        .modal-content {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px #0003;
+            padding: 32px 28px 24px 28px;
+            position: relative;
+            max-width: 95vw;
+            margin: 60px auto;
+            min-width: 320px;
+            animation: modalIn 0.2s;
+        }
+        @keyframes modalIn { from { transform: translateY(-40px); opacity: 0; } to { transform: none; opacity: 1; } }
+        .close {
+            position: absolute;
+            top: 14px; right: 18px;
+            font-size: 2em;
+            color: #888;
+            cursor: pointer;
+            background: none;
+            border: none;
+            transition: color 0.2s;
+            z-index: 2;
+        }
+        .close:hover { color: #2e5c3b; }
+        .modal-content h3 { margin-top: 0; color: #2e5c3b; font-weight: 700; text-align: center; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #2e5c3b; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1.2px solid #d0d0d0;
+            border-radius: 8px;
+            font-size: 1em;
+            background: #f8f9fa;
+            transition: border 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: #2e5c3b;
+            box-shadow: 0 0 0 2px #e6f9ed;
+            background: #fff;
+        }
+        .form-group textarea { min-height: 60px; resize: vertical; }
+        .btn-add-product, .btn-cancel-modal {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-add-product { background: #2e5c3b; color: #fff; margin-left: 8px; }
+        .btn-add-product:hover { background: #3e7c4b; }
+        .btn-cancel-modal { background: #aaa; color: #fff; }
+        .btn-cancel-modal:hover { background: #888; }
+        @media (max-width: 900px) { .admin-products-container { padding: 8px; } .admin-products-table th, .admin-products-table td { padding: 6px 2px; font-size: 0.95em; } }
+        @media (max-width: 600px) { .admin-products-header { flex-direction: column; gap: 12px; } .admin-products-table th, .admin-products-table td { font-size: 0.9em; } }
+        @media (max-width: 700px) {
+            .modal-content { padding: 12px 2vw; min-width: unset; }
+            .form-group label { font-size: 0.98em; }
+        }
+        /* DARK THEME SUPPORT */
+        body.dark-theme .admin-products-container {
+            background: #23272f;
+            color: #f1f1f1;
+        }
+        body.dark-theme .admin-products-table th,
+        body.dark-theme .admin-products-table td {
+            background: #23272f;
+            color: #f1f1f1;
+            border-bottom: 1px solid #444;
+        }
+        body.dark-theme .admin-products-table th {
+            background: #181a20;
+            color: #e0e0e0;
+        }
+        body.dark-theme .modal-content {
+            background: #23272f;
+            color: #f1f1f1;
+        }
+        body.dark-theme .form-group input,
+        body.dark-theme .form-group textarea,
+        body.dark-theme .form-group select {
+            background: #181a20;
+            color: #f1f1f1;
+            border: 1.2px solid #444;
+        }
+        body.dark-theme .form-group input:focus,
+        body.dark-theme .form-group textarea:focus,
+        body.dark-theme .form-group select:focus {
+            border-color: #40916C;
+            background: #23272f;
+        }
+        body.dark-theme .btn-add-product,
+        body.dark-theme .btn-cancel-modal {
+            background: #40916C;
+            color: #fff;
+        }
+        body.dark-theme .btn-add-product:hover {
+            background: #43AA8B;
+        }
+        body.dark-theme .btn-cancel-modal {
+            background: #888;
+        }
+        body.dark-theme .btn-cancel-modal:hover {
+            background: #555;
+        }
+        body.dark-theme .pagination button {
+            background: #181a20;
+            color: #f1f1f1;
+        }
+        body.dark-theme .pagination button.active,
+        body.dark-theme .pagination button:hover {
+            background: #40916C;
+            color: #fff;
+        }
+        body.dark-theme .badge-active {
+            background: #2c6e49;
+            color: #fff;
+        }
+        body.dark-theme .badge-inactive {
+            background: #444;
+            color: #bbb;
+        }
+        body.dark-theme .badge-outstock {
+            background: #a94442;
+            color: #fff;
+        }
+    </style>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        if (localStorage.getItem('theme') === 'dark') {
+            document.documentElement.classList.add('dark');
+        }
+        /*]]>*/
+    </script>
+</head>
+<body>
+<div th:replace="~{fragments/header :: header}"></div>
+<div th:replace="~{fragments/auth-modal :: authModal}"></div>
+<div id="adminProductsContent">
+    <!-- TOÀN BỘ NỘI DUNG TRANG ADMIN PRODUCTS ĐƯỢC BỌC TRONG DIV NÀY -->
+<div class="admin-products-container">
+    <div class="admin-products-header">
+        <h2>Quản lý sản phẩm</h2>
+        <button class="btn-add-product" id="btnAddProduct"><i class="fa fa-plus"></i> Thêm sản phẩm</button>
+    </div>
+    <div style="overflow-x:auto;">
+        <table class="admin-products-table" id="productsTable">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Loại trà</th>
+                    <th>Xuất xứ</th>
+                    <th>Trạng thái</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody id="productsTableBody">
+                <!-- Dữ liệu sẽ được render bằng JS -->
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- Đặt modal và overlay popup ngay trước </body> để không bị bọc trong container nào khác -->
+<!-- Overlay for modal -->
+<div id="modalOverlay" class="modal-overlay"></div>
+<!-- Modal Thêm/Sửa sản phẩm -->
+<div id="productModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:600px;margin:auto;">
+        <button class="close" id="closeModal" title="Đóng">&times;</button>
+        <h3 id="modalTitle">Thêm sản phẩm</h3>
+        <form id="productForm" autocomplete="off">
+            <input type="hidden" id="productId" />
+            <div class="form-group">
+                <label for="name">Tên sản phẩm *</label>
+                <input type="text" id="name" name="name" required />
+            </div>
+            <div class="form-group">
+                <label for="description">Mô tả</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="imageFile">Chọn ảnh sản phẩm (từ máy tính)</label>
+                <input type="file" id="imageFile" accept="image/*" />
+            </div>
+            <div class="form-group" style="display:none">
+                <label for="imageUrl">Tên file ảnh *</label>
+                <input type="text" id="imageUrl" name="imageUrl" value="default.png" required readonly />
+            </div>
+            <div class="form-group">
+                <label for="price">Giá (VND) *</label>
+                <input type="number" id="price" name="price" min="0" required />
+            </div>
+            <div class="form-group">
+                <label for="stockQuantity">Số lượng tồn kho *</label>
+                <input type="number" id="stockQuantity" name="stockQuantity" min="0" required />
+            </div>
+            <!-- Dropdown loại trà -->
+            <div class="form-group">
+              <label for="teaType">Loại trà *</label>
+              <select id="teaType" name="teaType" required></select>
+            </div>
+            <div class="form-group">
+                <label for="tasteNote">Ghi chú hương vị</label>
+                <input type="text" id="tasteNote" name="tasteNote" />
+            </div>
+            <div class="form-group">
+                <label for="usageGuide">Hướng dẫn sử dụng</label>
+                <textarea id="usageGuide" name="usageGuide"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="healthBenefit">Công dụng</label>
+                <input type="text" id="healthBenefit" name="healthBenefit" />
+            </div>
+            <div class="form-group">
+                <label for="origin">Xuất xứ</label>
+                <input type="text" id="origin" name="origin" />
+            </div>
+            <div style="margin-top:18px;display:flex;gap:12px;justify-content:flex-end;">
+                <button type="submit" class="btn-add-product" id="btnSaveProduct"><i class="fa fa-save"></i> Lưu</button>
+                <button type="button" class="btn-cancel-modal" id="btnCancelModal"><i class="fa fa-times"></i> Huỷ</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal xác nhận xoá -->
+<div id="confirmModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:400px;margin:auto;">
+        <span class="close" id="closeConfirmModal">&times;</span>
+        <h4 id="confirmText">Bạn có chắc muốn xoá sản phẩm này?</h4>
+        <div style="margin-top:18px;display:flex;gap:12px;justify-content:flex-end;">
+            <button class="btn-add-product" id="btnConfirmDelete"><i class="fa fa-trash"></i> Xoá</button>
+            <button class="btn-add-product" style="background:#aaa;" id="btnCancelDelete"><i class="fa fa-times"></i> Huỷ</button>
+        </div>
+    </div>
+</div>
+</div>
+
+<script th:src="@{/js/user-dropdown.js}"></script>
+<script th:src="@{/js/admin-products.js}"></script>
+<script th:src="@{/js/theme-toggle.js}"></script>
+<script>
+let adminWarningShown = false;
+document.addEventListener('DOMContentLoaded', function() {
+    fetch('/api/auth/me', { credentials: 'include' })
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.roles) {
+                // Chưa đăng nhập
+                document.getElementById('adminProductsContent').style.display = 'none';
+                if (!adminWarningShown && window.showToast) {
+                    window.showToast('Bạn cần đăng nhập tài khoản admin để truy cập trang này!', 'warning');
+                    adminWarningShown = true;
+                }
+                if (window.showAuthModal) {
+                    window.showAuthModal('login');
+                }
+                setTimeout(function() {
+                    window.location.href = '/';
+                }, 2000);
+            } else {
+                document.getElementById('adminProductsContent').style.display = '';
+            }
+        })
+        .catch(() => {
+            document.getElementById('adminProductsContent').style.display = 'none';
+            if (!adminWarningShown && window.showToast) {
+                window.showToast('Bạn cần đăng nhập tài khoản admin để truy cập trang này!', 'warning');
+                adminWarningShown = true;
+            }
+            if (window.showAuthModal) {
+                window.showAuthModal('login');
+            }
+            setTimeout(function() {
+                window.location.href = '/';
+            }, 2000);
+        });
+});
+</script>
+</body>
+</html> 

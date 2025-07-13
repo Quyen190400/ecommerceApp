@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của tôi - Beui</title>
+    <link rel="stylesheet" th:href="@{/css/tea-home.css}">
+    <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .orders-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-top: 100px;
+        }
+
+        .orders-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .orders-header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .orders-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-card {
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            background: white;
+        }
+
+        .order-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            cursor: pointer;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e1e5e9;
+            transition: all 0.3s ease;
+        }
+
+        .order-header:hover {
+            background: #e9ecef;
+        }
+
+        .order-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .order-toggle {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #3e5c3a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .order-toggle:hover {
+            background: #2e3d23;
+            transform: scale(1.1);
+        }
+
+        .order-toggle.expanded {
+            transform: rotate(90deg);
+        }
+
+        .order-id {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .order-customer {
+            color: #3e5c3a;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-shipping {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .order-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-items {
+            margin-top: 15px;
+        }
+
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .item-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .item-total {
+            font-weight: 600;
+            color: #3e5c3a;
+        }
+
+        .order-content {
+            padding: 20px;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .order-content.expanded {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3e5c3a 0%, #2e3d23 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(62, 92, 58, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2e3d23 0%, #1e2a1a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(62, 92, 58, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:hover {
+            background: linear-gradient(135deg, #218838 0%, #1e7e34 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+            box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.4);
+        }
+
+        .btn-outline {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+            color: white;
+            box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+        }
+
+        .btn-outline:hover {
+            background: linear-gradient(135deg, #5a6268 0%, #495057 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #3e5c3a;
+            border: 1px solid #3e5c3a;
+        }
+
+        .btn-outline:hover {
+            background: #3e5c3a;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .empty-orders {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-orders i {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .empty-orders h2 {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading i {
+            font-size: 2rem;
+            color: #3e5c3a;
+            animation: spin 1s linear infinite;
+        }
+
+        .admin-controls, .user-controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn, .clear-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .filter-btn {
+            background: #3e5c3a;
+            color: white;
+        }
+
+        .filter-btn:hover {
+            background: #2e3d23;
+        }
+
+        .clear-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .clear-btn:hover {
+            background: #5a6268;
+        }
+
+        /* Cải thiện CSS cho select boxes */
+        .status-filter, .sort-select, .search-input {
+            padding: 10px 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+
+        .status-filter:focus, .sort-select:focus, .search-input:focus {
+            outline: none;
+            border-color: #3e5c3a;
+            box-shadow: 0 0 0 3px rgba(62, 92, 58, 0.1);
+        }
+
+        .status-filter option, .sort-select option {
+            padding: 8px;
+        }
+
+        /* Cải thiện CSS cho action buttons */
+        .order-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: #3e5c3a;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2e3d23;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .btn-warning:hover {
+            background: #e0a800;
+            transform: translateY(-1px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-1px);
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .modal-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .modal-btn-confirm {
+            background: #dc3545;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #c82333;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        /* Cancel reason input */
+        .cancel-reason {
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 80px;
+            max-width: 100%;
+            padding: 0.8em 1.1em;
+            border: 1.5px solid #A3B18A;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-top: 0.7em;
+            margin-bottom: 0.7em;
+            background: #f8f8f5;
+            color: #2e3d23;
+            transition: border-color 0.2s;
+            outline: none;
+            resize: vertical;
+            box-shadow: 0 2px 8px rgba(60,60,60,0.04);
+        }
+
+        .cancel-reason:focus {
+            border-color: #3e5c3a;
+            background: #fff;
+        }
+
+        .status-filter,
+        .search-input,
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            background: white;
+        }
+
+        .status-filter:focus,
+        .search-input:focus,
+        .sort-select:focus {
+            outline: none;
+            border-color: #3e5c3a;
+        }
+
+        .search-input {
+            min-width: 200px;
+        }
+
+        .stats-summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #3e5c3a;
+        }
+
+        .admin-status-control {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .status-select {
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Dark theme support */
+        body.dark-theme {
+            background: #23272f;
+            color: #f1f1f1;
+        }
+        body.dark-theme .orders-content,
+        body.dark-theme .order-card,
+        body.dark-theme .card {
+            background: #2d323c;
+            color: #f1f1f1;
+            border-color: #444a57;
+        }
+        body.dark-theme .order-header,
+        body.dark-theme .order-header:hover {
+            background: #23272f;
+            border-bottom: 1px solid #444a57;
+        }
+        body.dark-theme .order-title,
+        body.dark-theme .card-title,
+        body.dark-theme .order-id,
+        body.dark-theme .item-name {
+            color: #fff;
+        }
+        body.dark-theme .order-status.status-pending {
+            background: #4e4a1e;
+            color: #ffe066;
+        }
+        body.dark-theme .order-status.status-shipping {
+            background: #1e4e4e;
+            color: #63e6be;
+        }
+        body.dark-theme .order-status.status-completed {
+            background: #234e1e;
+            color: #b9fbc0;
+        }
+        body.dark-theme .order-status.status-cancelled {
+            background: #4e1e1e;
+            color: #ff8787;
+        }
+        body.dark-theme .order-actions .action-btn {
+            background: #23272f;
+            color: #f1f1f1;
+            border: 1px solid #444a57;
+        }
+        body.dark-theme .order-actions .action-btn:hover {
+            background: #444a57;
+        }
+        body.dark-theme .empty-orders {
+            color: #ccc;
+        }
+        body.dark-theme .modal-content {
+            background: #23272f;
+            color: #f1f1f1;
+        }
+        body.dark-theme .modal-btn {
+            background: #444a57;
+            color: #fff;
+        }
+        body.dark-theme .modal-btn:hover {
+            background: #23272f;
+        }
+        body.dark-theme .toast {
+            background: #23272f;
+            color: #fff;
+        }
+        body.dark-theme .orders-header h1 {
+            color: #fff;
+        }
+
+        /* Toast Notification Styles */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 16px;
+            min-width: 300px;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            border-left: 4px solid #3e5c3a;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: #28a745;
+        }
+
+        .toast.error {
+            border-left-color: #dc3545;
+        }
+
+        .toast.warning {
+            border-left-color: #ffc107;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+
+        .toast.success .toast-icon {
+            color: #28a745;
+        }
+
+        .toast.error .toast-icon {
+            color: #dc3545;
+        }
+
+        .toast.warning .toast-icon {
+            color: #ffc107;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .toast-close:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Loading States */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-spinner {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading-spinner i {
+            font-size: 2rem;
+            color: #3e5c3a;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Error States */
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 12px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message i {
+            color: #dc3545;
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-card {
+            height: 200px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+        }
+
+        .page-btn {
+            padding: 8px 16px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .page-btn:hover {
+            background: #3e5c3a;
+            color: white;
+            border-color: #3e5c3a;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-numbers {
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-number {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-number:hover {
+            background: #3e5c3a;
+            color: white;
+            border-color: #3e5c3a;
+        }
+
+        .page-number.active {
+            background: #3e5c3a;
+            color: white;
+            border-color: #3e5c3a;
+        }
+
+        @media (max-width: 768px) {
+            .orders-container {
+                padding: 15px;
+                padding-top: 80px;
+            }
+
+            .order-details {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .order-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                justify-content: center;
+            }
+
+            .toast {
+                top: 10px;
+                right: 10px;
+                left: 10px;
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<script>
+(function() {
+  try {
+    var theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark-theme');
+      document.body && document.body.classList.add('dark-theme');
+    }
+  } catch(e){}
+})();
+</script>
+    <!-- Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+<!-- Orders Content -->
+<div class="orders-container">
+    <div class="orders-header">
+        <h1 id="ordersTitle">Đơn hàng của tôi</h1>
+        <div id="adminControls" style="display:none;"></div>
+        <div id="userControls" style="display:none;"></div>
+    </div>
+
+    <div class="orders-content">
+        <div id="ordersList">
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Đang tải đơn hàng...</p>
+            </div>
+        </div>
+        
+        <!-- Pagination -->
+        <div id="pagination" class="pagination" style="display: none;">
+            <button id="prevPage" class="page-btn">
+                <i class="fas fa-chevron-left"></i>
+                Trước
+            </button>
+            <div id="pageNumbers" class="page-numbers"></div>
+            <button id="nextPage" class="page-btn">
+                Sau
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+    <div class="toast-content">
+        <i class="toast-icon"></i>
+        <span class="toast-message"></span>
+    </div>
+    <button class="toast-close">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<!-- Confirmation Modal -->
+<div id="confirmationModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title" id="modalTitle">Xác nhận</h3>
+      <button class="modal-close" onclick="closeModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <p id="modalMessage">Bạn có chắc chắn muốn thực hiện hành động này?</p>
+      <textarea id="cancelReason" class="cancel-reason" placeholder="Nhập lý do hủy đơn hàng..." style="display: none;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal()">Hủy</button>
+      <button class="modal-btn modal-btn-confirm" id="modalConfirmBtn">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal xác nhận thanh toán giữa trang -->
+<style>
+  #confirmPaymentModal .modal-content {
+    background: #fff;
+    border-radius: 18px;
+    max-width: 400px;
+    width: 90vw;
+    padding: 36px 28px 28px 28px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+    position: relative;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #confirmPaymentModal .modal-close {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+    background: none;
+    border: none;
+    z-index: 2;
+    transition: color 0.2s;
+  }
+  #confirmPaymentModal .modal-close:hover {
+    color: #2C6E49;
+  }
+  #confirmPaymentModal .modal-icon {
+    font-size: 3.2rem;
+    color: #43AA8B;
+    margin-bottom: 10px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  #confirmPaymentModal .modal-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #2C6E49;
+    margin-bottom: 12px;
+    margin-top: 0;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+  #confirmPaymentModal .modal-message {
+    font-size: 1.08rem;
+    color: #222;
+    margin-bottom: 28px;
+    text-align: center;
+  }
+  #confirmPaymentModal .modal-actions {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    width: 100%;
+  }
+  #confirmPaymentModal .modal-btn-cancel {
+    background: #6c757d;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  #confirmPaymentModal .modal-btn-cancel:hover {
+    background: #495057;
+  }
+  #confirmPaymentModal .modal-btn-confirm {
+    background: #43AA8B;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background 0.2s;
+  }
+  #confirmPaymentModal .modal-btn-confirm:hover {
+    background: #2C6E49;
+  }
+</style>
+<div id="confirmPaymentModal" class="modal" style="display:none;align-items:center;justify-content:center;">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeConfirmPaymentModal()">&times;</button>
+    <div class="modal-icon"><i class="fas fa-question-circle"></i></div>
+    <div class="modal-title">Xác nhận thanh toán</div>
+    <div class="modal-message">Bạn có chắc chắn muốn xác nhận đã thanh toán đơn hàng này không?</div>
+    <div class="modal-actions">
+      <button class="modal-btn-cancel" onclick="closeConfirmPaymentModal()">Hủy</button>
+      <button class="modal-btn-confirm" id="confirmPaymentBtnModal">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<script th:src="@{/js/auth-forms.js}"></script>
+<script th:src="@{/js/user-dropdown.js}"></script>
+<script>
+    // Variables
+    let isAdmin = false;
+    let currentUser = null;
+    let allOrders = [];
+    let filteredOrders = [];
+    let currentPage = 1;
+    const ordersPerPage = 5;
+
+    // Debounce function to prevent multiple rapid API calls
+    let loadOrdersTimeout;
+    
+    // Load orders
+    function loadOrders() {
+        // Clear any pending timeout
+        if (loadOrdersTimeout) {
+            clearTimeout(loadOrdersTimeout);
+        }
+        
+        // Set a new timeout to debounce the request
+        loadOrdersTimeout = setTimeout(() => {
+            // First check user role
+            fetch('/api/auth/me', {
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(userData => {
+                // Handle both AppUser object and Map format
+                if (userData.authenticated === false) {
+                    showEmptyOrders('Vui lòng đăng nhập để xem đơn hàng');
+                    return;
+                }
+                
+                // Convert Map format to AppUser-like object
+                currentUser = {
+                    id: userData.id || null,
+                    username: userData.username,
+                    email: userData.email,
+                    fullName: userData.fullName,
+                    role: userData.role
+                };
+                
+                isAdmin = userData.role === 'ADMIN';
+                
+                // Debug: Log user data
+                console.log('User data:', userData);
+                console.log('Current user:', currentUser);
+                
+                // Update UI based on role
+                updateUIForRole();
+                
+                // Load orders
+                return fetch('/api/orders/my-orders', {
+                    credentials: 'include'
+                });
+            })
+            .then(response => {
+                if (response.status === 401) {
+                    showEmptyOrders('Vui lòng đăng nhập để xem đơn hàng');
+                    return;
+                }
+                return response.json();
+            })
+            .then(orders => {
+                // Hỗ trợ cả trả về mảng hoặc object có trường orders
+                if (orders && Array.isArray(orders)) {
+                    allOrders = orders;
+                } else if (orders && Array.isArray(orders.orders)) {
+                    allOrders = orders.orders;
+                } else {
+                    allOrders = [];
+                }
+                if (allOrders.length > 0) {
+                    // Sắp xếp theo role: user thấy mới nhất trước, admin thấy cũ nhất trước
+                    if (isAdmin) {
+                        allOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    } else {
+                        allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    }
+                    filteredOrders = [...allOrders];
+                    renderOrdersWithPagination();
+                    updateStats();
+                } else {
+                    showEmptyOrders(isAdmin ? 'Chưa có đơn hàng nào' : 'Bạn chưa có đơn hàng nào');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading orders:', error);
+                showEmptyOrders('Có lỗi xảy ra khi tải đơn hàng');
+            });
+        }, 300); // 300ms debounce
+    }
+
+    // Update UI based on user role
+    function updateUIForRole() {
+        const ordersTitle = document.getElementById('ordersTitle');
+        const adminControls = document.getElementById('adminControls');
+        const userControls = document.getElementById('userControls');
+        
+        if (isAdmin) {
+            ordersTitle.textContent = 'Quản lý đơn hàng';
+            adminControls.style.display = 'block';
+            userControls.style.display = 'none';
+            
+            // Add event listeners for filters
+            const statusFilter = document.getElementById('statusFilter');
+            const searchOrder = document.getElementById('searchOrder');
+            const sortOrder = document.getElementById('sortOrder');
+            
+            if (statusFilter) statusFilter.addEventListener('change', applyFilters);
+            if (searchOrder) searchOrder.addEventListener('input', applyFilters);
+            if (sortOrder) sortOrder.addEventListener('change', applyFilters);
+        } else {
+            ordersTitle.textContent = 'Đơn hàng của tôi';
+            adminControls.style.display = 'none';
+            userControls.style.display = 'block';
+        }
+    }
+
+    // Update stats for admin
+    function updateStats() {
+        if (!isAdmin) return;
+        
+        const statsSummary = document.getElementById('statsSummary');
+        const totalOrders = document.getElementById('totalOrders');
+        const totalRevenue = document.getElementById('totalRevenue');
+        
+        if (statsSummary && totalOrders && totalRevenue) {
+            statsSummary.style.display = 'flex';
+            totalOrders.textContent = allOrders.length;
+            
+            const revenue = allOrders.reduce((sum, order) => {
+                return sum + parseFloat(order.totalPrice || 0);
+            }, 0);
+            
+            totalRevenue.textContent = formatPrice(revenue);
+        }
+    }
+
+    // Apply filters for normal users
+    function applyUserFilters() {
+        const statusFilter = document.getElementById('userStatusFilter');
+        const selectedStatus = statusFilter.value;
+        
+        let filtered = [...allOrders];
+        
+        // Filter by status
+        if (selectedStatus) {
+            filtered = filtered.filter(order => order.status === selectedStatus);
+        }
+        
+        // Duy trì thứ tự sắp xếp mặc định cho user (mới nhất trước)
+        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        filteredOrders = filtered;
+        currentPage = 1;
+        renderOrdersWithPagination();
+    }
+
+    // Clear filters for normal users
+    function clearUserFilters() {
+        const statusFilter = document.getElementById('userStatusFilter');
+        statusFilter.value = '';
+        filteredOrders = [...allOrders];
+        // Duy trì thứ tự sắp xếp mặc định cho user (mới nhất trước)
+        filteredOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        currentPage = 1;
+        renderOrdersWithPagination();
+    }
+
+    // Modal functions
+    let currentAction = null;
+    let currentOrderId = null;
+
+    function showModal(title, message, action, orderId = null, showCancelReason = false) {
+        currentAction = action;
+        currentOrderId = orderId;
+        
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('modalMessage').textContent = message;
+        
+        const cancelReason = document.getElementById('cancelReason');
+        if (showCancelReason) {
+            cancelReason.style.display = 'block';
+            cancelReason.value = '';
+        } else {
+            cancelReason.style.display = 'none';
+        }
+        
+        document.getElementById('confirmationModal').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('confirmationModal').style.display = 'none';
+        currentAction = null;
+        currentOrderId = null;
+    }
+
+    function confirmAction() {
+        if (currentAction === 'cancelOrder') {
+            const reason = document.getElementById('cancelReason').value.trim();
+            if (!reason) {
+                showToast('Vui lòng nhập lý do hủy đơn hàng', 'error');
+                return;
+            }
+            performCancelOrder(currentOrderId, reason);
+        } else if (currentAction === 'confirmPayment') {
+            performConfirmPayment(currentOrderId);
+        } else if (currentAction === 'updateStatus') {
+            const newStatus = document.getElementById('statusSelect').value;
+            performUpdateStatus(currentOrderId, newStatus);
+        }
+        closeModal();
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('confirmationModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    // Add event listener for modal confirm button
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        if (modalConfirmBtn) {
+            modalConfirmBtn.addEventListener('click', confirmAction);
+        }
+    });
+
+    // Apply filters and sorting for admin
+    function applyFilters() {
+        const statusFilter = document.getElementById('statusFilter');
+        const searchOrder = document.getElementById('searchOrder');
+        const sortOrder = document.getElementById('sortOrder');
+        
+        let filtered = [...allOrders];
+        
+        // Filter by status
+        if (statusFilter.value) {
+            filtered = filtered.filter(order => order.status === statusFilter.value);
+        }
+        
+        // Filter by search
+        if (searchOrder.value.trim()) {
+            const searchTerm = searchOrder.value.toLowerCase();
+            filtered = filtered.filter(order => 
+                order.id.toString().includes(searchTerm) ||
+                order.userName?.toLowerCase().includes(searchTerm)
+            );
+        }
+        
+        // Sort orders
+        if (sortOrder && sortOrder.value) {
+            switch(sortOrder.value) {
+                case 'newest':
+                    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                    break;
+                case 'oldest':
+                    filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                    break;
+                case 'price-high':
+                    filtered.sort((a, b) => parseFloat(b.totalPrice) - parseFloat(a.totalPrice));
+                    break;
+                case 'price-low':
+                    filtered.sort((a, b) => parseFloat(a.totalPrice) - parseFloat(b.totalPrice));
+                    break;
+            }
+        } else {
+            // Default sorting based on role
+            if (isAdmin) {
+                // Admin: đơn hàng cũ nhất trước
+                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            } else {
+                // User: đơn hàng mới nhất trước
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+        }
+        
+        filteredOrders = filtered;
+        currentPage = 1;
+        renderOrdersWithPagination();
+        updateStats();
+    }
+
+    // Render orders with pagination
+    function renderOrdersWithPagination() {
+        const startIndex = (currentPage - 1) * ordersPerPage;
+        const endIndex = startIndex + ordersPerPage;
+        const ordersToShow = filteredOrders.slice(startIndex, endIndex);
+        
+        renderOrders(ordersToShow);
+        renderPagination();
+    }
+
+    // Render pagination
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+        const pagination = document.getElementById('pagination');
+        const pageNumbers = document.getElementById('pageNumbers');
+        const prevBtn = document.getElementById('prevPage');
+        const nextBtn = document.getElementById('nextPage');
+        
+        if (totalPages <= 1) {
+            pagination.style.display = 'none';
+            return;
+        }
+        
+        pagination.style.display = 'flex';
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+        
+        // Generate page numbers
+        let pageNumbersHTML = '';
+        const maxVisiblePages = 5;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+        
+        if (endPage - startPage + 1 < maxVisiblePages) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+            pageNumbersHTML += `
+                <button class="page-number ${i === currentPage ? 'active' : ''}" 
+                        onclick="goToPage(${i})">${i}</button>
+            `;
+        }
+        
+        pageNumbers.innerHTML = pageNumbersHTML;
+        
+        // Add event listeners
+        prevBtn.onclick = () => goToPage(currentPage - 1);
+        nextBtn.onclick = () => goToPage(currentPage + 1);
+    }
+
+    // Go to specific page
+    function goToPage(page) {
+        const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            renderOrdersWithPagination();
+        }
+    }
+
+    // Render orders
+    function renderOrders(orders) {
+        const ordersContainer = document.getElementById('ordersList');
+
+        const ordersHTML = orders.map(order => {
+            const statusClass = getStatusClass(order.status);
+            const statusText = getStatusText(order.status);
+
+            const canCancel = order.status === 'PENDING';
+            const canConfirmPayment = order.status === 'SHIPPING';
+            // Cho phép admin cũng có thể test các chức năng này
+            const isOrderOwner = !isAdmin || order.userId === currentUser.id || isAdmin;
+            
+            // Debug: Log thông tin để kiểm tra
+            console.log('Order debug:', {
+                orderId: order.id,
+                status: order.status,
+                userId: order.userId,
+                currentUserId: currentUser?.id,
+                isAdmin: isAdmin,
+                isOrderOwner: isOrderOwner,
+                canCancel: canCancel,
+                canConfirmPayment: canConfirmPayment
+            });
+
+            return `
+                <div class="order-card" data-order-id="${order.id}">
+                    <div class="order-header" onclick="toggleOrderDetails(${order.id})">
+                        <div class="order-header-left">
+                            <div class="order-toggle">
+                                <i class="fas fa-chevron-right"></i>
+                            </div>
+                            <div>
+                                <div class="order-id">Đơn hàng #${order.id}</div>
+                                <div class="order-date">${formatDate(order.createdAt)}</div>
+                                ${isAdmin ? `<div class="order-customer">Khách hàng: ${order.userName}</div>` : ''}
+                            </div>
+                        </div>
+                        ${isAdmin ? `
+                            <div class="admin-status-control">
+                                <span class="order-status ${statusClass}">${statusText}</span>
+                                <select class="status-select" onchange="updateOrderStatus(${order.id}, this.value)">
+                                    <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Đang xử lý</option>
+                                    <option value="SHIPPING" ${order.status === 'SHIPPING' ? 'selected' : ''}>Đang giao</option>
+                                    <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Hoàn tất</option>
+                                    <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
+                                </select>
+                            </div>
+                        ` : `
+                            <span class="order-status ${statusClass}">${statusText}</span>
+                        `}
+                    </div>
+
+                    <div class="order-content" id="order-content-${order.id}">
+                        <div class="order-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Tổng tiền:</span>
+                                <span class="detail-value">${formatPrice(order.totalPrice)}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Phương thức thanh toán:</span>
+                                <span class="detail-value">Thanh toán khi nhận hàng</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Địa chỉ giao hàng:</span>
+                                <span class="detail-value">${order.shippingAddress}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Phương thức giao hàng:</span>
+                                <span class="detail-value">${order.shippingMethod}</span>
+                            </div>
+                        </div>
+
+                        <div class="order-items">
+                            <h4>Sản phẩm đã đặt:</h4>
+                            ${order.orderItems.map(item => `
+                                <div class="order-item">
+                                    <img src="/uploads/images/${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
+                                    <div class="item-info">
+                                        <div class="item-name">${item.productName}</div>
+                                        <div class="item-details">
+                                            Số lượng: ${item.quantity} x ${formatPrice(item.unitPrice)}
+                                        </div>
+                                    </div>
+                                    <div class="item-total">${formatPrice(item.totalPrice)}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        <div class="order-actions">
+                            <button class="action-btn btn-outline" onclick="viewOrderDetail(${order.id})">
+                                <i class="fas fa-eye"></i>
+                                Xem chi tiết
+                            </button>
+
+                            ${isOrderOwner && order.status === 'PENDING' ? `
+                                <button class="action-btn btn-danger" onclick="showModal('Xác nhận hủy đơn hàng', 'Bạn có chắc chắn muốn hủy đơn hàng này không?', 'cancelOrder', ${order.id}, true)">
+                                    <i class="fas fa-times"></i>
+                                    Hủy đơn hàng
+                                </button>
+                            ` : ''}
+
+                            ${isOrderOwner && canConfirmPayment ? `
+                                <button class="action-btn btn-success" onclick="confirmPayment(${order.id})">
+                                    <i class="fas fa-check"></i>
+                                    Xác nhận thanh toán
+                                </button>
+                            ` : ''}
+
+                            ${isAdmin ? `
+                                <button class="action-btn btn-warning" onclick="exportOrder(${order.id})">
+                                    <i class="fas fa-download"></i>
+                                    Export
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        ordersContainer.innerHTML = ordersHTML;
+    }
+
+    // Show empty orders
+    function showEmptyOrders(message) {
+        const ordersContainer = document.getElementById('ordersList');
+        ordersContainer.innerHTML = `
+            <div class="empty-orders">
+                <i class="fas fa-box-open"></i>
+                <h2>${message}</h2>
+                <a href="/" class="action-btn btn-primary">
+                    <i class="fas fa-shopping-cart"></i>
+                    Mua sắm ngay
+                </a>
+            </div>
+        `;
+    }
+
+    // View order detail
+    function viewOrderDetail(orderId) {
+        window.location.href = `/order-success?orderId=${orderId}`;
+    }
+
+    // Cancel order with reason
+    function cancelOrder(orderId) {
+        if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này không?')) return;
+        fetch(`/api/orders/${orderId}/cancel`, {method:'PUT',credentials:'include'})
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) showToast('Đã hủy đơn hàng!', 'success');
+                else showToast(data.message || 'Hủy đơn hàng thất bại', 'error');
+                loadOrders();
+            })
+            .catch(() => {showToast('Hủy đơn hàng thất bại', 'error');});
+    }
+
+    function performCancelOrder(orderId, reason) {
+        fetch(`/api/orders/${orderId}/cancel`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ reason: reason })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Nếu response có status là 'CANCELLED' thì coi là thành công
+            if (data && data.status === 'CANCELLED') {
+                showToast('Đã hủy đơn hàng!', 'success');
+            } else {
+                showToast(data && data.message ? data.message : 'Hủy đơn hàng thất bại', 'error');
+            }
+            loadOrders();
+            updateCartCount();
+        })
+        .catch(error => {
+            console.error('Error canceling order:', error);
+            showToast('Có lỗi xảy ra khi hủy đơn hàng', 'error');
+        });
+    }
+
+    // Confirm payment
+    function confirmPayment(orderId) {
+        currentConfirmPaymentOrderId = orderId;
+        document.getElementById('confirmPaymentModal').style.display = 'flex';
+    }
+    function closeConfirmPaymentModal() {
+        document.getElementById('confirmPaymentModal').style.display = 'none';
+        currentConfirmPaymentOrderId = null;
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('confirmPaymentBtnModal');
+        if (btn) {
+            btn.onclick = function() {
+                if (!currentConfirmPaymentOrderId) return;
+                // Gọi API xác nhận thanh toán
+                fetch(`/api/orders/${currentConfirmPaymentOrderId}/confirm-payment`, {method:'PUT',credentials:'include'})
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) showToast('Đã xác nhận thanh toán!', 'success');
+                        else showToast(data.message || 'Xác nhận thất bại', 'error');
+                        closeConfirmPaymentModal();
+                        loadOrders();
+                    })
+                    .catch(() => {
+                        showToast('Xác nhận thất bại', 'error');
+                        closeConfirmPaymentModal();
+                    });
+            };
+        }
+    });
+
+    // Export order (for admin)
+    function exportOrder(orderId) {
+        // For now, just show a message. In a real app, this would generate PDF/Excel
+        showToast('Tính năng export sẽ được phát triển trong phiên bản tiếp theo', 'warning');
+    }
+
+    // Toggle order details (collapse/expand)
+    function toggleOrderDetails(orderId) {
+        const orderCard = document.querySelector(`[data-order-id="${orderId}"]`);
+        const orderContent = document.getElementById(`order-content-${orderId}`);
+        const toggleIcon = orderCard.querySelector('.order-toggle i');
+        
+        if (orderContent.classList.contains('expanded')) {
+            // Collapse
+            orderContent.classList.remove('expanded');
+            toggleIcon.style.transform = 'rotate(0deg)';
+        } else {
+            // Expand
+            orderContent.classList.add('expanded');
+            toggleIcon.style.transform = 'rotate(90deg)';
+        }
+    }
+
+    // Update order status (for admin)
+    function updateOrderStatus(orderId, newStatus) {
+        const statusText = getStatusText(newStatus);
+        showModal(
+            'Cập nhật trạng thái đơn hàng',
+            `Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng thành "${statusText}"?`,
+            'updateStatus',
+            orderId,
+            false
+        );
+    }
+
+    function performUpdateStatus(orderId, newStatus) {
+        fetch(`/api/orders/${orderId}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }),
+            credentials: 'include'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message) {
+                showToast(data.message, 'success');
+                loadOrders(); // Reload orders
+                updateCartCount(); // Update cart count
+            }
+        })
+        .catch(error => {
+            console.error('Error updating order status:', error);
+            showToast('Có lỗi xảy ra khi cập nhật trạng thái đơn hàng', 'error');
+        });
+    }
+
+    // Get status class
+    function getStatusClass(status) {
+        switch(status) {
+            case 'PENDING': return 'status-pending';
+            case 'SHIPPING': return 'status-shipping';
+            case 'COMPLETED': return 'status-completed';
+            case 'CANCELLED': return 'status-cancelled';
+            default: return 'status-pending';
+        }
+    }
+
+    // Get status text
+    function getStatusText(status) {
+        switch(status) {
+            case 'PENDING': return 'Đang xử lý';
+            case 'SHIPPING': return 'Đang giao';
+            case 'COMPLETED': return 'Hoàn tất';
+            case 'CANCELLED': return 'Đã hủy';
+            default: return 'Đang xử lý';
+        }
+    }
+
+    // Format date
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('vi-VN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // Format price
+    function formatPrice(price) {
+        if (typeof price === 'string') {
+            price = parseFloat(price);
+        }
+        return new Intl.NumberFormat('vi-VN', {
+            style: 'currency',
+            currency: 'VND'
+        }).format(price);
+    }
+
+    // Update cart count with debouncing
+    let updateCartCountTimeout;
+    function updateCartCount() {
+        if (updateCartCountTimeout) {
+            clearTimeout(updateCartCountTimeout);
+        }
+        
+        updateCartCountTimeout = setTimeout(() => {
+            fetch('/api/cart/count', {
+                credentials: 'include'
+            })
+            .then(response => response.json())
+            .then(data => {
+                const cartCount = document.querySelector('.cart-count');
+                if (cartCount) {
+                    cartCount.textContent = data.count || 0;
+                }
+            })
+            .catch(error => {
+                console.error('Error updating cart count:', error);
+            });
+        }, 200);
+    }
+
+    // Show toast notification
+    function showToast(message, type = 'success') {
+        // Create toast element if it doesn't exist
+        let toast = document.getElementById('toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.className = 'toast';
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="toast-icon"></i>
+                    <span class="toast-message"></span>
+                </div>
+                <button class="toast-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            document.body.appendChild(toast);
+        }
+
+        const toastContent = toast.querySelector('.toast-content');
+        const toastIcon = toastContent.querySelector('.toast-icon');
+        const toastMessage = toastContent.querySelector('.toast-message');
+
+        // Set icon based on type
+        toastIcon.className = 'toast-icon fas';
+        if (type === 'success') {
+            toastIcon.classList.add('fa-check-circle');
+        } else if (type === 'error') {
+            toastIcon.classList.add('fa-exclamation-circle');
+        } else if (type === 'warning') {
+            toastIcon.classList.add('fa-exclamation-triangle');
+        }
+
+        // Set message
+        toastMessage.textContent = message;
+
+        // Set toast type
+        toast.className = `toast ${type}`;
+        toast.classList.add('show');
+
+        // Auto hide after 4 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+
+        // Close button functionality
+        const closeBtn = toast.querySelector('.toast-close');
+        if (closeBtn) {
+            closeBtn.onclick = () => {
+                toast.classList.remove('show');
+            };
+        }
+    }
+
+    // Load orders when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add a small delay to avoid multiple rapid requests
+        setTimeout(() => {
+            loadOrders();
+            updateCartCount();
+        }, 100);
+    });
+
+function setTheme(theme) {
+    document.body.classList.toggle('dark-theme', theme === 'dark');
+    localStorage.setItem('theme', theme);
+    // Đổi icon
+    const btn = document.getElementById('themeToggleBtn');
+    if (btn) {
+        btn.querySelector('i').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+        btn.querySelector('span').textContent = theme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối';
+    }
+}
+function toggleTheme() {
+    const isDark = document.body.classList.contains('dark-theme');
+    setTheme(isDark ? 'light' : 'dark');
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+});
+</script>
+<script th:src="@{/js/theme-toggle.js}"></script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt hàng thành công - Trà Đạo</title>
+    <link rel="stylesheet" th:href="@{/css/tea-home.css}">
+    <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .success-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            padding-top: 120px;
+        }
+        
+        .success-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        
+        .success-title {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .success-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .order-details {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .order-details h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 500;
+            color: #666;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .order-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-shipping {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: #3e5c3a;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2e3d23;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: #3e5c3a;
+            border: 2px solid #3e5c3a;
+        }
+        
+        .btn-outline:hover {
+            background: #3e5c3a;
+            color: white;
+        }
+        
+        .order-items {
+            margin-top: 20px;
+        }
+        
+        .order-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        
+        .order-item:last-child {
+            border-bottom: none;
+        }
+        
+        .item-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            margin-right: 15px;
+        }
+        
+        .item-info {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .item-details {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .item-total {
+            font-weight: 600;
+            color: #3e5c3a;
+        }
+        
+        /* Dark theme support */
+        body.dark-theme .order-details {
+            background: #2a2a2a;
+            color: #ffffff;
+        }
+        
+        body.dark-theme .success-title {
+            color: #ffffff;
+        }
+        
+        body.dark-theme .detail-label {
+            color: #ccc;
+        }
+        
+        body.dark-theme .detail-value {
+            color: #ffffff;
+        }
+        
+        body.dark-theme .order-item {
+            border-bottom-color: #444;
+        }
+        
+        body.dark-theme .item-name {
+            color: #ffffff;
+        }
+        
+        body.dark-theme .item-details {
+            color: #ccc;
+        }
+        
+        @media (max-width: 768px) {
+            .success-container {
+                padding: 20px 15px;
+                padding-top: 100px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+<script>
+(function() {
+  try {
+    var theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark-theme');
+      document.body && document.body.classList.add('dark-theme');
+    }
+  } catch(e){}
+})();
+</script>
+    <!-- Include Header Fragment -->
+    <div th:replace="~{fragments/header :: header}"></div>
+
+    <!-- Success Content -->
+    <div class="success-container">
+        <div class="success-header">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h1 class="success-title">Đặt hàng thành công!</h1>
+            <p class="success-subtitle">Cảm ơn bạn đã mua sắm tại Beui</p>
+        </div>
+        
+        <div class="order-details" id="orderDetails">
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Đang tải thông tin đơn hàng...</p>
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="/" class="action-btn btn-primary">
+                <i class="fas fa-home"></i>
+                Về trang chủ
+            </a>
+            <a href="/orders" class="action-btn btn-outline">
+                <i class="fas fa-list"></i>
+                Xem đơn hàng
+            </a>
+            <a href="/cart" class="action-btn btn-secondary">
+                <i class="fas fa-shopping-cart"></i>
+                Giỏ hàng
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <i class="toast-icon"></i>
+            <span class="toast-message"></span>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <script th:src="@{/js/auth-forms.js}"></script>
+    <script th:src="@{/js/user-dropdown.js}"></script>
+    <script>
+        // Load order details
+        function loadOrderDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const orderId = urlParams.get('orderId');
+            
+            if (!orderId) {
+                showError('Không tìm thấy thông tin đơn hàng');
+                return;
+            }
+            
+            fetch(`/api/orders/${orderId}`, {
+                credentials: 'include'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Không thể tải thông tin đơn hàng');
+                }
+                return response.json();
+            })
+            .then(order => {
+                displayOrderDetails(order);
+            })
+            .catch(error => {
+                console.error('Error loading order:', error);
+                showError('Có lỗi xảy ra khi tải thông tin đơn hàng');
+            });
+        }
+        
+        // Display order details
+        function displayOrderDetails(order) {
+            const orderDetailsContainer = document.getElementById('orderDetails');
+            
+            const statusClass = getStatusClass(order.status);
+            const statusText = getStatusText(order.status);
+            
+            orderDetailsContainer.innerHTML = `
+                <h2>Chi tiết đơn hàng #${order.id}</h2>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Mã đơn hàng:</span>
+                    <span class="detail-value">#${order.id}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Ngày đặt:</span>
+                    <span class="detail-value">${formatDate(order.createdAt)}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Tổng tiền:</span>
+                    <span class="detail-value">${formatPrice(order.totalPrice)}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Trạng thái:</span>
+                    <span class="detail-value">
+                        <span class="order-status ${statusClass}">${statusText}</span>
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Phương thức thanh toán:</span>
+                    <span class="detail-value">Thanh toán khi nhận hàng</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Địa chỉ giao hàng:</span>
+                    <span class="detail-value">${order.shippingAddress}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Phương thức giao hàng:</span>
+                    <span class="detail-value">${order.shippingMethod}</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Số điện thoại:</span>
+                    <span class="detail-value">${order.phoneNumber}</span>
+                </div>
+                
+                ${order.orderNotes ? `
+                <div class="detail-row">
+                    <span class="detail-label">Ghi chú:</span>
+                    <span class="detail-value">${order.orderNotes}</span>
+                </div>
+                ` : ''}
+                
+                <div class="order-items">
+                    <h3>Sản phẩm đã đặt:</h3>
+                    ${order.orderItems.map(item => `
+                        <div class="order-item">
+                                                            <img src="/uploads/images/${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
+                            <div class="item-info">
+                                <div class="item-name">${item.productName}</div>
+                                <div class="item-details">
+                                    Số lượng: ${item.quantity} x ${formatPrice(item.unitPrice)}
+                                </div>
+                            </div>
+                            <div class="item-total">${formatPrice(item.totalPrice)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        // Get status class
+        function getStatusClass(status) {
+            switch(status) {
+                case 'PENDING': return 'status-pending';
+                case 'SHIPPING': return 'status-shipping';
+                case 'COMPLETED': return 'status-completed';
+                case 'CANCELLED': return 'status-cancelled';
+                default: return 'status-pending';
+            }
+        }
+        
+        // Get status text
+        function getStatusText(status) {
+            switch(status) {
+                case 'PENDING': return 'Đang xử lý';
+                case 'SHIPPING': return 'Đang giao';
+                case 'COMPLETED': return 'Hoàn tất';
+                case 'CANCELLED': return 'Đã hủy';
+                default: return 'Đang xử lý';
+            }
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            if (typeof price === 'string') {
+                price = parseFloat(price);
+            }
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+        
+        // Show error
+        function showError(message) {
+            const orderDetailsContainer = document.getElementById('orderDetails');
+            orderDetailsContainer.innerHTML = `
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'toast';
+                toast.innerHTML = `
+                    <div class="toast-content">
+                        <i class="toast-icon"></i>
+                        <span class="toast-message"></span>
+                    </div>
+                    <button class="toast-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                document.body.appendChild(toast);
+            }
+            
+            const toastContent = toast.querySelector('.toast-content');
+            const toastIcon = toastContent.querySelector('.toast-icon');
+            const toastMessage = toastContent.querySelector('.toast-message');
+            
+            toastIcon.className = 'toast-icon fas';
+            if (type === 'success') {
+                toastIcon.classList.add('fa-check-circle');
+            } else if (type === 'error') {
+                toastIcon.classList.add('fa-exclamation-circle');
+            } else if (type === 'warning') {
+                toastIcon.classList.add('fa-exclamation-triangle');
+            }
+            
+            toastMessage.textContent = message;
+            toast.className = `toast ${type}`;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+            
+            const closeBtn = toast.querySelector('.toast-close');
+            if (closeBtn) {
+                closeBtn.onclick = () => {
+                    toast.classList.remove('show');
+                };
+            }
+        }
+        
+        // Load order details when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadOrderDetails();
+        });
+    </script>
+</body>
+</html> 
