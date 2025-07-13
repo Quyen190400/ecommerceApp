@@ -1,0 +1,28 @@
+# Dockerfile để tạo custom SQL Server image với database sẵn có
+FROM mcr.microsoft.com/mssql/server:2019-latest
+
+# Tạo thư mục cho script init
+RUN mkdir -p /opt/mssql/init
+
+# Copy script init database từ project
+COPY ./src/main/resources/create_tables.sql /opt/mssql/init/
+
+# Tạo script entrypoint tùy chỉnh trong thư mục có quyền ghi
+RUN echo '#!/bin/bash\n\
+# Chạy SQL Server\n\
+/opt/mssql/bin/sqlservr &\n\
+\n\
+# Đợi SQL Server khởi động\n\
+sleep 30\n\
+\n\
+# Chạy script init database\n\
+/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P $SA_PASSWORD -C -i /opt/mssql/init/create_tables.sql\n\
+\n\
+# Giữ container chạy\n\
+wait' > /opt/mssql/entrypoint.sh
+
+# Cấp quyền thực thi
+RUN chmod +x /opt/mssql/entrypoint.sh
+
+# Set entrypoint
+ENTRYPOINT ["/opt/mssql/entrypoint.sh"] 
