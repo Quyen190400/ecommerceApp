@@ -95,7 +95,7 @@ public class AdminProductController {
     }
 
     @PatchMapping("/{id}/toggle-status")
-    public ResponseEntity<AdminProductResponse> toggleProductStatus(@PathVariable Long id) {
+    public ResponseEntity<AdminProductResponse> toggleProductStatus(@PathVariable("id") Long id) {
         return ResponseEntity.ok(productService.toggleAdminProductStatus(id));
     }
 } 

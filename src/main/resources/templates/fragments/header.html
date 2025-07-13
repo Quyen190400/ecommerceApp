@@ -62,11 +62,11 @@
                         </a>
                         <a href="/admin/orders" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-clipboard-list"></i>
-                            <span>Quản lý đơn hàng</span>
+                            <span>Quản lý đơn hàng (Admin)</span>
                         </a>
                         <a href="/admin/products" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-boxes"></i>
-                            <span>Quản lý sản phẩm</span>
+                            <span>Quản lý sản phẩm (Admin)</span>
                         </a>
                         <button class="dropdown-item theme-toggle-btn" id="themeToggleBtn">
                             <i class="fas fa-moon"></i>
@@ -131,7 +131,7 @@
                         </a>
                         <a href="/admin/products" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-boxes"></i>
-                            <span>Quản lý sản phẩm</span>
+                            <span>Quản lý sản phẩm (Admin)</span>
                         </a>
                         <button class="mobile-dropdown-item theme-toggle-btn" id="mobileThemeToggleBtn">
                             <i class="fas fa-moon"></i>
