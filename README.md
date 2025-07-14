@@ -134,7 +134,7 @@ Welcome to Beui Tea Shop! This is a modern e-commerce web application for sellin
 
 ## Contact
 For questions or support, please contact:
-- Email: support@beuiteashop.com
+- Email: beui@teashop.com
 
 ---
 Enjoy premium Vietnamese tea with Beui Tea Shop! 

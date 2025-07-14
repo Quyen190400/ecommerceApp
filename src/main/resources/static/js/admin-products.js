@@ -347,7 +347,7 @@ async function checkAuthOnPageLoad() {
     const res = await globalFetch('/api/auth/me', { credentials: 'include' });
     if (res.status === 401) {
       showToast('Vui lòng đăng nhập để tiếp tục', 'warning');
-      if (window.showAuthModal) showAuthModal('login');
+      showAuthModal('login');
     }
   } catch {}
 }

@@ -75,7 +75,7 @@ public class EcommerceAppApplication {
 				product1.setPrice(new BigDecimal("450000"));
 				product1.setImageUrl("tra-thai-nguyen.jpg");
 				product1.setOrigin("Thái Nguyên, Việt Nam");
-				product1.setTeaType("GREEN_TEA");
+				product1.setTeaType("Trà xanh");
 				product1.setTasteNote("Đậm đà, hậu ngọt sâu lắng, hương thơm tự nhiên");
 				product1.setHealthBenefit("Giúp giảm stress và lo âu, Tăng cường hệ miễn dịch, Chống oxy hóa");
 				product1.setUsageGuide("1. Rửa ấm chén bằng nước nóng\n2. Cho 3-5g trà vào ấm\n3. Rót nước sôi 80-85°C\n4. Ủ 2-3 phút\n5. Thưởng thức");
@@ -89,7 +89,7 @@ public class EcommerceAppApplication {
 				product2.setPrice(new BigDecimal("1200000"));
 				product2.setImageUrl("am-chen-battrang.jpg");
 				product2.setOrigin("Bát Tràng, Hà Nội");
-				product2.setTeaType("HERBAL_TEA");
+				product2.setTeaType("Dụng cụ trà");
 				product2.setTasteNote("Giữ nguyên hương vị trà, không bị biến chất");
 				product2.setHealthBenefit("Giữ nhiệt tốt, Tôn vị trà, An toàn cho sức khỏe");
 				product2.setUsageGuide("1. Rửa ấm chén bằng nước nóng\n2. Cho trà vào ấm\n3. Rót nước sôi\n4. Ủ 3-5 phút\n5. Thưởng thức");
@@ -103,7 +103,7 @@ public class EcommerceAppApplication {
 				product3.setPrice(new BigDecimal("950000"));
 				product3.setImageUrl("tra-sen-tay-ho.jpg");
 				product3.setOrigin("Tây Hồ, Hà Nội");
-				product3.setTeaType("SEN_TEA");
+				product3.setTeaType("Trà hoa");
 				product3.setTasteNote("Hương sen thơm ngát, vị trà thanh khiết");
 				product3.setHealthBenefit("Thư giãn tinh thần, tốt cho tim mạch");
 				product3.setUsageGuide("1. Rửa ấm chén bằng nước nóng\n2. Cho trà vào ấm\n3. Rót nước sôi 90°C\n4. Ủ 3 phút\n5. Thưởng thức");
@@ -117,7 +117,7 @@ public class EcommerceAppApplication {
 				product4.setPrice(new BigDecimal("2200000"));
 				product4.setImageUrl("am-tusa.jpg");
 				product4.setOrigin("Nghi Hưng, Trung Quốc");
-				product4.setTeaType("TEAWARE");
+				product4.setTeaType("Dụng cụ trà");
 				product4.setTasteNote("Giữ nguyên hương vị trà, không bị biến chất");
 				product4.setHealthBenefit("Giữ nhiệt tốt, tôn vị trà, an toàn cho sức khỏe");
 				product4.setUsageGuide("1. Rửa ấm bằng nước nóng\n2. Cho trà vào ấm\n3. Rót nước sôi\n4. Ủ 3-5 phút\n5. Thưởng thức");
@@ -173,7 +173,7 @@ public class EcommerceAppApplication {
 				product8.setPrice(new BigDecimal("250000"));
 				product8.setImageUrl("tra-oolong.jpg");
 				product8.setOrigin("Đài Loan");
-				product8.setTeaType("Trà Oolong");
+				product8.setTeaType("Trà xanh");
 				product8.setTasteNote("Phức tạp với nhiều tầng hương vị, từ ngọt đến chát");
 				product8.setHealthBenefit("Tăng cường trao đổi chất, giảm cholesterol, tốt cho tim");
 				product8.setUsageGuide("Pha với nước 85-95°C, ủ 3-5 phút. Có thể pha nhiều lần");

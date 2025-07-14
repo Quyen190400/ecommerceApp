@@ -23,7 +23,6 @@
     width: 95vw;
     position: relative;
     animation: modalIn 0.25s;
-    max-height: 90vh;
     overflow-y: auto;
 }
 @keyframes modalIn {

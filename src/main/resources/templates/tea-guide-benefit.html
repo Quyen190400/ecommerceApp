@@ -148,7 +148,12 @@
       position: relative;
       border-radius: 18px 18px 0 0;
       margin-bottom: 8px;
+      border-radius: 18px;
+      box-shadow: 0 4px 24px 0 rgba(60, 60, 60, 0.13), 0 1.5px 6px 0 rgba(60, 60, 60, 0.09);
+      overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s;
     }
+
     .benefit-banner .banner-content {
       position: relative;
       z-index: 2;
@@ -349,6 +354,13 @@
     .back-btn:hover, .all-products-btn:hover {
       background: #3e5c3a;
       color: #fff;
+    }
+    .benefit-banner {
+      border-radius: 8px;
+      border: 2px solid #b6e2a1;
+      box-shadow: 0 4px 18px 0 rgba(60, 60, 60, 0.10), 0 1.5px 6px 0 rgba(60, 60, 60, 0.07);
+      overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s;
     }
   </style>
   <script th:inline="javascript">
@@ -573,19 +585,23 @@ const benefitBannerImages = {
   "dung-cu": "/uploads/images/banner-dung-cu.jpg"
   // Thêm các benefit khác nếu có
 };
-function renderPage() {
+function setBannerOverlay() {
   const benefitType = getBenefitType();
-  const benefit = benefitData[benefitType];
-  // Đổi ảnh banner theo benefit
   const bannerEl = document.querySelector('.benefit-banner');
   const bannerImg = benefitBannerImages[benefitType] || "/uploads/images/banner-tea.jpg";
   if (bannerEl) {
-    bannerEl.style.backgroundImage = `linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.7) 60%, rgba(255,255,255,0.2) 100%), url('${bannerImg}')`;
+    bannerEl.style.backgroundImage = `url('${bannerImg}')`;
     bannerEl.style.backgroundPosition = 'center';
     bannerEl.style.backgroundRepeat = 'no-repeat';
     bannerEl.style.backgroundSize = 'cover';
   }
-  // KHÔNG gán let products = ... ở đây nữa!
+}
+
+function renderPage() {
+  setBannerOverlay();
+  const benefitType = getBenefitType();
+  const benefit = benefitData[benefitType];
+  // Đổi ảnh banner theo benefit
   const titleEl = document.getElementById('benefitTitle');
   const descEl = document.getElementById('benefitDesc');
   const iconEl = document.getElementById('benefitIcon');
@@ -640,7 +656,17 @@ function renderPage() {
       filterProducts();
     });
 }
-document.addEventListener('DOMContentLoaded', renderPage);
+document.addEventListener('DOMContentLoaded', function() {
+  renderPage();
+  // Đảm bảo banner cập nhật overlay khi chuyển theme
+  document.addEventListener('themechange', setBannerOverlay);
+});
+// Nếu có nút chuyển theme, thêm sự kiện cập nhật overlay
+if (window.themeToggleBtn) {
+  window.themeToggleBtn.addEventListener('click', function() {
+    setTimeout(setBannerOverlay, 100);
+  });
+}
 </script>
 <script th:src="@{/js/user-dropdown.js}"></script>
 <script th:src="@{/js/auth-forms.js}"></script>
