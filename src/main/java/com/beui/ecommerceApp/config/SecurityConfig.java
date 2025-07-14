@@ -71,7 +71,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/swagger/**").permitAll()
-                    .requestMatchers("/", "/login", "/register", "/test", "/css/**", "/js/**", "/images/**", "/api/upload/image", "/api/upload/image/custom", "/api/upload/image/url", "/auth/create-admin", "/auth/check-auth").permitAll()
+                    .requestMatchers("/", "/login", "/register", "/test", "/css/**", "/js/**", "/images/**", "/app/**", "/api/upload/image", "/api/upload/image/custom", "/api/upload/image/url", "/auth/create-admin", "/auth/check-auth").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/product/**").permitAll()
                     .requestMatchers("/tea-guide/**").permitAll()

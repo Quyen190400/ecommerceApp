@@ -17,7 +17,7 @@ if [ $? -eq 0 ]; then
     
     # Step 2: Build Docker image using JAR
     echo "🐳 Building Docker image..."
-    docker build -f Dockerfile.jar -t $FULL_IMAGE_NAME .
+    docker build --no-cache -f Dockerfile.jar -t $FULL_IMAGE_NAME .
     
     if [ $? -eq 0 ]; then
         echo "✅ Docker build successful!"
