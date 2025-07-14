@@ -29,19 +29,20 @@
       background: #1a1a1a;
     }
     
-    body.dark-theme .banner-title {
-      color: #ffffff;
-      text-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);
-    }
+<!--    body.dark-theme .banner-title {-->
+<!--      color: #ffffff;-->
+<!--      text-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);-->
+<!--    }-->
     
     body.dark-theme .banner-icon {
       color: #6b8e23;
       opacity: 0.4;
     }
     
-    body.dark-theme .benefit-desc {
-      color: #cccccc;
-    }
+<!--    body.dark-theme .benefit-desc {-->
+<!--      color: #cccccc;-->
+<!--      color: #350c0c;-->
+<!--    }-->
     
     body.dark-theme .chip {
       background: #3e5c3a;
@@ -180,7 +181,7 @@
     }
     .benefit-desc {
       font-size: 1.18rem;
-      color: #5a6d5a;
+      color: #350c0c;
       margin: 28px 0 10px 0;
       text-align: center;
       letter-spacing: 0.01em;
@@ -671,5 +672,6 @@ if (window.themeToggleBtn) {
 <script th:src="@{/js/user-dropdown.js}"></script>
 <script th:src="@{/js/auth-forms.js}"></script>
 <script th:src="@{/js/theme-toggle.js}"></script>
+<div th:replace="~{fragments/auth-modal :: authModal}"></div>
 </body>
 </html> 

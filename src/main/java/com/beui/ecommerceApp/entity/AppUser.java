@@ -24,19 +24,19 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "full_name", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "full_name", length = 255)
     private String fullName;
     
-    @Column(name = "username", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "username", length = 255)
     private String username;
     
-    @Column(name = "password", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "password", length = 255)
     private String password;
     
-    @Column(name = "email", columnDefinition = "NVARCHAR(255)", unique = true)
+    @Column(name = "email", length = 255, unique = true)
     private String email;
     
-    @Column(name = "role", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "role", length = 50)
     private String role;
     
     @Column(name = "created_at")

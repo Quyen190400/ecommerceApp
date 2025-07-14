@@ -2,19 +2,19 @@ environment:
   - SPRING_PROFILES_ACTIVE=docker
 spring:
   datasource:
-    url: jdbc:sqlserver://beui-sqlserver:1433;databaseName=greenteashop
-    username: sa
+    url: jdbc:mysql://beui-mysql:3306/greenteashop?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=UTC
+    username: root
     password: YourStrong@Password1
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
     show-sql: ${SPRING_JPA_SHOW_SQL:true}
-    database-platform: org.hibernate.dialect.SQLServerDialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.SQLServerDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
   sql:
     init:
       mode: never

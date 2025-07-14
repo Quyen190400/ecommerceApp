@@ -1,83 +1,70 @@
 -- Drop existing tables if they exist (in reverse order due to foreign keys)
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'order_item')
-    DROP TABLE order_item;
-
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'customer_order')
-    DROP TABLE customer_order;
-
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'product')
-    DROP TABLE product;
-
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'category')
-    DROP TABLE category;
-
-IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'app_user')
-    DROP TABLE app_user;
-
--- Create tables in correct order (no foreign key dependencies first)
+DROP TABLE IF EXISTS order_item;
+DROP TABLE IF EXISTS customer_order;
+DROP TABLE IF EXISTS product;
+DROP TABLE IF EXISTS category;
+DROP TABLE IF EXISTS app_user;
 
 -- 1. Create app_user table first (no dependencies)
 CREATE TABLE app_user (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    username NVARCHAR(MAX),
-    password NVARCHAR(MAX),
-    email NVARCHAR(MAX),
-    role NVARCHAR(MAX),
-    created_at DATETIME2 DEFAULT GETDATE(),
-    updated_at DATETIME2 DEFAULT GETDATE()
-);
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    password VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    email VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    role VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 2. Create category table (no dependencies)
 CREATE TABLE category (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(MAX) NOT NULL UNIQUE,
-    description NVARCHAR(MAX),
-    created_at DATETIME2 DEFAULT GETDATE(),
-    updated_at DATETIME2 DEFAULT GETDATE()
-);
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL UNIQUE,
+    description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 3. Create product table (depends on category)
 CREATE TABLE product (
-    id INT IDENTITY(1,1) PRIMARY KEY,
-    name NVARCHAR(MAX) NOT NULL,
-    description NVARCHAR(MAX),
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    description TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     price DECIMAL(10,2) NOT NULL,
-    image_url NVARCHAR(MAX),
-    origin NVARCHAR(MAX),
-    tea_type NVARCHAR(MAX),
-    taste_note NVARCHAR(MAX),
-    health_benefit NVARCHAR(MAX),
-    usage_guide NVARCHAR(MAX),
+    image_url VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    origin VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    tea_type VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    taste_note TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    health_benefit TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    usage_guide TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     stock_quantity INT DEFAULT 0,
     sold_count INT DEFAULT 0,
     status BIT NOT NULL DEFAULT 1,
     category_id INT,
-    created_at DATETIME2 DEFAULT GETDATE(),
-    updated_at DATETIME2 DEFAULT GETDATE(),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (category_id) REFERENCES category(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 4. Create customer_order table (depends on app_user)
 CREATE TABLE customer_order (
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     total_price DECIMAL(10,2) NOT NULL,
-    status NVARCHAR(MAX) NOT NULL DEFAULT 'PENDING',
-    created_at DATETIME2 DEFAULT GETDATE(),
-    updated_at DATETIME2 DEFAULT GETDATE(),
+    status VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'PENDING',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES app_user(id)
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- 5. Create order_item table (depends on customer_order and product)
 CREATE TABLE order_item (
-    id INT IDENTITY(1,1) PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
     unit_price DECIMAL(10,2) NOT NULL,
-    created_at DATETIME2 DEFAULT GETDATE(),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (order_id) REFERENCES customer_order(id),
     FOREIGN KEY (product_id) REFERENCES product(id)
-);
-
-PRINT 'All tables created successfully!'; 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci; 

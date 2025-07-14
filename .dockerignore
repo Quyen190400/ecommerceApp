@@ -61,8 +61,6 @@ README.md
 # Test files
 src/test/
 
-# Uploads (will be mounted as volume)
-uploads/
 
 # Temporary files
 *.tmp

@@ -1,16 +1,19 @@
 version: '3.8'
 
 services:
-  beui-sqlserver:
-    image: nthquyen1904/sqlserver-greenteashop:latest  # Registry: nthquyen1904
-    container_name: beui-sqlserver
+  beui-mysql:
+    image: mysql:8.0
+    container_name: beui-mysql
+    restart: always
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Password1
+      MYSQL_ROOT_PASSWORD: your_mysql_password
+      MYSQL_DATABASE: greenteashop
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuser_password
     ports:
-      - "1433:1433"
+      - "3306:3306"
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - mysql-data:/var/lib/mysql
     networks:
       - beui-network
     healthcheck:
@@ -20,7 +23,7 @@ services:
       retries: 5
 
 volumes:
-  sqlserver-data:
+  mysql-data:
 
 networks:
   beui-network:

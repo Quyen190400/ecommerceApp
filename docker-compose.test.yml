@@ -1,17 +1,20 @@
 version: '3.8'
 
 services:
-  # SQL Server cho test local
-  beui-sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: beui-sqlserver-test
+  # Thay thế dịch vụ SQL Server bằng MySQL cho test
+  beui-mysql-test:
+    image: mysql:8.0
+    container_name: beui-mysql-test
+    restart: always
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Password1
+      MYSQL_ROOT_PASSWORD: your_mysql_password
+      MYSQL_DATABASE: greenteashop
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuser_password
     ports:
-      - "1433:1433"
+      - "3307:3306"
     volumes:
-      - sqlserver-data-test:/var/opt/mssql
+      - mysql-data-test:/var/lib/mysql
     networks:
       - beui-network-test
     healthcheck:
@@ -69,7 +72,7 @@ services:
       start_period: 40s
 
 volumes:
-  sqlserver-data-test:
+  mysql-data-test:
 
 networks:
   beui-network-test:

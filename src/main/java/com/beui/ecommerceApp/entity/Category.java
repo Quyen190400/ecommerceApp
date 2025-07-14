@@ -24,10 +24,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "name", nullable = false, unique = true, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "name", nullable = false, unique = true, length = 255)
     private String name;
     
-    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
     @Column(name = "created_at")
