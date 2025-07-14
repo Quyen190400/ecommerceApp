@@ -1246,13 +1246,6 @@
             document.getElementById('filterStatus').addEventListener('change', filterOrders);
         });
 
-        // Tự động reload danh sách đơn hàng và thống kê mỗi 5 giây
-        setInterval(function() {
-            if (typeof loadOrders === 'function') {
-                loadOrders();
-                if (typeof loadStats === 'function') loadStats();
-            }
-        }, 5000);
 
         // Show toast notification
     </script>

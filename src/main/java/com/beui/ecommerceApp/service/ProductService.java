@@ -30,7 +30,9 @@ public class ProductService {
     // Lấy tất cả sản phẩm
     public List<Product> getAllProducts() {
         List<Product> products = productRepository.findAll();
-        return products;
+        return products.stream()
+                .filter(product -> product.getStatus() != null && product.getStatus())
+                .collect(java.util.stream.Collectors.toList());
     }
     
     // Lấy sản phẩm theo ID
@@ -50,7 +52,10 @@ public class ProductService {
     
     // Lấy sản phẩm còn hàng
     public List<Product> getAvailableProducts() {
-        return productRepository.findAvailableProducts();
+        List<Product> products = productRepository.findAvailableProducts();
+        return products.stream()
+                .filter(product -> product.getStatus() != null && product.getStatus())
+                .collect(java.util.stream.Collectors.toList());
     }
     
     // Thêm sản phẩm mới
@@ -114,7 +119,10 @@ public class ProductService {
     }
     
     public List<Product> getBestSellers() {
-        return productRepository.findTop4ByOrderBySoldCountDesc();
+        List<Product> products = productRepository.findTop4ByOrderBySoldCountDesc();
+        return products.stream()
+                .filter(product -> product.getStatus() != null && product.getStatus())
+                .collect(java.util.stream.Collectors.toList());
     }
 
     public List<Product> getProductsByBenefit(String benefit) {
@@ -129,7 +137,9 @@ public class ProductService {
         for (String keyword : keywords) {
             result.addAll(productRepository.findByHealthBenefitContainingIgnoreCase(keyword));
         }
-        return new java.util.ArrayList<>(result);
+        return new java.util.ArrayList<>(result).stream()
+                .filter(product -> product.getStatus() != null && product.getStatus())
+                .collect(java.util.stream.Collectors.toList());
     }
 
     // ADMIN: Lấy danh sách sản phẩm (phân trang)

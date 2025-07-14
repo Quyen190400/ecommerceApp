@@ -71,16 +71,15 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/swagger/**").permitAll()
-                    .requestMatchers("/", "/login", "/register", "/test", "/css/**", "/js/**", "/images/**", "/api/upload/image", "/api/upload/image/custom", "/api/upload/image/url", "/auth/debug/users", "/auth/test-auth", "/auth/create-admin", "/auth/check-auth", "/debug_403.html", "/debug-auth", "/test-login", "/api/orders/debug-auth").permitAll()
+                    .requestMatchers("/", "/login", "/register", "/test", "/css/**", "/js/**", "/images/**", "/api/upload/image", "/api/upload/image/custom", "/api/upload/image/url", "/auth/create-admin", "/auth/check-auth").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/product/**").permitAll()
                     .requestMatchers("/tea-guide/**").permitAll()
                     .requestMatchers("/orders-page").permitAll()
                     .requestMatchers("/orders").authenticated()
                     .requestMatchers("/api/cart/**").authenticated()
-                    .requestMatchers("/admin", "/products-page").hasRole("ADMIN")
-                    .requestMatchers("/dashboard").authenticated()
                     .requestMatchers("/products/admin/**", "/orders/**").hasRole("ADMIN")
+                    .requestMatchers("/admin/products").authenticated()
                     .requestMatchers("/api/users/me").authenticated()
                     .requestMatchers("/api/orders/my-orders").hasAnyRole("CUSTOMER", "ADMIN")
                     .requestMatchers("/api/orders/me").hasAnyRole("CUSTOMER", "ADMIN")
@@ -116,7 +115,7 @@ public class SecurityConfig {
                         response.getWriter().write("{\"message\":\"Vui lòng đăng nhập để thực hiện thao tác này\"}");
                     } else {
                         // For non-API requests, redirect to home page with expired message
-                        String redirectUrl = "/?expired=true";
+                        String redirectUrl = "/";
                         response.sendRedirect(redirectUrl);
                     }
                 })

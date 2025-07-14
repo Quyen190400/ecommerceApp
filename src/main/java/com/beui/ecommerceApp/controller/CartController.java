@@ -11,10 +11,18 @@ import com.beui.ecommerceApp.service.OrderService;
 import com.beui.ecommerceApp.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -147,17 +155,22 @@ public class CartController {
         Cart cart = cartOpt.get();
         List<CartItem> items = cartService.getCartItems(cart.getId());
         
-        // Cập nhật totals từ items thực tế
-        int totalItems = items.stream().mapToInt(CartItem::getQuantity).sum();
-        BigDecimal totalPrice = items.stream()
+        // Filter out hidden products
+        List<CartItem> visibleItems = items.stream()
+                .filter(item -> item.getProduct().getStatus() != null && item.getProduct().getStatus())
+                .collect(Collectors.toList());
+        
+        // Cập nhật totals từ items thực tế (chỉ visible items)
+        int totalItems = visibleItems.stream().mapToInt(CartItem::getQuantity).sum();
+        BigDecimal totalPrice = visibleItems.stream()
                 .map(CartItem::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         
         // Cập nhật cart totals trong database
         cartService.updateCartTotals(cart.getId());
         
-        // Convert to DTOs
-        CartResponse cartResponse = convertToCartResponse(cart, items);
+        // Convert to DTOs (chỉ visible items)
+        CartResponse cartResponse = convertToCartResponse(cart, visibleItems);
         
         Map<String, Object> response = new HashMap<>();
         response.put("cart", cartResponse);

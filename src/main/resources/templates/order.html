@@ -1165,7 +1165,7 @@
     </div>
   </div>
 </div>
-
+<div th:replace="~{fragments/auth-modal :: authModal}"></div>
 <script th:src="@{/js/auth-forms.js}"></script>
 <script th:src="@{/js/user-dropdown.js}"></script>
 <script>
@@ -1242,14 +1242,13 @@
                 }
                 if (allOrders.length > 0) {
                     // Sắp xếp theo role: user thấy mới nhất trước, admin thấy cũ nhất trước
-                    if (isAdmin) {
-                        allOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-                    } else {
+<!--                    if (isAdmin) {-->
+<!--                        allOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));-->
+<!--                    } else {-->
                         allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    }
+<!--                    }-->
                     filteredOrders = [...allOrders];
                     renderOrdersWithPagination();
-                    updateStats();
                 } else {
                     showEmptyOrders(isAdmin ? 'Chưa có đơn hàng nào' : 'Bạn chưa có đơn hàng nào');
                 }
@@ -1267,44 +1266,24 @@
         const adminControls = document.getElementById('adminControls');
         const userControls = document.getElementById('userControls');
         
-        if (isAdmin) {
-            ordersTitle.textContent = 'Quản lý đơn hàng';
-            adminControls.style.display = 'block';
-            userControls.style.display = 'none';
-            
-            // Add event listeners for filters
-            const statusFilter = document.getElementById('statusFilter');
-            const searchOrder = document.getElementById('searchOrder');
-            const sortOrder = document.getElementById('sortOrder');
-            
-            if (statusFilter) statusFilter.addEventListener('change', applyFilters);
-            if (searchOrder) searchOrder.addEventListener('input', applyFilters);
-            if (sortOrder) sortOrder.addEventListener('change', applyFilters);
-        } else {
+<!--        if (isAdmin) {-->
+<!--            ordersTitle.textContent = 'Quản lý đơn hàng';-->
+<!--            adminControls.style.display = 'block';-->
+<!--            userControls.style.display = 'none';-->
+<!--            -->
+<!--            // Add event listeners for filters-->
+<!--            const statusFilter = document.getElementById('statusFilter');-->
+<!--            const searchOrder = document.getElementById('searchOrder');-->
+<!--            const sortOrder = document.getElementById('sortOrder');-->
+<!--            -->
+<!--            if (statusFilter) statusFilter.addEventListener('change', applyFilters);-->
+<!--            if (searchOrder) searchOrder.addEventListener('input', applyFilters);-->
+<!--            if (sortOrder) sortOrder.addEventListener('change', applyFilters);-->
+<!--        } else {-->
             ordersTitle.textContent = 'Đơn hàng của tôi';
             adminControls.style.display = 'none';
             userControls.style.display = 'block';
-        }
-    }
-
-    // Update stats for admin
-    function updateStats() {
-        if (!isAdmin) return;
-        
-        const statsSummary = document.getElementById('statsSummary');
-        const totalOrders = document.getElementById('totalOrders');
-        const totalRevenue = document.getElementById('totalRevenue');
-        
-        if (statsSummary && totalOrders && totalRevenue) {
-            statsSummary.style.display = 'flex';
-            totalOrders.textContent = allOrders.length;
-            
-            const revenue = allOrders.reduce((sum, order) => {
-                return sum + parseFloat(order.totalPrice || 0);
-            }, 0);
-            
-            totalRevenue.textContent = formatPrice(revenue);
-        }
+<!--        }-->
     }
 
     // Apply filters for normal users
@@ -1376,9 +1355,6 @@
             performCancelOrder(currentOrderId, reason);
         } else if (currentAction === 'confirmPayment') {
             performConfirmPayment(currentOrderId);
-        } else if (currentAction === 'updateStatus') {
-            const newStatus = document.getElementById('statusSelect').value;
-            performUpdateStatus(currentOrderId, newStatus);
         }
         closeModal();
     }
@@ -1438,20 +1414,15 @@
                     break;
             }
         } else {
-            // Default sorting based on role
-            if (isAdmin) {
-                // Admin: đơn hàng cũ nhất trước
-                filtered.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            } else {
-                // User: đơn hàng mới nhất trước
-                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            }
+
+            // User: đơn hàng mới nhất trước
+            filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
         }
         
         filteredOrders = filtered;
         currentPage = 1;
         renderOrdersWithPagination();
-        updateStats();
     }
 
     // Render orders with pagination
@@ -1555,12 +1526,12 @@
                         ${isAdmin ? `
                             <div class="admin-status-control">
                                 <span class="order-status ${statusClass}">${statusText}</span>
-                                <select class="status-select" onchange="updateOrderStatus(${order.id}, this.value)">
-                                    <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Đang xử lý</option>
-                                    <option value="SHIPPING" ${order.status === 'SHIPPING' ? 'selected' : ''}>Đang giao</option>
-                                    <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Hoàn tất</option>
-                                    <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
-                                </select>
+<!--                                <select class="status-select" onchange="updateOrderStatus(${order.id}, this.value)">-->
+<!--                                    <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Đang xử lý</option>-->
+<!--                                    <option value="SHIPPING" ${order.status === 'SHIPPING' ? 'selected' : ''}>Đang giao</option>-->
+<!--                                    <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Hoàn tất</option>-->
+<!--                                    <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>-->
+<!--                                </select>-->
                             </div>
                         ` : `
                             <span class="order-status ${statusClass}">${statusText}</span>
@@ -1620,13 +1591,6 @@
                                 <button class="action-btn btn-success" onclick="confirmPayment(${order.id})">
                                     <i class="fas fa-check"></i>
                                     Xác nhận thanh toán
-                                </button>
-                            ` : ''}
-
-                            ${isAdmin ? `
-                                <button class="action-btn btn-warning" onclick="exportOrder(${order.id})">
-                                    <i class="fas fa-download"></i>
-                                    Export
                                 </button>
                             ` : ''}
                         </div>
