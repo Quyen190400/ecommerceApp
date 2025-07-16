@@ -1242,11 +1242,7 @@
                 }
                 if (allOrders.length > 0) {
                     // Sắp xếp theo role: user thấy mới nhất trước, admin thấy cũ nhất trước
-<!--                    if (isAdmin) {-->
-<!--                        allOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));-->
-<!--                    } else {-->
                         allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-<!--                    }-->
                     filteredOrders = [...allOrders];
                     renderOrdersWithPagination();
                 } else {
@@ -1526,12 +1522,6 @@
                         ${isAdmin ? `
                             <div class="admin-status-control">
                                 <span class="order-status ${statusClass}">${statusText}</span>
-<!--                                <select class="status-select" onchange="updateOrderStatus(${order.id}, this.value)">-->
-<!--                                    <option value="PENDING" ${order.status === 'PENDING' ? 'selected' : ''}>Đang xử lý</option>-->
-<!--                                    <option value="SHIPPING" ${order.status === 'SHIPPING' ? 'selected' : ''}>Đang giao</option>-->
-<!--                                    <option value="COMPLETED" ${order.status === 'COMPLETED' ? 'selected' : ''}>Hoàn tất</option>-->
-<!--                                    <option value="CANCELLED" ${order.status === 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>-->
-<!--                                </select>-->
                             </div>
                         ` : `
                             <span class="order-status ${statusClass}">${statusText}</span>

@@ -417,6 +417,20 @@ body.dark-theme .footer-bottom {
     color: #3e5c3a;
 }
 
+.action-btn.single-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    min-width: 120px;
+    font-size: 1rem;
+    font-weight: 500;
+    gap: 8px;
+}
+
 /* Cart Badge */
 .cart-badge {
     position: absolute;
@@ -672,6 +686,22 @@ input:checked + .slider:before {
 .mobile-nav-link.active {
     background: rgba(62, 92, 58, 0.05);
     color: #3e5c3a;
+}
+
+.mobile-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #3e5c3a;
+    transition: width 0.3s ease;
+}
+
+.mobile-nav-link.active::after,
+.mobile-nav-link:hover::after {
+    width: 100%;
 }
 
 .hero {
@@ -2180,4 +2210,11 @@ body.dark-theme .carousel-track {
 @media (max-width: 600px) {
   .product-card, .featured-card { height: 380px; }
   .product-info { min-height: 120px; }
+}
+
+/* Đảm bảo underline cho nav-link khi active hoặc hover (fix cho cả JS highlight) */
+.nav-link.active::after, .nav-link:hover::after,
+.mobile-nav-link.active::after, .mobile-nav-link:hover::after {
+    width: 100% !important;
+    background: #3e5c3a !important;
 }

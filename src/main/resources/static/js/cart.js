@@ -29,7 +29,7 @@ function loadCart() {
                 renderCartItems(data.items);
                 updateCartSummary();
             } else {
-                showEmptyCart('Giỏ hàng trống');
+                showEmptyCart('Hãy chọn sản phẩm để tiến hành đặt hàng');
             }
         })
         .catch(error => {
@@ -125,7 +125,19 @@ function showEmptyCart(message) {
         </div>
     `;
     
-    cartSummary.style.display = 'none';
+    // Luôn hiển thị tổng quan, cập nhật về 0
+    cartSummary.style.display = 'block';
+    document.getElementById('totalItems').textContent = 0;
+    document.getElementById('totalPrice').textContent = '0đ';
+    document.getElementById('finalTotal').textContent = '0đ';
+    
+    // Disable checkout button khi giỏ hàng trống
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+        checkoutBtn.disabled = true;
+        // checkoutBtn.innerHTML = '<i class="fas fa-shopping-bag"></i> Chọn sản phẩm';
+        checkoutBtn.title = 'Vui lòng chọn sản phẩm trước khi đặt hàng';
+    }
 }
 
 // Update quantity

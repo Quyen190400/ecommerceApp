@@ -50,29 +50,15 @@ public class AdminProductController {
             @RequestParam(value = "origin", required = false) String origin,
             @RequestParam(value = "status", required = false, defaultValue = "true") Boolean status,
             @RequestParam(value = "file", required = false) MultipartFile file
-    ) throws IOException {
+    ) {
         try {
-            // Lưu file nếu có
-            if (file != null && !file.isEmpty()) {
-                String uploadPath = System.getProperty("user.dir") + File.separator + "uploads" + File.separator + "images";
-                File uploadDir = new File(uploadPath);
-                if (!uploadDir.exists()) uploadDir.mkdirs();
-                File dest = new File(uploadDir, imageUrl);
-                file.transferTo(dest);
-            }
-            AdminProductRequest req = new AdminProductRequest();
-            req.setName(name);
-            req.setDescription(description);
-            req.setImageUrl(imageUrl);
-            req.setPrice(price);
-            req.setStockQuantity(stockQuantity);
-            req.setTeaType(teaType);
-            req.setTasteNote(tasteNote);
-            req.setUsageGuide(usageGuide);
-            req.setHealthBenefit(healthBenefit);
-            req.setOrigin(origin);
-            req.setStatus(status);
-            return ResponseEntity.ok(productService.createAdminProduct(req));
+            return ResponseEntity.ok(productService.createAdminProduct(
+                name, description, imageUrl, price, stockQuantity, teaType, tasteNote, usageGuide, healthBenefit, origin, status, file
+            ));
+        } catch (IOException ex) {
+            java.util.Map<String, String> error = new java.util.HashMap<>();
+            error.put("message", "Lỗi xử lý file ảnh: " + ex.getMessage());
+            return ResponseEntity.status(500).body(error);
         } catch (RuntimeException ex) {
             java.util.Map<String, String> error = new java.util.HashMap<>();
             error.put("message", ex.getMessage());
@@ -80,12 +66,56 @@ public class AdminProductController {
         }
     }
 
+    // PUT: Update sản phẩm KHÔNG có file (application/json)
     @PutMapping(path = "/{id}", consumes = "application/json")
-    public ResponseEntity<AdminProductResponse> updateProductJson(
+    public ResponseEntity<?> updateProductJson(
             @PathVariable("id") Long id,
             @RequestBody AdminProductRequest req
     ) {
-        return ResponseEntity.ok(productService.updateAdminProduct(id, req));
+        try {
+            return ResponseEntity.ok(productService.updateAdminProduct(id, req, null));
+        } catch (IOException ex) {
+            java.util.Map<String, String> error = new java.util.HashMap<>();
+            error.put("message", "Lỗi xử lý file ảnh: " + ex.getMessage());
+            return ResponseEntity.status(500).body(error);
+        } catch (RuntimeException ex) {
+            java.util.Map<String, String> error = new java.util.HashMap<>();
+            error.put("message", ex.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
+    }
+
+    // PUT: Update sản phẩm CÓ file (multipart/form-data)
+    @PutMapping(path = "/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updateProductMultipart(
+            @PathVariable("id") Long id,
+            @RequestParam("name") String name,
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam("imageUrl") String imageUrl,
+            @RequestParam("price") Double price,
+            @RequestParam("stockQuantity") Integer stockQuantity,
+            @RequestParam("teaType") String teaType,
+            @RequestParam(value = "tasteNote", required = false) String tasteNote,
+            @RequestParam(value = "usageGuide", required = false) String usageGuide,
+            @RequestParam(value = "healthBenefit", required = false) String healthBenefit,
+            @RequestParam(value = "origin", required = false) String origin,
+            @RequestParam(value = "status", required = false, defaultValue = "true") Boolean status,
+            @RequestParam(value = "file", required = false) MultipartFile file
+    ) {
+        try {
+            return ResponseEntity.ok(productService.updateAdminProduct(
+                id,
+                name, description, imageUrl, price, stockQuantity, teaType, tasteNote, usageGuide, healthBenefit, origin, status, file
+            ));
+        } catch (IOException ex) {
+            java.util.Map<String, String> error = new java.util.HashMap<>();
+            error.put("message", "Lỗi xử lý file ảnh: " + ex.getMessage());
+            return ResponseEntity.status(500).body(error);
+        } catch (RuntimeException ex) {
+            java.util.Map<String, String> error = new java.util.HashMap<>();
+            error.put("message", ex.getMessage());
+            return ResponseEntity.badRequest().body(error);
+        }
     }
 
     @DeleteMapping("/{id}")
