@@ -21,7 +21,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Admin Product", description = "Admin APIs for managing products: create, update, delete, and toggle status.")
 @RestController
 @RequestMapping("/api/admin/products")
 @PreAuthorize("hasRole('ADMIN')")
@@ -29,6 +32,7 @@ public class AdminProductController {
     @Autowired
     private ProductService productService;
 
+    @Operation(description = "Get a paginated list of all products for admin (requires ADMIN role)")
     @GetMapping
     public ResponseEntity<PageDTO<AdminProductResponse>> getAllProducts(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -36,6 +40,7 @@ public class AdminProductController {
         return ResponseEntity.ok(PageDTO.of(productService.getAllAdminProducts(PageRequest.of(page, size))));
     }
 
+    @Operation(description = "Create a new product (requires ADMIN role)")
     @PostMapping
     public ResponseEntity<?> createProduct(
             @RequestParam("name") String name,
@@ -67,6 +72,7 @@ public class AdminProductController {
     }
 
     // PUT: Update sản phẩm KHÔNG có file (application/json)
+    @Operation(description = "Update a product by ID with JSON body (requires ADMIN role)")
     @PutMapping(path = "/{id}", consumes = "application/json")
     public ResponseEntity<?> updateProductJson(
             @PathVariable("id") Long id,
@@ -86,6 +92,7 @@ public class AdminProductController {
     }
 
     // PUT: Update sản phẩm CÓ file (multipart/form-data)
+    @Operation(description = "Update a product by ID with multipart form data (requires ADMIN role)")
     @PutMapping(path = "/{id}", consumes = "multipart/form-data")
     public ResponseEntity<?> updateProductMultipart(
             @PathVariable("id") Long id,
@@ -118,12 +125,14 @@ public class AdminProductController {
         }
     }
 
+    @Operation(description = "Delete a product by ID (requires ADMIN role)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable("id") Long id) {
         productService.deleteAdminProduct(id);
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Toggle the status (active/inactive) of a product by ID (requires ADMIN role)")
     @PatchMapping("/{id}/toggle-status")
     public ResponseEntity<AdminProductResponse> toggleProductStatus(@PathVariable("id") Long id) {
         return ResponseEntity.ok(productService.toggleAdminProductStatus(id));

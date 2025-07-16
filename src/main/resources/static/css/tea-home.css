@@ -2218,3 +2218,15 @@ body.dark-theme .carousel-track {
     width: 100% !important;
     background: #3e5c3a !important;
 }
+
+input, textarea, select {
+    font-family: 'Roboto', 'Noto Serif SC', serif;
+    font-size: 15px;
+    color: #1E1E1E;
+}
+
+.description, .usage-guide, .product-info, .product-title, .product-card, .product-detail-description {
+    font-family: 'Roboto', 'Noto Serif SC', serif;
+    font-size: 15px;
+    color: #1E1E1E;
+}

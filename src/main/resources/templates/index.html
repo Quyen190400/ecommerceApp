@@ -159,7 +159,7 @@
 <!-- Giới thiệu -->
 <section class="intro">
     <div class="intro-img">
-        <img th:src="@{/uploads/images/banner3.jpg}" alt="Người hái chè">
+        <img th:src="@{/images/banner3.jpg}" alt="Người hái chè">
     </div>
     <div class="intro-text">
         <h2>Văn hóa Trà Xanh</h2>
@@ -176,22 +176,22 @@
     <h2>Nghệ Thuật Trà</h2>
     <div class="topic-grid">
         <div class="topic-card">
-            <img src="/uploads/images/tra-dao.png" alt="Trà Đạo">
+            <img src="/images/tra-dao.png" alt="Trà Đạo">
             <h3>Trà Đạo</h3>
             <p>Nghệ thuật thưởng trà, tĩnh tâm và hòa mình vào thiên nhiên.</p>
         </div>
         <div class="topic-card">
-            <img src="/uploads/images/tra-nghe.png" alt="Trà Nghệ">
+            <img src="/images/tra-nghe.png" alt="Trà Nghệ">
             <h3>Trà Nghệ</h3>
             <p>Tinh hoa chế biến và pha trà truyền thống.</p>
         </div>
         <div class="topic-card">
-            <img src="/uploads/images/tra-vi.png" alt="Trà Vị">
+            <img src="/images/tra-vi.png" alt="Trà Vị">
             <h3>Trà Vị</h3>
             <p>Khám phá hương vị trà xanh thuần khiết.</p>
         </div>
         <div class="topic-card">
-            <img src="/uploads/images/tra-cu.png" alt="Trà Cụ">
+            <img src="/images/tra-cu.png" alt="Trà Cụ">
             <h3>Trà Cụ</h3>
             <p>Bộ ấm chén, phụ kiện trà đạo tinh xảo.</p>
         </div>
@@ -277,10 +277,10 @@
       } else {
         // Nếu không còn Swiper, lấy từ HTML tĩnh (nếu có)
         carts = [
-          `<div class="guide-card"><div class="guide-image"><img src="/uploads/images/tra-an-than.jpg" alt="Trà An Thần"></div><div class="guide-content"><h3>Trà An Thần</h3><p>Giúp thư giãn, ngủ ngon, giảm stress và lo âu.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc an thần</span></p><button class="guide-btn" data-benefit="an-than"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
-          `<div class="guide-card"><div class="guide-image"><img src="/uploads/images/tra-giam-can.jpg" alt="Trà Giảm Cân"></div><div class="guide-content"><h3>Trà Giảm Cân</h3><p>Hỗ trợ giảm cân, thanh lọc cơ thể, tốt cho sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà xanh giảm cân</span></p><button class="guide-btn" data-benefit="giam-can"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
-          `<div class="guide-card"><div class="guide-image"><img src="/uploads/images/tra-thu-gian.jpg" alt="Trà Thảo mộc"></div><div class="guide-content"><h3>Trà Thảo mộc</h3><p>Giúp làm dịu thần kinh, hỗ trợ tiêu hóa, tăng cường sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc nguyên bông</span></p><button class="guide-btn" data-benefit="thao-moc"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
-          `<div class="guide-card"><div class="guide-image"><img src="/uploads/images/bo-am-tra.jpg" alt="Dụng cụ trà"></div><div class="guide-content"><h3>Dụng cụ trà</h3><p>Bộ ấm chén, phụ kiện trà đạo tinh xảo, nâng tầm trải nghiệm thưởng trà.</p><p class="suggested-product">Gợi ý: <span>Bộ ấm chén Bát Tràng</span></p><button class="guide-btn" data-benefit="dung-cu"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`
+          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-an-than.jpg" alt="Trà An Thần"></div><div class="guide-content"><h3>Trà An Thần</h3><p>Giúp thư giãn, ngủ ngon, giảm stress và lo âu.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc an thần</span></p><button class="guide-btn" data-benefit="an-than"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
+          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-giam-can.jpg" alt="Trà Giảm Cân"></div><div class="guide-content"><h3>Trà Giảm Cân</h3><p>Hỗ trợ giảm cân, thanh lọc cơ thể, tốt cho sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà xanh giảm cân</span></p><button class="guide-btn" data-benefit="giam-can"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
+          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-thu-gian.jpg" alt="Trà Thảo mộc"></div><div class="guide-content"><h3>Trà Thảo mộc</h3><p>Giúp làm dịu thần kinh, hỗ trợ tiêu hóa, tăng cường sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc nguyên bông</span></p><button class="guide-btn" data-benefit="thao-moc"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
+          `<div class="guide-card"><div class="guide-image"><img src="/images/bo-am-tra.jpg" alt="Dụng cụ trà"></div><div class="guide-content"><h3>Dụng cụ trà</h3><p>Bộ ấm chén, phụ kiện trà đạo tinh xảo, nâng tầm trải nghiệm thưởng trà.</p><p class="suggested-product">Gợi ý: <span>Bộ ấm chén Bát Tràng</span></p><button class="guide-btn" data-benefit="dung-cu"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`
         ];
       }
       let currentIndex = 0;

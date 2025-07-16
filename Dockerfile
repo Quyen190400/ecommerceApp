@@ -49,11 +49,6 @@ COPY --from=build /app/build/libs/*.jar app.jar
 RUN mkdir -p /app/uploads/images && \
     chown -R appuser:appgroup /app
 
-# Copy ảnh mẫu vào image
-COPY uploads/images /app/uploads/images
-
-# Kiểm tra file ảnh đã copy vào image chưa
-RUN ls -l /app/uploads/images
 # Switch to non-root user
 USER appuser
 

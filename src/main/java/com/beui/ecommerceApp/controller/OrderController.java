@@ -35,7 +35,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Order", description = "APIs for managing orders: place, view, update, cancel, and get order statistics.")
 @RestController
 @RequestMapping("/api/orders")
 public class OrderController {
@@ -243,6 +246,7 @@ public class OrderController {
     }
     
     // Tạo đơn hàng mới
+    @Operation(description = "Create a new order from selected cart items (requires login)")
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest, HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
@@ -278,6 +282,7 @@ public class OrderController {
         }
     }
     
+    @Operation(description = "Buy now: create an order for a single product immediately (requires login)")
     @PostMapping("/buy-now")
     public ResponseEntity<?> buyNow(@RequestBody Map<String, Object> payload, HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
@@ -291,6 +296,7 @@ public class OrderController {
 
 
     // Admin: Lọc đơn hàng
+    @Operation(description = "Admin: Filter orders by status, ID, date, or search term (requires ADMIN role)")
     @GetMapping("/filter")
     public ResponseEntity<?> filterOrdersForAdmin(
             @RequestParam(value = "status", required = false) String status,
@@ -321,6 +327,7 @@ public class OrderController {
     }
     
     // Lấy chi tiết đơn hàng
+    @Operation(description = "Get order details by order ID (owner or ADMIN only)")
     @GetMapping("/{orderId}")
     public ResponseEntity<?> getOrder(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
@@ -350,6 +357,7 @@ public class OrderController {
     }
     
     // Lấy danh sách đơn hàng của user hoặc tất cả đơn hàng cho admin
+    @Operation(description = "Get all orders of the current user (requires login)")
     @GetMapping("/my-orders")
     public ResponseEntity<?> getMyOrders(HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
@@ -369,6 +377,7 @@ public class OrderController {
     }
     
     // Admin: Lấy tất cả đơn hàng
+    @Operation(description = "Admin: Get all orders (requires ADMIN role)")
     @GetMapping("/admin/all")
     public ResponseEntity<?> getAllOrders(HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
@@ -395,6 +404,7 @@ public class OrderController {
     }
     
     // Admin: Cập nhật trạng thái đơn hàng
+    @Operation(description = "Admin: Update order status (requires ADMIN role)")
     @PutMapping("/{orderId}/status")
     public ResponseEntity<?> updateOrderStatus(@PathVariable("orderId") Long orderId, @RequestBody Map<String, String> request, HttpServletRequest httpRequest) {
         Optional<AppUser> userOpt = getCurrentUser(httpRequest);
@@ -422,6 +432,7 @@ public class OrderController {
     }
     
     // User: Hủy đơn hàng
+    @Operation(description = "Cancel an order by order ID (owner only)")
     @PutMapping("/{orderId}/cancel")
     public ResponseEntity<?> cancelOrder(@PathVariable("orderId") Long orderId, @RequestBody(required = false) Map<String, String> request, HttpServletRequest httpRequest) {
         Optional<AppUser> userOpt = getCurrentUser(httpRequest);
@@ -472,6 +483,7 @@ public class OrderController {
     }
     
     // User: Xác nhận thanh toán
+    @Operation(description = "Confirm payment for an order (owner only)")
     @PutMapping("/{orderId}/confirm-payment")
     public ResponseEntity<?> confirmPayment(@PathVariable("orderId") Long orderId, HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
@@ -504,6 +516,7 @@ public class OrderController {
     }
     
     // Admin: Lấy tất cả đơn hàng (endpoint cho admin-orders.html)
+    @Operation(description = "Admin: Get all orders for admin-orders.html (requires ADMIN role)")
     @GetMapping("/admin")
     public ResponseEntity<?> getAdminOrders(HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
@@ -534,6 +547,7 @@ public class OrderController {
     }
     
     // Admin: Lấy thống kê đơn hàng
+    @Operation(description = "Admin: Get order statistics (requires ADMIN role)")
     @GetMapping("/stats")
     public ResponseEntity<?> getOrderStats(HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);

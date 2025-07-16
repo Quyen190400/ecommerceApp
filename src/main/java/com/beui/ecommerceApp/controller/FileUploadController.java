@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "File Upload", description = "API for uploading product images and files.")
 @RestController
 @RequestMapping("/api/upload")
 public class FileUploadController {
@@ -20,6 +23,7 @@ public class FileUploadController {
     @Autowired
     private FileUploadService fileUploadService;
 
+    @Operation(description = "Upload an image file and return its URL (requires authentication)")
     @PostMapping("/image")
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         String url = fileUploadService.uploadImage(file);

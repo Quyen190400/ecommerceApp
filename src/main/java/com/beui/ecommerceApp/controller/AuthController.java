@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Authentication", description = "APIs for user authentication: login, register, logout, and get current user info.")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -40,21 +43,25 @@ public class AuthController {
     @Autowired
     private AuthService authService;
     
+    @Operation(description = "Authenticate user and return JWT token (login)")
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
         return authService.login(loginRequest, response);
     }
     
+    @Operation(description = "Get current authenticated user information from JWT token")
     @GetMapping("/me")
     public ResponseEntity<Map<String, Object>> getCurrentUser(HttpServletRequest request) {
         return authService.getCurrentUser(request);
     }
     
+    @Operation(description = "Register a new user account")
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@RequestBody RegisterRequest registerRequest) {
         return authService.register(registerRequest);
     }
     
+    @Operation(description = "Logout user and clear JWT cookie")
     @PostMapping("/logout")
     public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
         return authService.logout(response);

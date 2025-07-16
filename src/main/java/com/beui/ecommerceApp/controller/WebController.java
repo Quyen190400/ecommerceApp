@@ -23,7 +23,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Web Pages", description = "Controllers for rendering web pages and handling web navigation for the GreenTea App.")
 @Controller
 public class WebController {
 
