@@ -121,7 +121,7 @@ function showEmptyCart(message) {
         <div class="empty-cart">
             <i class="fas fa-shopping-cart"></i>
             <h2>${message}</h2>
-            <a href="/" class="continue-shopping">Tiếp tục mua sắm</a>
+            <a href="/#products" class="continue-shopping">Tiếp tục mua sắm</a>
         </div>
     `;
     
