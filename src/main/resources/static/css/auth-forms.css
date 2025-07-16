@@ -141,6 +141,8 @@ body.modal-open {
 .form-group {
     margin-bottom: 12px;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
@@ -185,24 +187,36 @@ body.modal-open {
 /* Password Input */
 .password-input {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: block;
 }
 
 .password-input input {
-    padding-right: 50px;
+    width: 100%;
+    padding-right: 44px;
+    box-sizing: border-box;
 }
 
 .password-toggle {
     position: absolute;
     right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
     background: none;
     border: none;
-    color: #666;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    color: #888;
+    font-size: 18px;
+    z-index: 2;
+    padding: 0;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:focus {
+    outline: none;
 }
 
 .password-toggle:hover {
@@ -214,15 +228,20 @@ body.modal-open {
 .error-message {
     display: none;
     color: #e74c3c;
-    font-size: 11px;
-    line-height: 1.2;
-    margin-top: 0 !important;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-top: 4px !important;
     opacity: 0;
     transform: translateY(-5px);
     transition: all 0.3s ease;
-    padding: 0;
+    padding: 0 2px;
     min-height: 0;
     background: none;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    text-align: left;
+    white-space: normal;
 }
 
 .error-message.show {

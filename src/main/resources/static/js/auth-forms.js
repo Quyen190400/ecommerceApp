@@ -188,12 +188,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const loginEmail = document.getElementById('loginEmail');
         const loginPassword = document.getElementById('loginPassword');
 
+        // --- Cập nhật cho login form ---
         if (loginEmail) {
-            loginEmail.addEventListener('input', function() {
-                loginFormInteracted = true;
-            });
+            let interacted = false;
             loginEmail.addEventListener('blur', function() {
-                if (!loginFormInteracted) return;
+                interacted = true;
                 if (!this.value.trim()) {
                     showError('loginEmailError', 'Email không được để trống');
                     this.classList.add('error');
@@ -205,14 +204,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('error');
                 }
             });
+            loginEmail.addEventListener('input', function() {
+                if (interacted) {
+                    hideError('loginEmailError');
+                    this.classList.remove('error');
+                }
+            });
         }
 
         if (loginPassword) {
-            loginPassword.addEventListener('input', function() {
-                loginFormInteracted = true;
-            });
+            let interacted = false;
             loginPassword.addEventListener('blur', function() {
-                if (!loginFormInteracted) return;
+                interacted = true;
                 if (!this.value.trim()) {
                     showError('loginPasswordError', 'Mật khẩu không được để trống');
                     this.classList.add('error');
@@ -221,7 +224,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('error');
                 }
             });
+            loginPassword.addEventListener('input', function() {
+                if (interacted) {
+                    hideError('loginPasswordError');
+                    this.classList.remove('error');
+                }
+            });
         }
+        // --- END cập nhật ---
 
         // Register form validation
         const registerName = document.getElementById('registerName');
@@ -230,8 +240,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const registerConfirmPassword = document.getElementById('registerConfirmPassword');
         const agreeTerms = document.getElementById('agreeTerms');
 
+        // --- Cập nhật cho register form ---
         if (registerName) {
+            let interacted = false;
             registerName.addEventListener('blur', function() {
+                interacted = true;
                 if (!this.value.trim()) {
                     showError('registerNameError', 'Họ tên không được để trống');
                     this.classList.add('error');
@@ -243,10 +256,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('error');
                 }
             });
+            registerName.addEventListener('input', function() {
+                if (interacted) {
+                    hideError('registerNameError');
+                    this.classList.remove('error');
+                }
+            });
         }
 
         if (registerEmail) {
+            let interacted = false;
             registerEmail.addEventListener('blur', function() {
+                interacted = true;
                 if (!this.value.trim()) {
                     showError('registerEmailError', 'Email không được để trống');
                     this.classList.add('error');
@@ -258,10 +279,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('error');
                 }
             });
+            registerEmail.addEventListener('input', function() {
+                if (interacted) {
+                    hideError('registerEmailError');
+                    this.classList.remove('error');
+                }
+            });
         }
 
         if (registerPassword) {
+            let interacted = false;
             registerPassword.addEventListener('blur', function() {
+                interacted = true;
                 if (!this.value.trim()) {
                     showError('registerPasswordError', 'Mật khẩu không được để trống');
                     this.classList.add('error');
@@ -273,10 +302,18 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('error');
                 }
             });
+            registerPassword.addEventListener('input', function() {
+                if (interacted) {
+                    hideError('registerPasswordError');
+                    this.classList.remove('error');
+                }
+            });
         }
 
         if (registerConfirmPassword) {
+            let interacted = false;
             registerConfirmPassword.addEventListener('blur', function() {
+                interacted = true;
                 const password = registerPassword ? registerPassword.value : '';
                 if (!this.value.trim()) {
                     showError('registerConfirmPasswordError', 'Xác nhận mật khẩu không được để trống');
@@ -289,23 +326,32 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.classList.remove('error');
                 }
             });
+            registerConfirmPassword.addEventListener('input', function() {
+                if (interacted) {
+                    hideError('registerConfirmPasswordError');
+                    this.classList.remove('error');
+                }
+            });
         }
 
         if (agreeTerms) {
+            let interacted = false;
             agreeTerms.addEventListener('change', function() {
+                interacted = true;
                 if (!this.checked) {
                     showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
                 } else {
                     hideError('agreeTermsError');
                 }
             });
-            // Thêm sự kiện blur để hiện lỗi khi bỏ focus mà chưa tick
             agreeTerms.addEventListener('blur', function() {
+                interacted = true;
                 if (!this.checked) {
                     showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
                 }
             });
         }
+        // --- END cập nhật ---
     }
 
     // Toast notification
