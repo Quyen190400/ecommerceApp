@@ -830,5 +830,45 @@
         }
     });
 </script>
+<script>
+// Scroll spy: Gạch chân nav-link khi cuộn tới section tương ứng
+window.addEventListener('DOMContentLoaded', function() {
+    const sections = [
+        {id: 'home', nav: ['/', '/#home']},
+        {id: 'art', nav: ['/\#art']},
+        {id: 'products', nav: ['/\#products']},
+        {id: 'contact', nav: ['/\#contact']}
+    ];
+    const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+    function onScrollSpy() {
+        let scrollPos = window.scrollY || document.documentElement.scrollTop;
+        let found = false;
+        for (let i = sections.length - 1; i >= 0; i--) {
+            const sec = document.getElementById(sections[i].id);
+            if (sec && scrollPos + 80 >= sec.offsetTop) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (sections[i].nav.some(href => link.getAttribute('href').endsWith(href))) {
+                        link.classList.add('active');
+                    }
+                });
+                found = true;
+                break;
+            }
+        }
+        // Nếu không section nào match, active Trang chủ
+        if (!found) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '/' || link.getAttribute('href') === '/#home') {
+                    link.classList.add('active');
+                }
+            });
+        }
+    }
+    window.addEventListener('scroll', onScrollSpy);
+    onScrollSpy();
+});
+</script>
 </body>
 </html> 
