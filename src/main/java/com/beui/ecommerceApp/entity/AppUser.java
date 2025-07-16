@@ -14,6 +14,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Entity
@@ -54,8 +55,9 @@ public class AppUser {
     
     // Constructors
     public AppUser() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZoneId vnZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        this.createdAt = LocalDateTime.now(vnZone);
+        this.updatedAt = LocalDateTime.now(vnZone);
     }
     
     public AppUser(String fullName, String email, String password, String role) {
@@ -150,6 +152,6 @@ public class AppUser {
     
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
     }
 } 

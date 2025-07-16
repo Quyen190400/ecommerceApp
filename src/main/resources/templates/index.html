@@ -61,7 +61,6 @@
             padding: 15px 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: slideDown 0.3s ease;
         }
         
         .success-message {
@@ -178,7 +177,7 @@
         <div class="topic-card">
             <img src="/images/tra-dao.png" alt="Trà Đạo">
             <h3>Trà Đạo</h3>
-            <p>Nghệ thuật thưởng trà, tĩnh tâm và hòa mình vào thiên nhiên.</p>
+            <p>Nghệ thuật thưởng trà, hòa mình vào thiên nhiên.</p>
         </div>
         <div class="topic-card">
             <img src="/images/tra-nghe.png" alt="Trà Nghệ">
@@ -210,7 +209,12 @@
                 <h4 class="product-title-multiline" th:text="${product.name}">Tên sản phẩm</h4>
                 <p class="sold-count" th:text="'Đã bán: ' + ${product.soldCount} + ' sản phẩm'"></p>
                 <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</p>
-                <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                <div class="product-actions">
+                    <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                    <button type="button" class="add-cart-btn" th:attr="data-product-id=${product.id}" title="Thêm vào giỏ hàng">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -228,7 +232,12 @@
                 <h4 th:text="${product.name}">Tên sản phẩm</h4>
                 <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</p>
                 <p class="description" th:text="${#strings.abbreviate(product.description, 100)}">Mô tả sản phẩm...</p>
-                <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                <div class="product-actions">
+                    <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                    <button type="button" class="add-cart-btn" th:attr="data-product-id=${product.id}" title="Thêm vào giỏ hàng">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -708,6 +717,7 @@
     </button>
 </div>
 
+<script th:src="@{/js/cart.js}"></script>
 <script th:src="@{/js/auth-forms.js}"></script>
 <script th:src="@{/js/user-dropdown.js}"></script>
 <script>
