@@ -40,13 +40,11 @@ public class WebController {
 
     @GetMapping("/")
     public String home(Model model, HttpServletRequest request) {
-        System.out.println("🏠 Home page requested");
         List<Product> products = productService.getAllProducts();
         model.addAttribute("allProducts", products);
 
         List<Product> bestSellers = productService.getBestSellers();
-        model.addAttribute("featuredProducts", bestSellers);
-        
+
         // Add user info from JWT
         addUserInfoToModel(model, request);
         
@@ -293,7 +291,6 @@ public class WebController {
             
             // No valid JWT token found
             model.addAttribute("isAuthenticated", false);
-            System.out.println("❌ No valid JWT token found");
             
         } catch (Exception e) {
             System.out.println("💥 Error processing JWT: " + e.getMessage());
