@@ -17,13 +17,6 @@ function escapeHTML(str) {
   return str?.replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\'':'&#39;','"':'&quot;'}[c])) || '';
 }
 
-function normalizeImageUrl(url) {
-  if (!url) return '';
-  if (url.startsWith('/')) return url;
-  // Nếu chỉ là tên file, tự động prepent
-  return '/uploads/images/' + url;
-}
-
 function handleAuthExpired() {
   if (window.showToast) {
     window.showToast('Vui lòng đăng nhập để tiếp tục', 'warning');
@@ -74,7 +67,7 @@ function renderProducts(products) {
     return;
   }
   products.forEach(p => {
-    const imgUrl = normalizeImageUrl(p.imageUrl);
+    const imgUrl = p.imageUrl;
     tbody.innerHTML += `
       <tr>
         <td><img src="${escapeHTML(imgUrl) || '/static/images/product-placeholder.jpg'}" alt="Ảnh"/></td>
@@ -136,9 +129,8 @@ async function openEditProduct(id) {
     document.getElementById('productId').value = p.id;
     document.getElementById('name').value = p.name;
     document.getElementById('description').value = p.description;
-    // Khi edit, nếu imageUrl là /uploads/images/xxx.jpg thì chỉ show tên file
+    // Khi edit, không cần cắt /uploads/images/ nữa, chỉ lấy nguyên p.imageUrl
     let imgVal = p.imageUrl || '';
-    if (imgVal.startsWith('/uploads/images/')) imgVal = imgVal.substring(15);
     document.getElementById('imageUrl').value = imgVal;
     document.getElementById('price').value = p.price;
     document.getElementById('stockQuantity').value = p.stockQuantity;

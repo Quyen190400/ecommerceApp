@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import java.util.stream.Collectors;
 import java.util.Map;
+import com.beui.ecommerceApp.service.FileUploadService;
 
 @Service
 public class ProductService {
@@ -26,6 +27,9 @@ public class ProductService {
     
     @Autowired
     private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private FileUploadService fileUploadService;
     
     // Lấy tất cả sản phẩm
     public List<Product> getAllProducts() {
@@ -199,13 +203,9 @@ public class ProductService {
             Boolean status,
             org.springframework.web.multipart.MultipartFile file
     ) throws java.io.IOException {
-        // Lưu file nếu có
         if (file != null && !file.isEmpty()) {
-            String uploadPath = System.getProperty("user.dir") + java.io.File.separator + "uploads" + java.io.File.separator + "images";
-            java.io.File uploadDir = new java.io.File(uploadPath);
-            if (!uploadDir.exists()) uploadDir.mkdirs();
-            java.io.File dest = new java.io.File(uploadDir, imageUrl);
-            file.transferTo(dest);
+            String imageUrlCloud = fileUploadService.uploadImage(file);
+            imageUrl = imageUrlCloud;
         }
         AdminProductRequest req = new AdminProductRequest();
         req.setName(name);
@@ -238,13 +238,9 @@ public class ProductService {
             Boolean status,
             org.springframework.web.multipart.MultipartFile file
     ) throws java.io.IOException {
-        // Lưu file nếu có
         if (file != null && !file.isEmpty()) {
-            String uploadPath = System.getProperty("user.dir") + java.io.File.separator + "uploads" + java.io.File.separator + "images";
-            java.io.File uploadDir = new java.io.File(uploadPath);
-            if (!uploadDir.exists()) uploadDir.mkdirs();
-            java.io.File dest = new java.io.File(uploadDir, imageUrl);
-            file.transferTo(dest);
+            String imageUrlCloud = fileUploadService.uploadImage(file);
+            imageUrl = imageUrlCloud;
         }
         AdminProductRequest req = new AdminProductRequest();
         req.setName(name);
@@ -265,11 +261,8 @@ public class ProductService {
     public AdminProductResponse updateAdminProduct(Long id, AdminProductRequest req, org.springframework.web.multipart.MultipartFile file) throws java.io.IOException {
         // Nếu có file thì xử lý lưu file và cập nhật imageUrl
         if (file != null && !file.isEmpty() && req.getImageUrl() != null && !req.getImageUrl().trim().isEmpty()) {
-            String uploadPath = System.getProperty("user.dir") + java.io.File.separator + "uploads" + java.io.File.separator + "images";
-            java.io.File uploadDir = new java.io.File(uploadPath);
-            if (!uploadDir.exists()) uploadDir.mkdirs();
-            java.io.File dest = new java.io.File(uploadDir, req.getImageUrl());
-            file.transferTo(dest);
+            String imageUrlCloud = fileUploadService.uploadImage(file);
+            req.setImageUrl(imageUrlCloud);
         }
         return updateAdminProduct(id, req);
     }

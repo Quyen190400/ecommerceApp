@@ -32,3 +32,8 @@ app:
 server:
   port: ${SERVER_PORT:8080}
 
+cloudinary:
+  cloud_name: ${CLOUDINARY_CLOUD_NAME:djht19dig}
+  api_key: ${CLOUDINARY_API_KEY:766633261474643}
+  api_secret: ${CLOUDINARY_API_SECRET:E9gNgIS3z0HnmiTyopFgxvtTj_c}
+

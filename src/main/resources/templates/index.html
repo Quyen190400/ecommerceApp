@@ -204,7 +204,7 @@
     <div class="products-grid">
         <div class="product-card" th:each="product : ${featuredProducts}">
             <div class="product-image">
-                <img th:src="@{|/uploads/images/${product.imageUrl}|}" th:alt="${product.name}">
+                <img th:src="${product.imageUrl}" th:alt="${product.name}">
             </div>
             <div class="product-info">
                 <h4 class="product-title-multiline" th:text="${product.name}">Tên sản phẩm</h4>
@@ -222,7 +222,7 @@
     <div class="products-grid" id="productsGrid">
         <div class="product-card" th:each="product,iterStat : ${allProducts}" th:classappend="${iterStat.index} >= 8 ? 'hidden-product' : ''">
             <div class="product-image">
-                <img th:src="@{|/uploads/images/${product.imageUrl}|}" th:alt="${product.name}">
+                <img th:src="${product.imageUrl}" th:alt="${product.name}">
             </div>
             <div class="product-info">
                 <h4 th:text="${product.name}">Tên sản phẩm</h4>

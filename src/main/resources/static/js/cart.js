@@ -50,7 +50,7 @@ function renderCartItems(items) {
                        checked 
                        onchange="toggleItemSelection(${item.id})">
             </div>
-            <img src="/uploads/images/${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
+            <img src="${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
             <div class="item-info">
                 <h3>${item.productName}</h3>
                 <div class="item-price">${formatPrice(item.unitPrice)}</div>

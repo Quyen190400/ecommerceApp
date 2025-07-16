@@ -396,7 +396,7 @@
                     <h3>Sản phẩm đã đặt:</h3>
                     ${order.orderItems.map(item => `
                         <div class="order-item">
-                                                            <img src="/uploads/images/${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
+                            <img src="${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
                             <div class="item-info">
                                 <div class="item-name">${item.productName}</div>
                                 <div class="item-details">

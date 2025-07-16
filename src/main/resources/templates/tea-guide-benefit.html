@@ -641,7 +641,7 @@ function renderPage() {
           id: p.id,
           name: p.name,
           price: p.price,
-          image: p.imageUrl ? '/uploads/images/' + p.imageUrl : '/uploads/images/product-placeholder.jpg',
+          image: p.imageUrl ? p.imageUrl : '/uploads/images/product-placeholder.jpg',
           description: p.description || p.shortDescription || '',
           health_benefit: p.healthBenefit || '',
           tea_type: p.teaType || '',
