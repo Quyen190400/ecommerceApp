@@ -29,7 +29,7 @@ function loadCart() {
                 renderCartItems(data.items);
                 updateCartSummary();
             } else {
-                showEmptyCart('Giỏ hàng trống');
+                showEmptyCart('Hãy chọn sản phẩm để tiến hành đặt hàng');
             }
         })
         .catch(error => {
@@ -50,7 +50,7 @@ function renderCartItems(items) {
                        checked 
                        onchange="toggleItemSelection(${item.id})">
             </div>
-            <img src="/uploads/images/${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
+            <img src="${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
             <div class="item-info">
                 <h3>${item.productName}</h3>
                 <div class="item-price">${formatPrice(item.unitPrice)}</div>
@@ -121,11 +121,23 @@ function showEmptyCart(message) {
         <div class="empty-cart">
             <i class="fas fa-shopping-cart"></i>
             <h2>${message}</h2>
-            <a href="/" class="continue-shopping">Tiếp tục mua sắm</a>
+            <a href="/#products" class="continue-shopping">Tiếp tục mua sắm</a>
         </div>
     `;
     
-    cartSummary.style.display = 'none';
+    // Luôn hiển thị tổng quan, cập nhật về 0
+    cartSummary.style.display = 'block';
+    document.getElementById('totalItems').textContent = 0;
+    document.getElementById('totalPrice').textContent = '0đ';
+    document.getElementById('finalTotal').textContent = '0đ';
+    
+    // Disable checkout button khi giỏ hàng trống
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+        checkoutBtn.disabled = true;
+        // checkoutBtn.innerHTML = '<i class="fas fa-shopping-bag"></i> Chọn sản phẩm';
+        checkoutBtn.title = 'Vui lòng chọn sản phẩm trước khi đặt hàng';
+    }
 }
 
 // Update quantity

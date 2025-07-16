@@ -23,7 +23,9 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Web Pages", description = "Controllers for rendering web pages and handling web navigation for the GreenTea App.")
 @Controller
 public class WebController {
 
@@ -38,13 +40,11 @@ public class WebController {
 
     @GetMapping("/")
     public String home(Model model, HttpServletRequest request) {
-        System.out.println("🏠 Home page requested");
         List<Product> products = productService.getAllProducts();
         model.addAttribute("allProducts", products);
 
         List<Product> bestSellers = productService.getBestSellers();
-        model.addAttribute("featuredProducts", bestSellers);
-        
+
         // Add user info from JWT
         addUserInfoToModel(model, request);
         
@@ -291,7 +291,6 @@ public class WebController {
             
             // No valid JWT token found
             model.addAttribute("isAuthenticated", false);
-            System.out.println("❌ No valid JWT token found");
             
         } catch (Exception e) {
             System.out.println("💥 Error processing JWT: " + e.getMessage());

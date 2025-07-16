@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import java.util.stream.Collectors;
 import java.util.Map;
+import com.beui.ecommerceApp.service.FileUploadService;
 
 @Service
 public class ProductService {
@@ -26,6 +27,9 @@ public class ProductService {
     
     @Autowired
     private CategoryRepository categoryRepository;
+    
+    @Autowired
+    private FileUploadService fileUploadService;
     
     // Lấy tất cả sản phẩm
     public List<Product> getAllProducts() {
@@ -166,20 +170,101 @@ public class ProductService {
     // ADMIN: Cập nhật sản phẩm
     public AdminProductResponse updateAdminProduct(Long id, AdminProductRequest req) {
         Product product = productRepository.findById(id).orElseThrow();
-        
         // Kiểm tra tên sản phẩm trùng lặp khi update
         String newName = req.getName();
         String oldName = product.getName();
-        
         // Nếu tên mới khác với tên cũ và tên mới đã tồn tại
         if (!newName.equals(oldName) && productRepository.existsByName(newName)) {
             throw new RuntimeException("Tên sản phẩm '" + newName + "' đã tồn tại!");
         }
-        
+        // Nếu không truyền imageUrl (null hoặc rỗng), giữ nguyên ảnh cũ
+        String oldImageUrl = product.getImageUrl();
+        if (req.getImageUrl() == null || req.getImageUrl().trim().isEmpty()) {
+            req.setImageUrl(oldImageUrl);
+        }
         mapAdminProductRequestToProduct(req, product);
         product.setUpdatedAt(java.time.LocalDateTime.now());
         Product saved = productRepository.save(product);
         return toAdminProductResponse(saved);
+    }
+
+    // ADMIN: Thêm sản phẩm (overload, nhận từng trường và file)
+    public AdminProductResponse createAdminProduct(
+            String name,
+            String description,
+            String imageUrl,
+            Double price,
+            Integer stockQuantity,
+            String teaType,
+            String tasteNote,
+            String usageGuide,
+            String healthBenefit,
+            String origin,
+            Boolean status,
+            org.springframework.web.multipart.MultipartFile file
+    ) throws java.io.IOException {
+        if (file != null && !file.isEmpty()) {
+            String imageUrlCloud = fileUploadService.uploadImage(file);
+            imageUrl = imageUrlCloud;
+        }
+        AdminProductRequest req = new AdminProductRequest();
+        req.setName(name);
+        req.setDescription(description);
+        req.setImageUrl(imageUrl);
+        req.setPrice(price);
+        req.setStockQuantity(stockQuantity);
+        req.setTeaType(teaType);
+        req.setTasteNote(tasteNote);
+        req.setUsageGuide(usageGuide);
+        req.setHealthBenefit(healthBenefit);
+        req.setOrigin(origin);
+        req.setStatus(status);
+        return createAdminProduct(req);
+    }
+
+    // ADMIN: Update sản phẩm (overload, nhận từng trường và file)
+    public AdminProductResponse updateAdminProduct(
+            Long id,
+            String name,
+            String description,
+            String imageUrl,
+            Double price,
+            Integer stockQuantity,
+            String teaType,
+            String tasteNote,
+            String usageGuide,
+            String healthBenefit,
+            String origin,
+            Boolean status,
+            org.springframework.web.multipart.MultipartFile file
+    ) throws java.io.IOException {
+        if (file != null && !file.isEmpty()) {
+            String imageUrlCloud = fileUploadService.uploadImage(file);
+            imageUrl = imageUrlCloud;
+        }
+        AdminProductRequest req = new AdminProductRequest();
+        req.setName(name);
+        req.setDescription(description);
+        req.setImageUrl(imageUrl);
+        req.setPrice(price);
+        req.setStockQuantity(stockQuantity);
+        req.setTeaType(teaType);
+        req.setTasteNote(tasteNote);
+        req.setUsageGuide(usageGuide);
+        req.setHealthBenefit(healthBenefit);
+        req.setOrigin(origin);
+        req.setStatus(status);
+        return updateAdminProduct(id, req);
+    }
+
+    // ADMIN: Update sản phẩm (overload, nhận thêm file=null cho JSON)
+    public AdminProductResponse updateAdminProduct(Long id, AdminProductRequest req, org.springframework.web.multipart.MultipartFile file) throws java.io.IOException {
+        // Nếu có file thì xử lý lưu file và cập nhật imageUrl
+        if (file != null && !file.isEmpty() && req.getImageUrl() != null && !req.getImageUrl().trim().isEmpty()) {
+            String imageUrlCloud = fileUploadService.uploadImage(file);
+            req.setImageUrl(imageUrlCloud);
+        }
+        return updateAdminProduct(id, req);
     }
 
     // ADMIN: Xóa sản phẩm

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đặt hàng thành công - Trà Đạo</title>
+    <title>Đặt hàng thành công - Beui</title>
     <link rel="stylesheet" th:href="@{/css/tea-home.css}">
     <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
@@ -276,15 +276,15 @@
         </div>
         
         <div class="action-buttons">
-            <a href="/" class="action-btn btn-primary">
+            <a href="/" class="action-btn btn-primary single-line">
                 <i class="fas fa-home"></i>
                 Về trang chủ
             </a>
-            <a href="/orders" class="action-btn btn-outline">
+            <a href="/orders" class="action-btn btn-outline single-line">
                 <i class="fas fa-list"></i>
                 Xem đơn hàng
             </a>
-            <a href="/cart" class="action-btn btn-secondary">
+            <a href="/cart" class="action-btn btn-secondary single-line">
                 <i class="fas fa-shopping-cart"></i>
                 Giỏ hàng
             </a>
@@ -396,7 +396,7 @@
                     <h3>Sản phẩm đã đặt:</h3>
                     ${order.orderItems.map(item => `
                         <div class="order-item">
-                                                            <img src="/uploads/images/${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
+                            <img src="${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
                             <div class="item-info">
                                 <div class="item-name">${item.productName}</div>
                                 <div class="item-details">
