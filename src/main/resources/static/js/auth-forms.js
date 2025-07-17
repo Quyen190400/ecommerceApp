@@ -746,3 +746,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 }); 
+
+document.addEventListener('DOMContentLoaded', function() {
+    var backToLoginBtn = document.getElementById('backToLoginForm');
+    if (backToLoginBtn) {
+        backToLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (typeof switchForm === 'function') {
+                switchForm('login');
+            }
+        });
+    }
+}); 

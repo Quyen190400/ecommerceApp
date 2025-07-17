@@ -8,6 +8,23 @@
     <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+    // Hàm dùng chung xử lý khi tài khoản bị vô hiệu hóa
+    function handleAuthDeactivated(status, body) {
+      if (status === 403 && body.message === "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.") {
+        if (typeof showToast === 'function') {
+          showToast(body.message, 'error');
+        } else {
+          alert(body.message);
+        }
+        document.querySelectorAll('button, input[type=checkbox], input[type=submit]').forEach(el => el.disabled = true);
+        return true;
+      }
+      return false;
+    }
+    // Cách dùng:
+    // fetch(...).then(res => res.json().then(data => ({status: res.status, body: data}))).then(({status, body}) => { if (handleAuthDeactivated(status, body)) return; ... });
+    </script>
     <style>
         .orders-container {
             max-width: 1200px;
@@ -1186,73 +1203,59 @@
         if (loadOrdersTimeout) {
             clearTimeout(loadOrdersTimeout);
         }
-        
         // Set a new timeout to debounce the request
         loadOrdersTimeout = setTimeout(() => {
             // First check user role
-            fetch('/api/auth/me', {
-                credentials: 'include'
-            })
-            .then(response => response.json())
-            .then(userData => {
-                // Handle both AppUser object and Map format
-                if (userData.authenticated === false) {
-                    showEmptyOrders('Vui lòng đăng nhập để xem đơn hàng');
-                    return;
-                }
-                
-                // Convert Map format to AppUser-like object
-                currentUser = {
-                    id: userData.id || null,
-                    username: userData.username,
-                    email: userData.email,
-                    fullName: userData.fullName,
-                    role: userData.role
-                };
-                
-                isAdmin = userData.role === 'ADMIN';
-                
-                // Debug: Log user data
-                console.log('User data:', userData);
-                console.log('Current user:', currentUser);
-                
-                // Update UI based on role
-                updateUIForRole();
-                
-                // Load orders
-                return fetch('/api/orders/my-orders', {
-                    credentials: 'include'
+            fetch('/api/auth/me', { credentials: 'include' })
+                .then(response => response.json())
+                .then(userData => {
+                    // Handle both AppUser object and Map format
+                    if (userData.authenticated === false) {
+                        showEmptyOrders('Vui lòng đăng nhập để xem đơn hàng');
+                        return;
+                    }
+                    // Convert Map format to AppUser-like object
+                    currentUser = {
+                        id: userData.id || null,
+                        username: userData.username,
+                        email: userData.email,
+                        fullName: userData.fullName,
+                        role: userData.role
+                    };
+                    isAdmin = userData.role === 'ADMIN';
+                    // Debug: Log user data
+                    console.log('User data:', userData);
+                    console.log('Current user:', currentUser);
+                    // Update UI based on role
+                    updateUIForRole();
+                    // Load orders
+                    return fetch('/api/orders/my-orders', { credentials: 'include' })
+                        .then(response => response.json().then(data => ({ status: response.status, body: data })))
+                        .then(({ status, body }) => {
+                            console.log('[DEBUG] API /api/orders/my-orders status:', status, 'body:', body);
+                            if (handleAuthDeactivated(status, body)) return;
+                            // Hỗ trợ cả trả về mảng hoặc object có trường orders
+                            if (body && Array.isArray(body)) {
+                                allOrders = body;
+                            } else if (body && Array.isArray(body.orders)) {
+                                allOrders = body.orders;
+                            } else {
+                                allOrders = [];
+                            }
+                            if (allOrders.length > 0) {
+                                // Sắp xếp theo role: user thấy mới nhất trước, admin thấy cũ nhất trước
+                                allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                                filteredOrders = [...allOrders];
+                                renderOrdersWithPagination();
+                            } else {
+                                showEmptyOrders(isAdmin ? 'Chưa có đơn hàng nào' : 'Bạn chưa có đơn hàng nào');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error loading orders:', error);
+                            showEmptyOrders('Có lỗi xảy ra khi tải đơn hàng');
+                        });
                 });
-            })
-            .then(response => {
-                if (response.status === 401) {
-                    showEmptyOrders('Vui lòng đăng nhập để xem đơn hàng');
-                    return;
-                }
-                return response.json();
-            })
-            .then(orders => {
-                // Hỗ trợ cả trả về mảng hoặc object có trường orders
-                if (orders && Array.isArray(orders)) {
-                    allOrders = orders;
-                } else if (orders && Array.isArray(orders.orders)) {
-                    allOrders = orders.orders;
-                } else {
-                    allOrders = [];
-                }
-                if (allOrders.length > 0) {
-                    // Sắp xếp theo role: user thấy mới nhất trước, admin thấy cũ nhất trước
-                        allOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    filteredOrders = [...allOrders];
-                    renderOrdersWithPagination();
-                } else {
-                    showEmptyOrders(isAdmin ? 'Chưa có đơn hàng nào' : 'Bạn chưa có đơn hàng nào');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading orders:', error);
-                showEmptyOrders('Có lỗi xảy ra khi tải đơn hàng');
-            });
         }, 300); // 300ms debounce
     }
 
@@ -1488,12 +1491,9 @@
         const ordersHTML = orders.map(order => {
             const statusClass = getStatusClass(order.status);
             const statusText = getStatusText(order.status);
-
             const canCancel = order.status === 'PENDING';
             const canConfirmPayment = order.status === 'SHIPPING';
-            // Cho phép admin cũng có thể test các chức năng này
             const isOrderOwner = !isAdmin || order.userId === currentUser.id || isAdmin;
-            
             // Debug: Log thông tin để kiểm tra
             console.log('Order debug:', {
                 orderId: order.id,
@@ -1505,7 +1505,20 @@
                 canCancel: canCancel,
                 canConfirmPayment: canConfirmPayment
             });
-
+            // Tách phần render orderItems ra ngoài để tránh lỗi template string
+            let orderItemsHtml = '';
+            if (Array.isArray(order.orderItems)) {
+                orderItemsHtml = order.orderItems.map(item => {
+                    return '<div class="order-item">' +
+                        '<img src="' + item.productImage + '" alt="' + item.productName + '" class="item-image" onerror="this.src=\'/images/product-placeholder.jpg\'">' +
+                        '<div class="item-info">' +
+                            '<div class="item-name">' + item.productName + '</div>' +
+                            '<div class="item-details">Số lượng: ' + item.quantity + ' x ' + formatPrice(item.unitPrice) + '</div>' +
+                        '</div>' +
+                        '<div class="item-total">' + formatPrice(item.totalPrice) + '</div>' +
+                    '</div>';
+                }).join('');
+            }
             return `
                 <div class="order-card" data-order-id="${order.id}">
                     <div class="order-header" onclick="toggleOrderDetails(${order.id})">
@@ -1527,7 +1540,6 @@
                             <span class="order-status ${statusClass}">${statusText}</span>
                         `}
                     </div>
-
                     <div class="order-content" id="order-content-${order.id}">
                         <div class="order-details">
                             <div class="detail-item">
@@ -1547,36 +1559,21 @@
                                 <span class="detail-value">${order.shippingMethod}</span>
                             </div>
                         </div>
-
                         <div class="order-items">
                             <h4>Sản phẩm đã đặt:</h4>
-                            ${order.orderItems.map(item => `
-                                <div class="order-item">
-                                    <img src="${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
-                                    <div class="item-info">
-                                        <div class="item-name">${item.productName}</div>
-                                        <div class="item-details">
-                                            Số lượng: ${item.quantity} x ${formatPrice(item.unitPrice)}
-                                        </div>
-                                    </div>
-                                    <div class="item-total">${formatPrice(item.totalPrice)}</div>
-                                </div>
-                            `).join('')}
+                            ${orderItemsHtml}
                         </div>
-
                         <div class="order-actions">
                             <button class="action-btn btn-outline" onclick="viewOrderDetail(${order.id})">
                                 <i class="fas fa-eye"></i>
                                 Xem chi tiết
                             </button>
-
                             ${isOrderOwner && order.status === 'PENDING' ? `
                                 <button class="action-btn btn-danger" onclick="showModal('Xác nhận hủy đơn hàng', 'Bạn có chắc chắn muốn hủy đơn hàng này không?', 'cancelOrder', ${order.id}, true)">
                                     <i class="fas fa-times"></i>
                                     Hủy đơn hàng
                                 </button>
                             ` : ''}
-
                             ${isOrderOwner && canConfirmPayment ? `
                                 <button class="action-btn btn-success" onclick="confirmPayment(${order.id})">
                                     <i class="fas fa-check"></i>
@@ -1873,25 +1870,22 @@
         }, 100);
     });
 
-function setTheme(theme) {
-    document.body.classList.toggle('dark-theme', theme === 'dark');
-    localStorage.setItem('theme', theme);
-    // Đổi icon
-    const btn = document.getElementById('themeToggleBtn');
-    if (btn) {
-        btn.querySelector('i').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        btn.querySelector('span').textContent = theme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối';
+    function setTheme(theme) {
+        document.body.classList.toggle('dark-theme', theme === 'dark');
+        localStorage.setItem('theme', theme);
+        // Đổi icon
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) {
+            btn.querySelector('i').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            btn.querySelector('span').textContent = theme === 'dark' ? 'Chế độ sáng' : 'Chế độ tối';
+        }
     }
-}
-function toggleTheme() {
-    const isDark = document.body.classList.contains('dark-theme');
-    setTheme(isDark ? 'light' : 'dark');
-}
-document.addEventListener('DOMContentLoaded', function() {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-});
+    function toggleTheme() {
+        const isDark = document.body.classList.contains('dark-theme');
+        setTheme(isDark ? 'light' : 'dark');
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        setTheme(savedTheme);
+    });
 </script>
-<script th:src="@{/js/theme-toggle.js}"></script>
-</body>
-</html>

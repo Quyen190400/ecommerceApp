@@ -29,10 +29,26 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // Helper kiểm tra active
+    private boolean isUserInactive(AppUser user) {
+        return user.getActive() == null || !user.getActive();
+    }
+
     @GetMapping("/me")
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(description = "Get current user information")
     public ResponseEntity<?> getCurrentUser(Authentication auth) {
+        // Lấy email từ Authentication
+        String email = auth.getName();
+        // Lấy user từ repository
+        AppUser user = userService.findByEmail(email).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of("message", "Không tìm thấy người dùng"));
+        }
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
+        // Trả về thông tin user (có thể dùng lại userService.getCurrentUser(auth) nếu muốn trả về DTO)
         return userService.getCurrentUser(auth);
     }
 
@@ -40,6 +56,13 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(description = "Get user by ID (requires ADMIN role)")
     public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {
+        AppUser user = userService.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of("message", "Không tìm thấy người dùng"));
+        }
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
         return userService.getUserById(id);
     }
 
@@ -47,11 +70,19 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(description = "Get all users (requires ADMIN role)")
     public ResponseEntity<?> getAllUsers() {
+        // Không kiểm tra active cho danh sách, chỉ trả về danh sách
         return userService.getAllUsers();
     }
 
     @GetMapping("/email/{email}")
     public ResponseEntity<?> getUserByEmail(@PathVariable("email") String email) {
+        AppUser user = userService.findByEmail(email).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of("message", "Không tìm thấy người dùng"));
+        }
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
         return userService.getUserByEmail(email);
     }
 
@@ -64,6 +95,13 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(description = "Update user information")
     public ResponseEntity<?> updateUser(@PathVariable("id") Long id, @RequestBody AppUser userDetails) {
+        AppUser user = userService.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of("message", "Không tìm thấy người dùng"));
+        }
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
         return userService.updateUser(id, userDetails);
     }
 
@@ -71,6 +109,13 @@ public class UserController {
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(description = "Delete user by ID (requires ADMIN role)")
     public ResponseEntity<?> deleteUser(@PathVariable("id") Long id) {
+        AppUser user = userService.findById(id).orElse(null);
+        if (user == null) {
+            return ResponseEntity.status(404).body(Map.of("message", "Không tìm thấy người dùng"));
+        }
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
         return userService.deleteUser(id);
     }
 
@@ -90,14 +135,14 @@ public class UserController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/set-active")
-    public ResponseEntity<?> setActive(@RequestParam Long userId, @RequestParam boolean active) {
+    public ResponseEntity<?> setActive(@RequestParam("userId") Long userId, @RequestParam("active") boolean active) {
         userService.setActive(userId, active);
         return ResponseEntity.ok().body(Map.of("message", active ? "Đã kích hoạt tài khoản." : "Đã ngừng kích hoạt tài khoản."));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam Long userId) {
+    public ResponseEntity<?> resetPassword(@RequestParam("userId") Long userId) {
         userService.resetPassword(userId, "TeaShop@123");
         // Gửi mail cho user
         userService.findById(userId).ifPresent(user -> {
