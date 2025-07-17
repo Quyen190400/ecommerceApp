@@ -54,6 +54,11 @@ public class OrderController {
     
     @Autowired
     private UserService userService;
+
+    // Helper kiểm tra active
+    private boolean isUserInactive(AppUser user) {
+        return user.getActive() == null || !user.getActive();
+    }
     
     // Helper method to remove cart items in separate transaction
     @Transactional(propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW)
@@ -257,6 +262,11 @@ public class OrderController {
         
         AppUser user = userOpt.get();
         
+        // Trong tất cả các API cần xác thực, sau khi lấy user:
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
+
         // Validate request
         if (orderRequest.getSelectedItemIds() == null || orderRequest.getSelectedItemIds().isEmpty()) {
             return ResponseEntity.status(400).body(Map.of("message", "Vui lòng chọn ít nhất một sản phẩm"));
@@ -290,6 +300,10 @@ public class OrderController {
             return ResponseEntity.status(401).body(Map.of("message", "Vui lòng đăng nhập để đặt hàng"));
         }
         AppUser user = userOpt.get();
+        // Trong tất cả các API cần xác thực, sau khi lấy user:
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
         // Chuyển toàn bộ xử lý sang service
         return orderService.handleBuyNow(user, payload);
     }
@@ -360,11 +374,18 @@ public class OrderController {
     @Operation(description = "Get all orders of the current user (requires login)")
     @GetMapping("/my-orders")
     public ResponseEntity<?> getMyOrders(HttpServletRequest request) {
+        System.out.println("[DEBUG] /api/orders/my-orders được gọi");
         Optional<AppUser> userOpt = getCurrentUser(request);
         if (userOpt.isEmpty()) {
+            System.out.println("[DEBUG] Không tìm thấy user từ JWT");
             return ResponseEntity.status(401).body(Map.of("message", "Vui lòng đăng nhập"));
         }
         AppUser user = userOpt.get();
+        System.out.println("[DEBUG] User: " + user.getEmail() + ", role: " + user.getRole());
+        // Trong tất cả các API cần xác thực, sau khi lấy user:
+        if (isUserInactive(user)) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
         // Luôn chỉ trả về đơn hàng của user hiện tại, kể cả admin
         List<CustomerOrder> orders = orderService.getOrdersByUserId(user.getId());
         List<OrderResponse> orderResponses = orders.stream()

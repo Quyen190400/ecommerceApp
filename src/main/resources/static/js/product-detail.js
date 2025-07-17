@@ -1,3 +1,29 @@
+// Hàm dùng chung xử lý khi tài khoản bị vô hiệu hóa
+function handleAuthDeactivated(status, body) {
+  if (status === 403 && body.message === "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.") {
+    if (typeof showToast === 'function') {
+      showToast(body.message, 'error');
+    } else {
+      alert(body.message);
+    }
+    document.querySelectorAll('button, input[type=checkbox], input[type=submit]').forEach(el => {
+      const excludeIds = [
+        'userDropdownBtn',
+        'mobileUserBtn',
+        'themeToggleBtn',
+        'mobileThemeToggleBtn'
+      ];
+      const excludeClasses = [
+        'logout-btn'
+      ];
+      if (!excludeIds.includes(el.id) && !excludeClasses.some(cls => el.classList.contains(cls))) {
+        el.disabled = true;
+      }
+    });
+    return true;
+  }
+  return false;
+}
 // Product Detail Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     
@@ -89,14 +115,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Do NOT redirect
                 return;
             }
-            return response.json();
+            return response.json().then(data => ({status: response.status, body: data}));
         })
-        .then(data => {
-            if (data && data.message) {
+        .then(res => {
+            if (!res) return;
+            const {status, body} = res;
+            if (handleAuthDeactivated(status, body)) return;
+            if (body && body.message) {
                 if (window.showToast) {
-                    window.showToast(data.message, 'success');
+                    window.showToast(body.message, 'success');
                 } else {
-                    showToast(data.message, 'success');
+                    showToast(body.message, 'success');
                 }
                 updateCartBadge();
             }
@@ -169,16 +198,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Do NOT redirect
                 return null;
             }
-            return res.json();
+            return res.json().then(data => ({status: res.status, body: data}));
         })
-        .then(data => {
-            if (!data) return;
-            if (data.success) {
+        .then(res => {
+            if (!res) return;
+            const {status, body} = res;
+            if (status === 403 && body && body.message === "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.") {
+                showToast(body.message, 'error');
+                return;
+            }
+            if (handleAuthDeactivated(status, body)) return;
+            if (!body) return;
+            if (body.success) {
                 showToast('Đặt hàng thành công! Đang chuyển hướng...', 'success');
                 closeBuyNowModal();
                 setTimeout(() => { window.location.href = '/orders'; }, 1500);
             } else {
-                showToast(data.message || 'Có lỗi xảy ra khi đặt hàng.', 'error');
+                showToast(body.message || 'Có lỗi xảy ra khi đặt hàng.', 'error');
             }
         })
         .catch(() => {

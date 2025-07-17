@@ -34,7 +34,7 @@
                     </div>
                     <span class="error-message" id="loginPasswordError"></span>
                 </div>
-                <div class="form-group checkbox-group" style="display:none">
+                <div class="form-group checkbox-group">
                     <label class="checkbox-label">
                         <input type="checkbox" id="rememberMe" name="remember-me">
                         <span class="checkmark"></span>
@@ -46,13 +46,34 @@
                     Đăng nhập
                 </button>
             </form>
-            <div class="auth-links" style="display:none">
-                <a href="#" class="forgot-password">Quên mật khẩu?</a>
+            <div class="auth-links" style="margin-top: 8px; text-align: right;">
+                <a href="#" class="forgot-password" id="showForgotPasswordForm">Quên mật khẩu?</a>
             </div>
             <div class="auth-register-link">
                 <span>Chưa có tài khoản?</span>
                 <a href="#" id="showRegisterForm">Đăng ký ngay</a>
             </div>
+        </div>
+        <!-- Forgot Password Form (tách riêng) -->
+        <div class="auth-form" id="forgotForm">
+            <h2 class="auth-title">Quên mật khẩu</h2>
+            <form id="forgotFormElement">
+                <div class="form-group">
+                    <label for="forgotEmail">
+                        <i class="fas fa-envelope"></i>
+                        Email
+                    </label>
+                    <input type="email" id="forgotEmail" name="email" placeholder="Nhập email đã đăng ký" required>
+                    <span class="error-message" id="forgotEmailError"></span>
+                </div>
+                <button type="submit" class="auth-submit-btn">
+                    <i class="fas fa-paper-plane"></i>
+                    Gửi mật khẩu mới
+                </button>
+                <div class="auth-login-link" style="margin-top: 12px; text-align: right;">
+                    <a href="#" id="backToLoginForm">Quay lại đăng nhập</a>
+                </div>
+            </form>
         </div>
         <!-- Register Form -->
         <div class="auth-form" id="registerForm">
@@ -119,4 +140,90 @@
             </div>
         </div>
     </div>
-</div> 
+</div>
+<script>
+console.log('[DEBUG] auth-modal.js loaded');
+function switchForm(formName) {
+    const authForms = document.querySelectorAll('.auth-form');
+    authForms.forEach(form => {
+        form.classList.remove('active');
+    });
+    var form = document.getElementById(formName + 'Form');
+    if (form) {
+        form.classList.add('active');
+        console.log('Switched to form:', form.id);
+    } else {
+        console.warn('Form not found:', formName + 'Form');
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    var showForgotBtn = document.getElementById('showForgotPasswordForm');
+    var backToLoginBtn = document.getElementById('backToLoginForm');
+    if (showForgotBtn) {
+        showForgotBtn.onclick = function(e) {
+            e.preventDefault();
+            switchForm('forgot');
+        };
+    }
+    // Bổ sung: nếu có nhiều nút 'Quên mật khẩu?' ở các form khác, gán sự kiện cho tất cả
+    var forgotLinks = document.querySelectorAll('.forgot-password');
+    forgotLinks.forEach(function(link) {
+        link.onclick = function(e) {
+            e.preventDefault();
+            switchForm('forgot');
+        };
+    });
+    if (backToLoginBtn) {
+        backToLoginBtn.onclick = function(e) {
+            e.preventDefault();
+            switchForm('login');
+        };
+    }
+    // Gán lại event submit cho form quên mật khẩu bằng addEventListener
+    var forgotFormElement = document.getElementById('forgotFormElement');
+    if (forgotFormElement) {
+        forgotFormElement.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = document.getElementById('forgotEmail').value;
+            var errorSpan = document.getElementById('forgotEmailError');
+            errorSpan.textContent = '';
+            console.log('[DEBUG] Submit forgot password for:', email);
+            fetch('/api/users/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'email=' + encodeURIComponent(email)
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('[DEBUG] Forgot password response:', data);
+                if (data.message) {
+                    errorSpan.style.color = data.message.includes('gửi') ? '#28a745' : '#e74c3c';
+                    errorSpan.textContent = data.message;
+                    if (data.message.includes('gửi')) {
+                        setTimeout(function() {
+                            // Chuyển về form login
+                            const authForms = document.querySelectorAll('.auth-form');
+                            authForms.forEach(form => form.classList.remove('active'));
+                            var loginForm = document.getElementById('loginForm');
+                            if (loginForm) loginForm.classList.add('active');
+                            // Hiện toast nổi bật
+                            if (typeof showToast === 'function') {
+                                showToast('Mật khẩu mới đã được gửi tới email của bạn. Vui lòng kiểm tra!', 'success');
+                            } else {
+                                alert('Mật khẩu mới đã được gửi tới email của bạn. Vui lòng kiểm tra!');
+                            }
+                            var loginEmail = document.getElementById('loginEmail');
+                            if (loginEmail) loginEmail.focus();
+                        }, 1200);
+                    }
+                }
+            })
+            .catch((err) => {
+                console.error('[DEBUG] Forgot password error:', err);
+                errorSpan.style.color = '#e74c3c';
+                errorSpan.textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
+            });
+        });
+    }
+});
+</script> 

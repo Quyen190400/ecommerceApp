@@ -235,6 +235,13 @@ public class WebController {
         return "admin-products";
     }
 
+    @GetMapping("/admin/users")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String adminUsers(Model model, HttpServletRequest request) {
+        addUserInfoToModel(model, request);
+        return "admin-users";
+    }
+
     @GetMapping("/test-header-dropdown")
     public String testHeaderDropdown(Model model, HttpServletRequest request) {
         // Add user info from JWT

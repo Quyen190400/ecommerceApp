@@ -43,6 +43,17 @@ body.dark-theme input, body.dark-theme textarea, body.dark-theme select {
     color: #f1f1f1 !important;
     border-color: #444a57 !important;
 }
+body.dark-theme input[type="text"],
+body.dark-theme input[type="search"] {
+  color: #fff !important;
+  background: #232323 !important;
+  border-color: #444a57 !important;
+}
+body.dark-theme input[type="text"]::placeholder,
+body.dark-theme input[type="search"]::placeholder {
+  color: #cccccc !important;
+  opacity: 1;
+}
 
 body.dark-theme .navbar {
     background: rgba(26, 26, 26, 0.95);
@@ -2265,4 +2276,152 @@ input, textarea, select {
     background: #6b8e23;
     color: #fff;
     transform: translateY(-2px) scale(1.05);
+}
+body.dark-theme .dropdown-menu {
+  background: #232323 !important;
+  color: #f1f1f1 !important;
+  border: 1px solid #444a57 !important;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.35) !important;
+}
+body.dark-theme .dropdown-menu .dropdown-item,
+body.dark-theme .dropdown-menu .dropdown-link {
+  color: #f1f1f1 !important;
+  background: transparent !important;
+}
+body.dark-theme .dropdown-menu .dropdown-item:hover,
+body.dark-theme .dropdown-menu .dropdown-link:hover {
+  background: #333 !important;
+  color: #b7e4c7 !important;
+}
+
+/* Dropdown gợi ý tìm kiếm sản phẩm - phong cách nghệ thuật, tinh tế */
+.search-suggest-dropdown {
+  position: absolute;
+  top: 110%;
+  left: 0;
+  width: 100%;
+  z-index: 1001;
+  background: rgba(255,255,255,0.93); /* nền trắng nhạt, bán trong suốt */
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(60,60,60,0.13);
+  padding: 4px 0;
+  margin-top: 6px;
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.4,0,.2,1);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-8px);
+}
+.search-suggest-dropdown.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.search-suggest-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  font-size: 1rem;
+  color: #333;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.search-suggest-item:hover,
+.search-suggest-item.active {
+  background: #e6f4ea !important;
+  color: #1b5e20 !important;
+  /* Thêm hiệu ứng chuyển màu mượt và dịch xuống */
+  transition: background 0.18s, color 0.18s, transform 0.18s;
+  border-radius: 8px;
+  transform: translateY(3px);
+  cursor: pointer;
+}
+.search-suggest-item:focus {
+  outline: 1.5px solid #8bc34a;
+  background: #eeeeee;
+}
+
+/* Animation dropdown trượt xuống mượt mà hơn */
+.search-suggest-dropdown {
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.4,0,.2,1);
+  will-change: opacity, transform;
+}
+.search-suggest-item img,
+.search-suggest-item .item-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 600px) {
+  .search-suggest-dropdown {
+    left: 0;
+    width: 98vw;
+    min-width: 0;
+    border-radius: 8px;
+    font-size: 0.98rem;
+  }
+  .search-suggest-item {
+    padding: 10px 10px;
+    font-size: 0.98rem;
+  }
+}
+
+/* Input search focus viền nổi bật */
+.search-bar input[type="text"],
+.search-bar input[type="search"] {
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 14px;
+  transition: border-color 0.2s;
+  outline: none;
+}
+.search-bar input[type="text"]:focus,
+.search-bar input[type="search"]:focus {
+  border-color: #8bc34a;
+  box-shadow: 0 0 0 2px #e8f5e9;
+}
+
+/* Dark mode cho dropdown suggest search */
+body.dark-theme .search-suggest-dropdown,
+.dark-mode .search-suggest-dropdown {
+  background: rgba(40,40,40,0.98);
+  border: 1.5px solid #444a57;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+body.dark-theme .search-suggest-item,
+.dark-mode .search-suggest-item {
+  color: #f1f1f1;
+}
+body.dark-theme .search-suggest-item:hover,
+body.dark-theme .search-suggest-item.active,
+.dark-mode .search-suggest-item:hover,
+.dark-mode .search-suggest-item.active {
+  background: #2a3a2a !important;
+  color: #b7e4c7 !important;
+  transform: translateY(3px);
+  cursor: pointer;
+}
+body.dark-theme .search-bar input[type="text"],
+body.dark-theme .search-bar input[type="search"],
+.dark-mode .search-bar input[type="text"],
+.dark-mode .search-bar input[type="search"] {
+  background: #232323;
+  color: #fff;
+  border-color: #444a57;
+}
+body.dark-theme .search-bar input[type="text"]::placeholder,
+body.dark-theme .search-bar input[type="search"]::placeholder,
+.dark-mode .search-bar input[type="text"]::placeholder,
+.dark-mode .search-bar input[type="search"]::placeholder {
+  color: #cccccc;
+  opacity: 1;
 }
