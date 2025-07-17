@@ -90,6 +90,7 @@
     </div>
 <!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>-->
     <script>
+    let allUsers = [];
     let currentPage = 1;
     let pageSize = 10;
     // Toast đồng nhất
@@ -117,19 +118,20 @@
     }
     function fetchUsers(page=1) {
         currentPage = page;
-        const search = document.getElementById('searchInput').value.trim();
         let url = `/api/users?page=${page-1}&size=${pageSize}`;
-        if (search) url += `&search=${encodeURIComponent(search)}`;
         showLoading(true);
         fetch(url, { headers: { 'Accept': 'application/json' } })
             .then(res => res.json())
             .then(data => {
                 showLoading(false);
+                // Lưu lại toàn bộ user khi lần đầu load
                 if (data.content) {
-                    renderUserTable(data.content);
-                    renderPagination(data.totalPages, page);
+                    allUsers = data.content;
+                    renderUserTable(allUsers);
+                    renderPagination(1, 1); // Không phân trang khi filter frontend
                 } else {
-                    renderUserTable(data);
+                    allUsers = data;
+                    renderUserTable(allUsers);
                     renderPagination(1, 1);
                 }
             }).catch(()=>showLoading(false));
@@ -140,6 +142,8 @@
         users.forEach(user => {
             const isAdmin = user.role === 'ADMIN';
             const tr = document.createElement('tr');
+            tr.setAttribute('data-email', user.email ? user.email.toLowerCase() : '');
+            tr.setAttribute('data-fullname', user.fullName ? user.fullName.toLowerCase() : '');
             tr.innerHTML = `
                 <td>${user.email}</td>
                 <td>${user.fullName || ''} ${isAdmin ? '<span class="badge badge-admin" style="background:#ffe082;color:#b28704;border-radius:8px;padding:2px 8px;margin-left:6px;font-size:12px;font-weight:600;">Admin</span>' : ''}</td>
@@ -246,10 +250,24 @@
             input.checked = oldActive;
         });
     }
+    // Thay thế sự kiện filter trên searchInput:
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const keyword = this.value.trim().toLowerCase();
+        const rows = document.querySelectorAll('#userTableBody tr');
+        rows.forEach(row => {
+            const email = row.getAttribute('data-email');
+            const fullName = row.getAttribute('data-fullname');
+            if (!keyword || (email && email.includes(keyword)) || (fullName && fullName.includes(keyword))) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
     document.getElementById('searchInput').addEventListener('keydown', function(e) {
         if (e.key === 'Enter') fetchUsers(1);
     });
-    fetchUsers();
+    window.onload = fetchUsers;
     </script>
     <script th:src="@{/js/user-dropdown.js}"></script>
 </body>
