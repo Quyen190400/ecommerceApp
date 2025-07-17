@@ -26,10 +26,15 @@
         </nav>
         <!-- Right Side Actions -->
         <div class="navbar-actions">
-            <!-- Search Icon -->
-            <button class="action-btn search-btn" id="searchBtn">
-                <i class="fas fa-search"></i>
-            </button>
+            <div class="search-container" style="position: relative; display: inline-block;">
+                <input type="text" id="productSearchInput" class="form-control" placeholder="Tìm sản phẩm..." autocomplete="off" style="width: 220px; border-radius: 20px; padding: 6px 36px 6px 14px; border: 1.5px solid #A3B18A;">
+                <button class="action-btn search-btn" id="searchBtn" style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #40916C; font-size: 1.1em;">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div id="searchSuggestList" class="dropdown-menu" style="display:none; position: absolute; left: 0; top: 110%; width: 100%; z-index: 1001; background: #fff; border: 1px solid #A3B18A; border-radius: 8px; box-shadow: 0 4px 16px rgba(60,60,60,0.10); max-height: 260px; overflow-y: auto;">
+                    <!-- Gợi ý sẽ được render ở đây -->
+                </div>
+            </div>
             <!-- Cart Icon -->
             <a href="#" class="action-btn cart-btn" id="cartBtn" onclick="handleCartClick(event)">
                 <i class="fas fa-shopping-cart"></i>
