@@ -7,11 +7,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private AppUserRepository userRepository;
+    @Autowired
+    private JavaMailSender mailSender;
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public ResponseEntity<?> getCurrentUser(Authentication auth) {
@@ -66,5 +73,68 @@ public class UserServiceImpl implements UserService {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.notFound().build();
+    }
+
+    @Override
+    public Optional<AppUser> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+    @Override
+    public void setActive(Long userId, boolean active) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setActive(active);
+            userRepository.save(user);
+        });
+    }
+    @Override
+    public void resetPassword(Long userId, String newPassword) {
+        userRepository.findById(userId).ifPresent(user -> {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        });
+    }
+    @Override
+    public boolean changePassword(Long userId, String oldPassword, String newPassword) {
+        Optional<AppUser> userOpt = userRepository.findById(userId);
+        if (userOpt.isPresent()) {
+            AppUser user = userOpt.get();
+            if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
+    public boolean forgotPassword(String email) {
+        Optional<AppUser> userOpt = userRepository.findByEmailAndActiveTrue(email);
+        if (userOpt.isPresent()) {
+            AppUser user = userOpt.get();
+            String defaultPassword = "TeaShop@123";
+            user.setPassword(passwordEncoder.encode(defaultPassword));
+            userRepository.save(user);
+            // Gửi email
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setTo(user.getEmail());
+            message.setSubject("Mật khẩu mới cho tài khoản Trà Đạo");
+            message.setText("Mật khẩu mới của bạn là: " + defaultPassword + "\nVui lòng đăng nhập và đổi mật khẩu ngay!");
+            mailSender.send(message);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void sendMail(SimpleMailMessage message) {
+        mailSender.send(message);
+    }
+    @Override
+    public Optional<AppUser> findById(Long id) {
+        return userRepository.findById(id);
     }
 } 

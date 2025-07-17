@@ -73,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Event listeners for form switching
     const showRegisterForm = document.getElementById('showRegisterForm');
     const showLoginForm = document.getElementById('showLoginForm');
+    const showForgotForm = document.getElementById('showForgotPasswordForm');
 
     if (showRegisterForm) {
         showRegisterForm.addEventListener('click', function(e) {
@@ -85,6 +86,13 @@ document.addEventListener('DOMContentLoaded', function() {
         showLoginForm.addEventListener('click', function(e) {
             e.preventDefault();
             switchForm('login');
+        });
+    }
+
+    if (showForgotForm) {
+        showForgotForm.addEventListener('click', function(e) {
+            e.preventDefault();
+            switchForm('forgot');
         });
     }
 
@@ -682,6 +690,59 @@ document.addEventListener('DOMContentLoaded', function() {
         mobileRegisterBtn.addEventListener('click', function(e) {
             e.preventDefault();
             showAuthModal('register');
+        });
+    }
+}); 
+
+// --- ĐẢM BẢO FORM QUÊN MẬT KHẨU ĐƯỢC BẮT SỰ KIỆN ĐÚNG ---
+document.addEventListener('DOMContentLoaded', function() {
+    var forgotFormElement = document.getElementById('forgotFormElement');
+    if (forgotFormElement) {
+        forgotFormElement.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = document.getElementById('forgotEmail').value;
+            var errorSpan = document.getElementById('forgotEmailError');
+            if (errorSpan) errorSpan.textContent = '';
+            fetch('/api/users/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'email=' + encodeURIComponent(email)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.message) {
+                    if (errorSpan) {
+                        errorSpan.style.color = data.message.includes('gửi') ? '#28a745' : '#e74c3c';
+                        errorSpan.textContent = data.message;
+                    } else {
+                        alert(data.message);
+                    }
+                    if (data.message.includes('gửi')) {
+                        setTimeout(function() {
+                            // Chuyển về form login
+                            const authForms = document.querySelectorAll('.auth-form');
+                            authForms.forEach(form => form.classList.remove('active'));
+                            var loginForm = document.getElementById('loginForm');
+                            if (loginForm) loginForm.classList.add('active');
+                            if (typeof showToast === 'function') {
+                                showToast('Mật khẩu mới đã được gửi tới email của bạn. Vui lòng kiểm tra!', 'success');
+                            } else {
+                                alert('Mật khẩu mới đã được gửi tới email của bạn. Vui lòng kiểm tra!');
+                            }
+                            var loginEmail = document.getElementById('loginEmail');
+                            if (loginEmail) loginEmail.focus();
+                        }, 1200);
+                    }
+                }
+            })
+            .catch((err) => {
+                if (errorSpan) {
+                    errorSpan.style.color = '#e74c3c';
+                    errorSpan.textContent = 'Có lỗi xảy ra, vui lòng thử lại.';
+                } else {
+                    alert('Có lỗi xảy ra, vui lòng thử lại.');
+                }
+            });
         });
     }
 }); 
