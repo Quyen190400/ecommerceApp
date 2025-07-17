@@ -311,25 +311,25 @@
         });
       }
       // Tắt auto chuyển tab
-      // function resetAutoplay() {
-      //   clearInterval(window.carouselTimer);
-      //   window.carouselTimer = setInterval(() => {
-      //     currentIndex = (currentIndex + 1) % carts.length;
-      //     updateDisplay();
-      //   }, 5000);
-      // }
+      function resetAutoplay() {
+        clearInterval(window.carouselTimer);
+        window.carouselTimer = setInterval(() => {
+          currentIndex = (currentIndex + 1) % carts.length;
+          updateDisplay();
+        }, 5000);
+      }
       document.querySelector('.carousel-prev').onclick = function() {
         currentIndex = (currentIndex - 1 + carts.length) % carts.length;
         updateDisplay();
-        // resetAutoplay();
+        resetAutoplay();
       };
       document.querySelector('.carousel-next').onclick = function() {
         currentIndex = (currentIndex + 1) % carts.length;
         updateDisplay();
-        // resetAutoplay();
+        resetAutoplay();
       };
       updateDisplay();
-      // resetAutoplay();
+      resetAutoplay();
     });
 </script>
 
