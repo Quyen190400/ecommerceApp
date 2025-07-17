@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import io.jsonwebtoken.ExpiredJwtException;
 
 @Service
 public class JwtService {
@@ -56,8 +57,12 @@ public class JwtService {
      * Email is the primary identifier for authentication
      */
     public boolean isTokenValid(String token, String email) {
-        final String extractedEmail = extractUsername(token);
-        return (extractedEmail.equals(email)) && !isTokenExpired(token);
+        try {
+            final String extractedEmail = extractUsername(token);
+            return (extractedEmail.equals(email)) && !isTokenExpired(token);
+        } catch (ExpiredJwtException e) {
+            return false;
+        }
     }
     
     private boolean isTokenExpired(String token) {

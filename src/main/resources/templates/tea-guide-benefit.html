@@ -29,19 +29,20 @@
       background: #1a1a1a;
     }
     
-    body.dark-theme .banner-title {
-      color: #ffffff;
-      text-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);
-    }
+<!--    body.dark-theme .banner-title {-->
+<!--      color: #ffffff;-->
+<!--      text-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);-->
+<!--    }-->
     
     body.dark-theme .banner-icon {
       color: #6b8e23;
       opacity: 0.4;
     }
     
-    body.dark-theme .benefit-desc {
-      color: #cccccc;
-    }
+<!--    body.dark-theme .benefit-desc {-->
+<!--      color: #cccccc;-->
+<!--      color: #350c0c;-->
+<!--    }-->
     
     body.dark-theme .chip {
       background: #3e5c3a;
@@ -180,7 +181,7 @@
     }
     .benefit-desc {
       font-size: 1.18rem;
-      color: #5a6d5a;
+      color: #350c0c;
       margin: 28px 0 10px 0;
       text-align: center;
       letter-spacing: 0.01em;
@@ -448,7 +449,7 @@ const mockProductsByBenefit = {
       id: 1,
       name: "Trà hoa cúc an thần",
       price: 89000,
-      image: "/uploads/images/tra-hoa-cuc.jpg",
+      image: "/images/tra-hoa-cuc.jpg",
       description: "Trà hoa cúc giúp thư giãn, ngủ ngon, giảm stress.",
       health_benefit: "an thần, thư giãn, ngủ ngon",
       tea_type: "thao-moc",
@@ -458,7 +459,7 @@ const mockProductsByBenefit = {
       id: 2,
       name: "Trà sen Tây Hồ",
       price: 159000,
-      image: "/uploads/images/tra-sen-tay-ho.jpg",
+      image: "/images/tra-sen-tay-ho.jpg",
       description: "Trà sen thơm ngát, giúp thư giãn và an thần.",
       health_benefit: "an thần, thư giãn",
       tea_type: "xanh",
@@ -468,7 +469,7 @@ const mockProductsByBenefit = {
       id: 3,
       name: "Trà an thần ban đêm",
       price: 125000,
-      image: "/uploads/images/tra-thu-gian.jpg",
+      image: "/images/tra-thu-gian.jpg",
       description: "Kết hợp thảo mộc tự nhiên giúp ngủ sâu, giảm căng thẳng.",
       health_benefit: "an thần, ngủ ngon",
       tea_type: "thao-moc",
@@ -478,7 +479,7 @@ const mockProductsByBenefit = {
       id: 4,
       name: "Trà hoa nhài thư giãn",
       price: 99000,
-      image: "/uploads/images/tra-thu-gian2.jpg",
+      image: "/images/tra-thu-gian2.jpg",
       description: "Hương hoa nhài dịu nhẹ, hỗ trợ thư giãn tinh thần.",
       health_benefit: "an thần, thư giãn",
       tea_type: "thao-moc",
@@ -488,7 +489,7 @@ const mockProductsByBenefit = {
       id: 5,
       name: "Trà thảo mộc ngủ ngon",
       price: 112000,
-      image: "/uploads/images/tra-hoa-cuc1.jpg",
+      image: "/images/tra-hoa-cuc1.jpg",
       description: "Thảo mộc tự nhiên giúp an thần, hỗ trợ giấc ngủ sâu.",
       health_benefit: "an thần, ngủ ngon",
       tea_type: "thao-moc",
@@ -498,7 +499,7 @@ const mockProductsByBenefit = {
       id: 6,
       name: "Trà oolong thư giãn",
       price: 135000,
-      image: "/uploads/images/tra-oolong.jpg",
+      image: "/images/tra-oolong.jpg",
       description: "Oolong nhẹ dịu, giúp giảm stress, thư giãn đầu óc.",
       health_benefit: "an thần, thư giãn",
       tea_type: "oolong",
@@ -579,16 +580,16 @@ function filterProducts() {
 }
 // Map benefitType sang ảnh banner riêng
 const benefitBannerImages = {
-  "an-than": "/uploads/images/banner-an-than.jpg",
-  "giam-can": "/uploads/images/banner-giam-can.jpg",
-  "thao-moc": "/uploads/images/banner-thao-moc.jpg",
-  "dung-cu": "/uploads/images/banner-dung-cu.jpg"
+  "an-than": "/images/banner-an-than.jpg",
+  "giam-can": "/images/banner-giam-can.jpg",
+  "thao-moc": "/images/banner-thao-moc.jpg",
+  "dung-cu": "/images/banner-dung-cu.jpg"
   // Thêm các benefit khác nếu có
 };
 function setBannerOverlay() {
   const benefitType = getBenefitType();
   const bannerEl = document.querySelector('.benefit-banner');
-  const bannerImg = benefitBannerImages[benefitType] || "/uploads/images/banner-tea.jpg";
+  const bannerImg = benefitBannerImages[benefitType] || "/images/banner-tea.jpg";
   if (bannerEl) {
     bannerEl.style.backgroundImage = `url('${bannerImg}')`;
     bannerEl.style.backgroundPosition = 'center';
@@ -640,7 +641,7 @@ function renderPage() {
           id: p.id,
           name: p.name,
           price: p.price,
-          image: p.imageUrl ? '/uploads/images/' + p.imageUrl : '/uploads/images/product-placeholder.jpg',
+          image: p.imageUrl ? p.imageUrl : '/images/product-placeholder.jpg',
           description: p.description || p.shortDescription || '',
           health_benefit: p.healthBenefit || '',
           tea_type: p.teaType || '',
@@ -671,5 +672,6 @@ if (window.themeToggleBtn) {
 <script th:src="@{/js/user-dropdown.js}"></script>
 <script th:src="@{/js/auth-forms.js}"></script>
 <script th:src="@{/js/theme-toggle.js}"></script>
+<div th:replace="~{fragments/auth-modal :: authModal}"></div>
 </body>
 </html> 

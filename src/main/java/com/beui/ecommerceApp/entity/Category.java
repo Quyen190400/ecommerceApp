@@ -13,6 +13,7 @@ import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -24,10 +25,10 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "name", nullable = false, unique = true, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "name", nullable = false, unique = true, length = 255)
     private String name;
     
-    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
     @Column(name = "created_at")
@@ -42,8 +43,9 @@ public class Category {
     
     // Constructors
     public Category() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZoneId vnZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        this.createdAt = LocalDateTime.now(vnZone);
+        this.updatedAt = LocalDateTime.now(vnZone);
     }
     
     public Category(String name, String description) {
@@ -103,6 +105,6 @@ public class Category {
     
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
     }
 } 

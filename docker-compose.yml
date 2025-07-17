@@ -1,44 +1,27 @@
 version: '3.8'
 
 services:
-  beui-sqlserver:
-    image: mcr.microsoft.com/mssql/server:2019-latest
-    container_name: beui-sqlserver
+  beui-mysql:
+    image: mysql:8.0
+    container_name: beui-mysql
+    restart: always
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Password1
+      MYSQL_ROOT_PASSWORD: your_mysql_password
+      MYSQL_DATABASE: greenteashop
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: appuser_password
     ports:
-      - "1433:1433"
+      - "3306:3306"
     volumes:
-      - sqlserver-data:/var/opt/mssql
+      - mysql-data:/var/lib/mysql
+      - ./src/main/resources/create_tables.sql:/docker-entrypoint-initdb.d/init.sql:ro
     networks:
       - beui-network
     healthcheck:
-      test: ["CMD-SHELL", "pidof sqlservr || exit 1"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pyour_mysql_password"]
       interval: 10s
       timeout: 5s
       retries: 5
-
-  sql-init:
-    image: mcr.microsoft.com/mssql-tools
-    container_name: sql-init
-    depends_on:
-      beui-sqlserver:
-        condition: service_healthy
-    volumes:
-      - ./src/main/resources/create_tables.sql:/sql/init.sql:ro
-    entrypoint: ["/bin/bash", "-c", "sleep 20 && /opt/mssql-tools/bin/sqlcmd -S beui-sqlserver -U sa -P YourStrong@Password1 -i /sql/init.sql"]
-    networks:
-      - beui-network
-    command: >
-      bash -c "
-        echo '[Init] Waiting 10s for SQL Server...' 
-        sleep 15
-        echo '[Init] Running SQL init script...'
-        /opt/mssql-tools/bin/sqlcmd -S beui-sqlserver -U sa -P YourStrong@Password1 -i /sql/init.sql
-        echo '[Init] Done.'
-      "
-    restart: "no"
 
   greentea-app:
     build:
@@ -46,14 +29,12 @@ services:
       dockerfile: Dockerfile
     container_name: greentea-app
     depends_on:
-      beui-sqlserver:
+      beui-mysql:
         condition: service_healthy
-      sql-init:
-        condition: service_completed_successfully
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:sqlserver://beui-sqlserver:1433;databaseName=greenteashop;encrypt=true;trustServerCertificate=true
-      - SPRING_DATASOURCE_USERNAME=sa
-      - SPRING_DATASOURCE_PASSWORD=YourStrong@Password1
+      - SPRING_DATASOURCE_URL=jdbc:mysql://beui-mysql:3306/greenteashop?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=appuser
+      - SPRING_DATASOURCE_PASSWORD=appuser_password
     ports:
       - "8080:8080"
     volumes:
@@ -62,9 +43,8 @@ services:
       - beui-network
 
 volumes:
-  sqlserver-data:
+  mysql-data:
 
 networks:
   beui-network:
     driver: bridge
-    

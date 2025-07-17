@@ -15,10 +15,10 @@ public class SwaggerConfig {
     public OpenAPI apiInfo() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("E-commerce API")
-                        .description("Spring Boot backend for online shopping")
+                        .title("GreenTea App API")
+                        .description("Backend API for GreenTea App - Vietnamese premium tea e-commerce platform. Enjoy modern shopping, manage products, orders, and users. Built with Spring Boot.")
                         .version("1.0.0")
-                        .contact(new Contact().name("Quyen").email("quyen190400@gmail.com")))
+                        .contact(new Contact().name("Quyen - GreenTea App").email("quyen190400@gmail.com")))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new io.swagger.v3.oas.models.Components()
                         .addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()));

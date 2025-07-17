@@ -1,5 +1,1 @@
-IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = N'greenteashop')
-BEGIN
-    CREATE DATABASE greenteashop;
-END
-GO 
+CREATE DATABASE IF NOT EXISTS greenteashop CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; 

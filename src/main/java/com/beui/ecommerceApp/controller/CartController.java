@@ -29,7 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Cart", description = "APIs for managing the user's shopping cart: view, add, update, remove items, and checkout.")
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
@@ -131,6 +134,7 @@ public class CartController {
         return response;
     }
     
+    @Operation(description = "Get the current user's cart with all visible items")
     // Lấy giỏ hàng của user hiện tại
     @GetMapping
     public ResponseEntity<?> getCart(HttpServletRequest request) {
@@ -181,6 +185,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
     
+    @Operation(description = "Add a product to the current user's cart")
     // Thêm sản phẩm vào giỏ hàng
     @PostMapping("/add")
     public ResponseEntity<?> addToCart(@RequestBody Map<String, Object> request, HttpServletRequest httpRequest) {
@@ -216,6 +221,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
     
+    @Operation(description = "Update the quantity of a cart item by item ID")
     // Cập nhật số lượng sản phẩm
     @PutMapping("/items/{itemId}")
     public ResponseEntity<?> updateCartItem(@PathVariable("itemId") Long itemId, @RequestBody Map<String, Object> request, HttpServletRequest httpRequest) {
@@ -254,6 +260,7 @@ public class CartController {
         return ResponseEntity.ok(response);
     }
     
+    @Operation(description = "Remove a product from the cart by item ID")
     // Xóa sản phẩm khỏi giỏ hàng
     @DeleteMapping("/items/{itemId}")
     public ResponseEntity<?> removeFromCart(@PathVariable("itemId") Long itemId, HttpServletRequest request) {
@@ -272,12 +279,14 @@ public class CartController {
         }
     }
     
+    @Operation(description = "Checkout the cart (redirects to /api/orders for full order creation)")
     // Đặt hàng từ giỏ hàng - Redirect to new order API
     @PostMapping("/checkout")
     public ResponseEntity<?> checkout(@RequestBody Map<String, Object> request, HttpServletRequest httpRequest) {
         return ResponseEntity.status(400).body(Map.of("message", "Vui lòng sử dụng API /api/orders để đặt hàng với thông tin đầy đủ"));
     }
     
+    @Operation(description = "Get the total number of items in the current user's cart")
     // Lấy số lượng item trong giỏ hàng
     @GetMapping("/count")
     public ResponseEntity<?> getCartItemCount(HttpServletRequest request) {

@@ -37,7 +37,7 @@
             <!-- Product Images -->
             <div class="product-images">
                 <div class="main-image">
-                    <img th:src="@{|/uploads/images/${product.imageUrl}|}" th:alt="${product.name}" id="mainImage">
+                    <img th:src="${product.imageUrl}" th:alt="${product.name}" id="mainImage">
                 </div>
             </div>
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,7 +86,7 @@ public class OrderServiceImpl implements OrderService {
                 // TODO: Lưu vào bảng audit log nếu cần
             }
             order.setStatus(status);
-            order.setUpdatedAt(java.time.LocalDateTime.now());
+            order.setUpdatedAt(java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh")));
             if ("COMPLETED".equals(status)) {
                 List<OrderItem> items = getOrderItems(orderId);
                 for (OrderItem item : items) {
@@ -134,8 +135,8 @@ public class OrderServiceImpl implements OrderService {
         order.setPhoneNumber(orderRequest.getPhoneNumber());
         order.setOrderNotes(orderRequest.getOrderNotes());
         order.setStatus("PENDING");
-        order.setCreatedAt(java.time.LocalDateTime.now());
-        order.setUpdatedAt(java.time.LocalDateTime.now());
+        order.setCreatedAt(java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh")));
+        order.setUpdatedAt(java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh")));
         // Tạo OrderItem
         OrderItem item = new OrderItem();
         item.setProduct(product);

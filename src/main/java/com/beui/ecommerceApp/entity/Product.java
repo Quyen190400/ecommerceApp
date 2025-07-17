@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -28,31 +29,31 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(name = "name", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "name", nullable = false, length = 255)
     private String name;
     
-    @Column(name = "description", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
     
     @Column(name = "price", nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
     
-    @Column(name = "image_url", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "image_url", length = 255)
     private String imageUrl;
     
-    @Column(name = "origin", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "origin", length = 255)
     private String origin;
     
-    @Column(name = "tea_type", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "tea_type", length = 255)
     private String teaType;
     
-    @Column(name = "taste_note", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "taste_note", columnDefinition = "TEXT")
     private String tasteNote;
     
-    @Column(name = "health_benefit", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "health_benefit", columnDefinition = "TEXT")
     private String healthBenefit;
     
-    @Column(name = "usage_guide", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "usage_guide", columnDefinition = "TEXT")
     private String usageGuide;
     
     @Column(name = "stock_quantity")
@@ -80,8 +81,9 @@ public class Product {
     
     // Constructors
     public Product() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZoneId vnZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        this.createdAt = LocalDateTime.now(vnZone);
+        this.updatedAt = LocalDateTime.now(vnZone);
         this.stockQuantity = 0;
     }
     
@@ -240,6 +242,6 @@ public class Product {
     
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
     }
 } 

@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Entity
@@ -35,22 +36,22 @@ public class CustomerOrder {
     @Column(name = "total_price", nullable = false, precision = 10, scale = 2)
     private BigDecimal totalPrice;
     
-    @Column(name = "status", nullable = false, columnDefinition = "NVARCHAR(255)")
+    @Column(name = "status", nullable = false, length = 50)
     private String status;
     
-    @Column(name = "shipping_address", columnDefinition = "NTEXT")
+    @Column(name = "shipping_address", columnDefinition = "TEXT")
     private String shippingAddress;
     
-    @Column(name = "shipping_method", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "shipping_method", length = 255)
     private String shippingMethod;
     
-    @Column(name = "phone_number", columnDefinition = "NVARCHAR(20)")
+    @Column(name = "phone_number", length = 20)
     private String phoneNumber;
     
-    @Column(name = "payment_method", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "payment_method", length = 50)
     private String paymentMethod;
     
-    @Column(name = "order_notes", columnDefinition = "NTEXT")
+    @Column(name = "order_notes", columnDefinition = "TEXT")
     private String orderNotes;
     
     @Column(name = "created_at")
@@ -65,8 +66,9 @@ public class CustomerOrder {
     
     // Constructors
     public CustomerOrder() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZoneId vnZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        this.createdAt = LocalDateTime.now(vnZone);
+        this.updatedAt = LocalDateTime.now(vnZone);
         this.status = "PENDING";
         this.paymentMethod = "COD"; // Cash on Delivery
     }

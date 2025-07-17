@@ -22,7 +22,6 @@
     max-width: 400px;
     width: 95vw;
     position: relative;
-    animation: modalIn 0.25s;
     overflow-y: auto;
 }
 @keyframes modalIn {
@@ -141,6 +140,8 @@ body.modal-open {
 .form-group {
     margin-bottom: 12px;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .form-group label {
@@ -159,7 +160,8 @@ body.modal-open {
     font-size: 16px;
 }
 
-.form-group input {
+.form-group input,
+.form-group input.error {
     width: 100%;
     padding: 12px 16px;
     border: 2px solid #e1e5e9;
@@ -169,6 +171,7 @@ body.modal-open {
     background: #ffffff;
     color: #333;
     box-sizing: border-box;
+    height: 44px;
 }
 
 .form-group input:focus {
@@ -185,24 +188,36 @@ body.modal-open {
 /* Password Input */
 .password-input {
     position: relative;
-    display: flex;
-    align-items: center;
+    display: block;
 }
 
 .password-input input {
-    padding-right: 50px;
+    width: 100%;
+    padding-right: 44px;
+    box-sizing: border-box;
 }
 
 .password-toggle {
     position: absolute;
+    top: 10px;
     right: 12px;
     background: none;
     border: none;
-    color: #666;
     cursor: pointer;
-    padding: 8px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
+    color: #888;
+    font-size: 18px;
+    z-index: 2;
+    padding: 0;
+    height: 32px;
+    width: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.password-toggle:focus {
+    outline: none;
 }
 
 .password-toggle:hover {
@@ -212,17 +227,15 @@ body.modal-open {
 
 /* Error Messages */
 .error-message {
-    display: none;
-    color: #e74c3c;
-    font-size: 11px;
-    line-height: 1.2;
-    margin-top: 0 !important;
-    opacity: 0;
-    transform: translateY(-5px);
-    transition: all 0.3s ease;
-    padding: 0;
-    min-height: 0;
-    background: none;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #e74c3c !important;
+    font-size: 0.95em !important;
+    padding: 2px 0 0 0 !important;
+    margin: 2px 0 0 0 !important;
+    font-weight: 400 !important;
+    display: block;
 }
 
 .error-message.show {

@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
 @Table(name = "order_item")
@@ -43,7 +44,7 @@ public class OrderItem {
     
     // Constructors
     public OrderItem() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
     }
     
     public OrderItem(CustomerOrder order, Product product, Integer quantity, BigDecimal unitPrice) {

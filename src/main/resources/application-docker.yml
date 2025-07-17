@@ -1,36 +1,36 @@
-environment:
-  - SPRING_PROFILES_ACTIVE=docker
-spring:
-  datasource:
-    url: jdbc:sqlserver://beui-sqlserver:1433;databaseName=greenteashop
-    username: sa
-    password: YourStrong@Password1
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-  jpa:
-    hibernate:
-      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
-    show-sql: ${SPRING_JPA_SHOW_SQL:true}
-    database-platform: org.hibernate.dialect.SQLServerDialect
-    properties:
-      hibernate:
-        format_sql: true
-        dialect: org.hibernate.dialect.SQLServerDialect
-  sql:
-    init:
-      mode: never
-app:
-  upload:
-    path: ${APP_UPLOAD_PATH:/app/uploads}
-
-server:
-  port: 8080
-  address: 0.0.0.0
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always 
+#environment:
+#  - SPRING_PROFILES_ACTIVE=docker
+#spring:
+#  datasource:
+#    url: jdbc:mysql://beui-mysql:3306/greenteashop?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=UTC
+#    username: root
+#    password: YourStrong@Password1
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#  jpa:
+#    hibernate:
+#      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+#    show-sql: ${SPRING_JPA_SHOW_SQL:true}
+#    database-platform: org.hibernate.dialect.MySQL8Dialect
+#    properties:
+#      hibernate:
+#        format_sql: true
+#        dialect: org.hibernate.dialect.MySQL8Dialect
+#  sql:
+#    init:
+#      mode: never
+#app:
+#  upload:
+#    path: ${APP_UPLOAD_PATH:/app/uploads}
+#
+#server:
+#  port: 8080
+#  address: 0.0.0.0
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: health,info,metrics
+#  endpoint:
+#    health:
+#      show-details: always

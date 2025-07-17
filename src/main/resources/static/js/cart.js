@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadCart();
     updateCartBadge();
+    bindAddCartEvents();
 });
 
 // Global variables to track selected items
@@ -29,7 +30,7 @@ function loadCart() {
                 renderCartItems(data.items);
                 updateCartSummary();
             } else {
-                showEmptyCart('Giỏ hàng trống');
+                showEmptyCart('Hãy chọn sản phẩm để tiến hành đặt hàng');
             }
         })
         .catch(error => {
@@ -50,7 +51,7 @@ function renderCartItems(items) {
                        checked 
                        onchange="toggleItemSelection(${item.id})">
             </div>
-            <img src="/uploads/images/${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
+            <img src="${item.productImage}" alt="${item.productName}" class="item-image" onerror="this.src='/images/product-placeholder.jpg'">
             <div class="item-info">
                 <h3>${item.productName}</h3>
                 <div class="item-price">${formatPrice(item.unitPrice)}</div>
@@ -121,11 +122,23 @@ function showEmptyCart(message) {
         <div class="empty-cart">
             <i class="fas fa-shopping-cart"></i>
             <h2>${message}</h2>
-            <a href="/" class="continue-shopping">Tiếp tục mua sắm</a>
+            <a href="/#products" class="continue-shopping">Tiếp tục mua sắm</a>
         </div>
     `;
     
-    cartSummary.style.display = 'none';
+    // Luôn hiển thị tổng quan, cập nhật về 0
+    cartSummary.style.display = 'block';
+    document.getElementById('totalItems').textContent = 0;
+    document.getElementById('totalPrice').textContent = '0đ';
+    document.getElementById('finalTotal').textContent = '0đ';
+    
+    // Disable checkout button khi giỏ hàng trống
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if (checkoutBtn) {
+        checkoutBtn.disabled = true;
+        // checkoutBtn.innerHTML = '<i class="fas fa-shopping-bag"></i> Chọn sản phẩm';
+        checkoutBtn.title = 'Vui lòng chọn sản phẩm trước khi đặt hàng';
+    }
 }
 
 // Update quantity
@@ -375,3 +388,65 @@ function showToast(message, type = 'success') {
         };
     }
 }
+
+window.addToCartIndex = function(productId) {
+    fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+            productId: parseInt(productId),
+            quantity: 1
+        })
+    })
+    .then(response => {
+        if (response.status === 401) {
+            if (window.showToast) {
+                window.showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
+            } else {
+                showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
+            }
+            if (window.showAuthModal) {
+                window.showAuthModal('login');
+            }
+            return;
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.message) {
+            if (window.showToast) {
+                window.showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'success');
+            }
+            updateCartBadge();
+        }
+    })
+    .catch(error => {
+        console.error('Error adding to cart:', error);
+        if (window.showToast) {
+            window.showToast('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+        } else {
+            showToast('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+        }
+    });
+};
+
+function bindAddCartEvents() {
+    document.querySelectorAll('.add-cart-btn').forEach(function(btn) {
+        btn.onclick = function() {
+            var productId = btn.getAttribute('data-product-id');
+            if (productId) {
+                window.addToCartIndex(productId);
+            }
+        };
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    bindAddCartEvents();
+    // Nếu có render lại sản phẩm bằng JS, hãy gọi lại bindAddCartEvents()
+});

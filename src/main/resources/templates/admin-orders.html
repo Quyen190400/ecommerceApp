@@ -258,7 +258,7 @@
             display: inline-block;
         }
         .admin-orders-page .order-status.status-pending {
-            background: var(--btn-light-bg);
+            background: var(--block-orange);
             color: var(--btn-light-text);
             border: 1.2px solid var(--btn-outline);
         }
@@ -1052,15 +1052,15 @@
                 const price = Number(item.unitPrice ?? item.price) || 0;
                 const quantity = Number(item.quantity) || 0;
                 let imgSrc = (item.productImage && item.productImage !== 'null' && item.productImage !== '')
-                    ? `/uploads/images/${item.productImage}`
+                    ? item.productImage
                     : (item.product && item.product.image && item.product.image !== 'null' && item.product.image !== ''
-                        ? `/uploads/images/${item.product.image}`
+                        ? item.product.image
                         : '/uploads/images/product-placeholder.jpg');
                 itemsHtml += `
                     <div class="order-item" style="align-items:center;gap:16px;">
-                        <img src="${imgSrc}" alt="${item.product ? item.product.name : ''}" class="item-image" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1.5px solid #e1e5e9;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);" onerror="this.src='/uploads/images/product-placeholder.jpg'">
+                        <img src="${imgSrc}" alt="${item.productName}" class="item-image" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1.5px solid #e1e5e9;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,0.04);" onerror="this.src='/images/product-placeholder.jpg'">
                         <div class="item-info">
-                            <div class="item-name">${item.product ? item.product.name : ''}</div>
+                            <div class="item-name">${item.productName}</div>
                             <div class="item-details">Số lượng: ${quantity} x ${formatPrice(price)}</div>
                         </div>
                         <div class="item-total">${formatPrice(quantity * price)}</div>
