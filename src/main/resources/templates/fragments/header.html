@@ -61,7 +61,7 @@
                             <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
                         </div>
                         <div class="dropdown-divider"></div>
-                        <a href="/orders" class="dropdown-item">
+                        <a href="/orders" class="dropdown-item" th:if="${currentUser != null and (currentUser.active == null or currentUser.active)}">
                             <i class="fas fa-box"></i>
                             <span>Đơn hàng của tôi</span>
                         </a>
@@ -72,6 +72,10 @@
                         <a href="/admin/products" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-boxes"></i>
                             <span>Quản lý sản phẩm (Admin)</span>
+                        </a>
+                        <a href="/admin/users" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Quản lý người dùng (Admin)</span>
                         </a>
                         <button class="dropdown-item theme-toggle-btn" id="themeToggleBtn">
                             <i class="fas fa-moon"></i>
@@ -126,7 +130,7 @@
                             <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
                         </div>
                         <div class="mobile-dropdown-divider"></div>
-                        <a href="/orders" class="mobile-dropdown-item">
+                        <a href="/orders" class="mobile-dropdown-item" th:if="${currentUser != null and (currentUser.active == null or currentUser.active)}">
                             <i class="fas fa-box"></i>
                             <span>Đơn hàng của tôi</span>
                         </a>
@@ -137,6 +141,10 @@
                         <a href="/admin/products" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-boxes"></i>
                             <span>Quản lý sản phẩm (Admin)</span>
+                        </a>
+                        <a href="/admin/users" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Quản lý người dùng (Admin)</span>
                         </a>
                         <button class="mobile-dropdown-item theme-toggle-btn" id="mobileThemeToggleBtn">
                             <i class="fas fa-moon"></i>

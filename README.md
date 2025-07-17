@@ -9,7 +9,7 @@ Welcome to Beui Tea Shop! This is a modern tea shop web application using **Java
 ![Overall Architecture](assets/architecture_diagram.png)
 
 - **Frontend**: User interface, rendered dynamically with Thymeleaf (HTML, CSS, JS).
-- **Backend**: Handles business logic, REST APIs, JWT authentication, user roles, image upload to Cloudinary, and database connection.
+- **Backend**: Handles business logic, REST APIs, JWT authentication, user roles (admin/user), user management, product & order management, password reset, secure API endpoints, image upload to Cloudinary, input validation, error handling, and database connection.
 - **MySQL Database**: Stores products, orders, users, and other business data. Deployed as a managed service on Railway.
 - **Cloudinary**: Stores product images; backend uploads images directly to Cloudinary and saves the URL to the DB. No local image storage.
 - **API Docs (Swagger UI)**: Auto-generated API documentation for backend endpoints.
@@ -121,6 +121,9 @@ Main environment variables (set in `.env` or Railway dashboard):
 | `/api/orders`                         | POST   | Place order                | Authenticated (User/Admin) |
 | `/api/admin/orders`                   | GET    | List all orders            | Admin only          |
 | `/api/admin/orders/{id}`              | PUT    | Update order status        | Admin only          |
+| `/api/users`                           | GET    | List all users              | Admin only          |
+| `/api/users/reset-password`            | POST   | Reset user password         | Admin only          |
+| `/api/users/{id}`                      | PUT    | Update user info/status     | Admin only          |
 
 - **Public:** Anyone can access, no login required.
 - **Authenticated:** Requires login (JWT token). Both regular users and admins can access.

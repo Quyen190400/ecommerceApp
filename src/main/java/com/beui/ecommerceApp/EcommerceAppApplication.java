@@ -48,6 +48,7 @@ public class EcommerceAppApplication {
 				nthquyenUser.setPassword(passwordEncoder.encode("123456"));
 				nthquyenUser.setUsername("nthquyen@greentea.com");
 				nthquyenUser.setRole("CUSTOMER");
+				nthquyenUser.setActive(true);
 				userRepository.save(nthquyenUser);
 				
 				AppUser adminUser = new AppUser();
@@ -56,6 +57,7 @@ public class EcommerceAppApplication {
 				adminUser.setPassword(passwordEncoder.encode("123456"));
 				adminUser.setUsername("admin@greentea.com");
 				adminUser.setRole("ADMIN");
+				adminUser.setActive(true);
 				userRepository.save(adminUser);
 			}
 			System.out.println("==============================================");

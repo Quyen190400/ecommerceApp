@@ -27,6 +27,11 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // Skip JWT processing for static resources to improve performance
         String requestURI = request.getRequestURI();
+        // Bỏ qua JWT cho forgot-password
+        if (requestURI.equals("/api/users/forgot-password")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         if (requestURI.startsWith("/css/") || 
             requestURI.startsWith("/js/") || 
             requestURI.startsWith("/images/") ||

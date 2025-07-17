@@ -1,3 +1,36 @@
+// Hàm dùng chung xử lý khi tài khoản bị vô hiệu hóa
+function handleAuthDeactivated(status, body) {
+  // Nếu đang ở trang cart (có phần tử cartItems), chỉ show UI giữa trang, không show toast
+  if (status === 403 && body.message === "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.") {
+    if (!document.getElementById('cartItems')) {
+      if (typeof showToast === 'function') {
+        showToast(body.message, 'error');
+      } else {
+        alert(body.message);
+      }
+    }
+    document.querySelectorAll('button, input[type=checkbox], input[type=submit]').forEach(el => {
+      const excludeIds = [
+        'userDropdownBtn',
+        'mobileUserBtn',
+        'themeToggleBtn',
+        'mobileThemeToggleBtn'
+      ];
+      const excludeClasses = [
+        'logout-btn'
+      ];
+      // Loại trừ theo id hoặc class
+      if (!excludeIds.includes(el.id) && !excludeClasses.some(cls => el.classList.contains(cls))) {
+        el.disabled = true;
+      }
+    });
+    return true;
+  }
+  return false;
+}
+// Cách dùng:
+// fetch(...).then(res => res.json().then(data => ({status: res.status, body: data}))).then(({status, body}) => { if (handleAuthDeactivated(status, body)) return; ... });
+
 // Cart functionality
 document.addEventListener('DOMContentLoaded', function() {
     loadCart();
@@ -14,20 +47,17 @@ function loadCart() {
     fetch('/api/cart', {
         credentials: 'include'
     })
-        .then(response => {
-            if (response.status === 401) {
-                // User not logged in
-                showEmptyCart('Vui lòng đăng nhập để xem giỏ hàng');
+        .then(response => response.json().then(data => ({status: response.status, body: data})))
+        .then(({status, body}) => {
+            if (handleAuthDeactivated(status, body)) {
+                showInactiveCart();
                 return;
             }
-            return response.json();
-        })
-        .then(data => {
-            if (data && data.items && data.items.length > 0) {
-                cartItems = data.items;
+            if (body && body.items && body.items.length > 0) {
+                cartItems = body.items;
                 // Select all items by default
                 selectedItems = new Set(cartItems.map(item => item.id));
-                renderCartItems(data.items);
+                renderCartItems(body.items);
                 updateCartSummary();
             } else {
                 showEmptyCart('Hãy chọn sản phẩm để tiến hành đặt hàng');
@@ -37,6 +67,23 @@ function loadCart() {
             console.error('Error loading cart:', error);
             showEmptyCart('Có lỗi xảy ra khi tải giỏ hàng');
         });
+}
+
+// Hiển thị giao diện khi tài khoản bị vô hiệu hóa
+function showInactiveCart() {
+    const cartItemsContainer = document.getElementById('cartItems');
+    const cartSummary = document.getElementById('cartSummary');
+    if (cartItemsContainer) {
+        cartItemsContainer.innerHTML = `
+            <div class="empty-cart" style="text-align:center;padding:60px 20px;">
+                <i class="fas fa-user-slash" style="font-size:3rem;color:#e57373;"></i>
+                <h2 style="color:#e57373;">Tài khoản của bạn đã bị vô hiệu hóa.<br>Vui lòng liên hệ quản trị viên.</h2>
+            </div>
+        `;
+    }
+    if (cartSummary) {
+        cartSummary.style.display = 'none';
+    }
 }
 
 // Render cart items
@@ -158,10 +205,11 @@ function updateQuantity(itemId, newQuantity) {
             quantity: parseInt(newQuantity)
         })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            showToast(data.message, 'success');
+    .then(response => response.json().then(data => ({status: response.status, body: data})))
+    .then(({status, body}) => {
+        if (handleAuthDeactivated(status, body)) return;
+        if (body.message) {
+            showToast(body.message, 'success');
             loadCart(); // Reload cart to update totals
             updateCartBadge();
         }
@@ -181,10 +229,11 @@ function removeFromCart(itemId) {
         },
         credentials: 'include'
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            showToast(data.message, 'success');
+    .then(response => response.json().then(data => ({status: response.status, body: data})))
+    .then(({status, body}) => {
+        if (handleAuthDeactivated(status, body)) return;
+        if (body.message) { // Đã sửa từ data.message sang body.message
+            showToast(body.message, 'success');
             loadCart(); // Reload cart
             updateCartBadge();
         }
@@ -257,10 +306,11 @@ function checkout() {
         credentials: 'include',
         body: JSON.stringify(orderData)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            showToast(data.message, 'success');
+    .then(response => response.json().then(data => ({status: response.status, body: data})))
+    .then(({status, body}) => {
+        if (handleAuthDeactivated(status, body)) return;
+        if (body.message) {
+            showToast(body.message, 'success');
             
             // Reload cart to reflect removed items
             loadCart();
@@ -268,10 +318,10 @@ function checkout() {
             
             // Redirect to order success page
             setTimeout(() => {
-                window.location.href = `/order-success?orderId=${data.order.id}`;
+                window.location.href = `/order-success?orderId=${body.order.id}`;
             }, 1500);
         } else {
-            throw new Error(data.message || 'Có lỗi xảy ra');
+            throw new Error(body.message || 'Có lỗi xảy ra');
         }
     })
     .catch(error => {
@@ -287,24 +337,14 @@ function updateCartBadge() {
     fetch('/api/cart/count', {
         credentials: 'include'
     })
-    .then(response => {
-        if (response.status === 401 || response.status === 403) {
-            // Chưa đăng nhập, ẩn badge
-            const cartBadge = document.getElementById('cartBadge');
-            if (cartBadge) {
-                cartBadge.textContent = '';
-                cartBadge.style.display = 'none';
-            }
-            return null;
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (!data) return; // Đã xử lý ở trên
+    .then(response => response.json().then(data => ({status: response.status, body: data})))
+    .then(({status, body}) => {
+        if (handleAuthDeactivated(status, body)) return;
+        if (!body) return; // Đã xử lý ở trên
         const cartBadge = document.getElementById('cartBadge');
         if (cartBadge) {
-            if (data.count && data.count > 0) {
-                cartBadge.textContent = data.count;
+            if (body.count && body.count > 0) {
+                cartBadge.textContent = body.count;
                 cartBadge.style.display = 'inline-block';
             } else {
                 cartBadge.textContent = '';
@@ -401,26 +441,18 @@ window.addToCartIndex = function(productId) {
             quantity: 1
         })
     })
-    .then(response => {
-        if (response.status === 401) {
-            if (window.showToast) {
-                window.showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
-            } else {
-                showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
-            }
-            if (window.showAuthModal) {
-                window.showAuthModal('login');
-            }
+    .then(response => response.json().then(data => ({status: response.status, body: data})))
+    .then(({status, body}) => {
+        if (status === 403 && body && body.message === "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.") {
+            showToast(body.message, 'error');
             return;
         }
-        return response.json();
-    })
-    .then(data => {
-        if (data && data.message) {
+        if (handleAuthDeactivated(status, body)) return;
+        if (body && body.message) {
             if (window.showToast) {
-                window.showToast(data.message, 'success');
+                window.showToast(body.message, 'success');
             } else {
-                showToast(data.message, 'success');
+                showToast(body.message, 'success');
             }
             updateCartBadge();
         }

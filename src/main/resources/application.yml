@@ -25,6 +25,21 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: quyen190400@gmail.com
+    password: ${SPRING_MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+    default-encoding: UTF-8
+    from: "Beui - Green tea shop <quyen190400@gmail.com>"
+
+
 app:
   upload:
     path: ${APP_UPLOAD_PATH:/app/uploads/images}
@@ -35,5 +50,5 @@ server:
 cloudinary:
   cloud_name: ${CLOUDINARY_CLOUD_NAME:djht19dig}
   api_key: ${CLOUDINARY_API_KEY:766633261474643}
-  api_secret: ${CLOUDINARY_API_SECRET:E9gNgIS3z0HnmiTyopFgxvtTj_c}
+  api_secret: ${CLOUDINARY_API_SECRET:}
 

@@ -139,49 +139,42 @@ public class CartController {
     @GetMapping
     public ResponseEntity<?> getCart(HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
-        
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(401).body(Map.of("message", "Vui lòng đăng nhập để xem giỏ hàng"));
         }
-        
         AppUser user = userOpt.get();
-        Optional<Cart> cartOpt = cartService.getCartByUserId(user.getId());
-        
-        if (!cartOpt.isPresent()) {
-            return ResponseEntity.ok(Map.of(
-                "cart", null,
-                "items", List.of(),
-                "totalItems", 0,
-                "totalPrice", BigDecimal.ZERO
-            ));
+        if (user.getActive() == null || !user.getActive()) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
         }
-        
+        Optional<Cart> cartOpt = cartService.getCartByUserId(user.getId());
+        if (!cartOpt.isPresent()) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("cart", null);
+            response.put("items", List.of());
+            response.put("totalItems", 0);
+            response.put("totalPrice", java.math.BigDecimal.ZERO);
+            return ResponseEntity.ok(response);
+        }
         Cart cart = cartOpt.get();
         List<CartItem> items = cartService.getCartItems(cart.getId());
-        
         // Filter out hidden products
         List<CartItem> visibleItems = items.stream()
                 .filter(item -> item.getProduct().getStatus() != null && item.getProduct().getStatus())
                 .collect(Collectors.toList());
-        
         // Cập nhật totals từ items thực tế (chỉ visible items)
         int totalItems = visibleItems.stream().mapToInt(CartItem::getQuantity).sum();
-        BigDecimal totalPrice = visibleItems.stream()
+        java.math.BigDecimal totalPrice = visibleItems.stream()
                 .map(CartItem::getTotalPrice)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
         // Cập nhật cart totals trong database
         cartService.updateCartTotals(cart.getId());
-        
         // Convert to DTOs (chỉ visible items)
         CartResponse cartResponse = convertToCartResponse(cart, visibleItems);
-        
         Map<String, Object> response = new HashMap<>();
         response.put("cart", cartResponse);
         response.put("items", cartResponse.getItems());
         response.put("totalItems", totalItems);
         response.put("totalPrice", totalPrice);
-        
         return ResponseEntity.ok(response);
     }
     
@@ -196,6 +189,10 @@ public class CartController {
         }
         
         AppUser user = userOpt.get();
+        if (user.getActive() == null || !user.getActive()) {
+            return ResponseEntity.status(403).body(Map.of("message", "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên."));
+        }
+        
         Long productId = Long.valueOf(request.get("productId").toString());
         Integer quantity = Integer.valueOf(request.get("quantity").toString());
         
