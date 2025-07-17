@@ -80,7 +80,7 @@ public class SecurityConfig {
                     .requestMatchers("/orders").authenticated()
                     .requestMatchers("/api/cart/**").authenticated()
                     .requestMatchers("/products/admin/**", "/orders/**").hasRole("ADMIN")
-                    .requestMatchers("/admin/products").authenticated()
+                    .requestMatchers("/admin/products", "/admin/users").authenticated()
                     .requestMatchers("/api/users/me").authenticated()
                     .requestMatchers("/api/orders/my-orders").hasAnyRole("CUSTOMER", "ADMIN")
                     .requestMatchers("/api/orders/me").hasAnyRole("CUSTOMER", "ADMIN")

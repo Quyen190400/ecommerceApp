@@ -218,13 +218,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         suggestList.innerHTML = matches.slice(0, 8).map(p =>
-            `<div class="dropdown-item" style="cursor:pointer; padding:8px 16px; border-bottom:1px solid #f0f0f0; background: #fff; color: #222;" data-id="${p.id}">${p.name}</div>`
+            `<div class="search-suggest-item" data-id="${p.id}">${p.name}</div>`
         ).join('');
         suggestList.classList.add('show');
         suggestList.style.display = 'block';
         suggestList.style.zIndex = '9999';
         // Gắn sự kiện click
-        suggestList.querySelectorAll('.dropdown-item').forEach(item => {
+        suggestList.querySelectorAll('.search-suggest-item').forEach(item => {
             item.onclick = function() {
                 window.location.href = '/product/' + item.getAttribute('data-id');
             };

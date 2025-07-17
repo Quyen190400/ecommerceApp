@@ -1,3 +1,29 @@
+// Hàm dùng chung xử lý khi tài khoản bị vô hiệu hóa
+function handleAuthDeactivated(status, body) {
+  if (status === 403 && body.message === "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.") {
+    if (typeof showToast === 'function') {
+      showToast(body.message, 'error');
+    } else {
+      alert(body.message);
+    }
+    document.querySelectorAll('button, input[type=checkbox], input[type=submit]').forEach(el => {
+      const excludeIds = [
+        'userDropdownBtn',
+        'mobileUserBtn',
+        'themeToggleBtn',
+        'mobileThemeToggleBtn'
+      ];
+      const excludeClasses = [
+        'logout-btn'
+      ];
+      if (!excludeIds.includes(el.id) && !excludeClasses.some(cls => el.classList.contains(cls))) {
+        el.disabled = true;
+      }
+    });
+    return true;
+  }
+  return false;
+}
 // Product Detail Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     

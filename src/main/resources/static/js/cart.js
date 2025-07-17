@@ -208,8 +208,8 @@ function updateQuantity(itemId, newQuantity) {
     .then(response => response.json().then(data => ({status: response.status, body: data})))
     .then(({status, body}) => {
         if (handleAuthDeactivated(status, body)) return;
-        if (data.message) {
-            showToast(data.message, 'success');
+        if (body.message) {
+            showToast(body.message, 'success');
             loadCart(); // Reload cart to update totals
             updateCartBadge();
         }
@@ -309,8 +309,8 @@ function checkout() {
     .then(response => response.json().then(data => ({status: response.status, body: data})))
     .then(({status, body}) => {
         if (handleAuthDeactivated(status, body)) return;
-        if (data.message) {
-            showToast(data.message, 'success');
+        if (body.message) {
+            showToast(body.message, 'success');
             
             // Reload cart to reflect removed items
             loadCart();
@@ -318,10 +318,10 @@ function checkout() {
             
             // Redirect to order success page
             setTimeout(() => {
-                window.location.href = `/order-success?orderId=${data.order.id}`;
+                window.location.href = `/order-success?orderId=${body.order.id}`;
             }, 1500);
         } else {
-            throw new Error(data.message || 'Có lỗi xảy ra');
+            throw new Error(body.message || 'Có lỗi xảy ra');
         }
     })
     .catch(error => {
@@ -340,11 +340,11 @@ function updateCartBadge() {
     .then(response => response.json().then(data => ({status: response.status, body: data})))
     .then(({status, body}) => {
         if (handleAuthDeactivated(status, body)) return;
-        if (!data) return; // Đã xử lý ở trên
+        if (!body) return; // Đã xử lý ở trên
         const cartBadge = document.getElementById('cartBadge');
         if (cartBadge) {
-            if (data.count && data.count > 0) {
-                cartBadge.textContent = data.count;
+            if (body.count && body.count > 0) {
+                cartBadge.textContent = body.count;
                 cartBadge.style.display = 'inline-block';
             } else {
                 cartBadge.textContent = '';
