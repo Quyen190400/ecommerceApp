@@ -44,7 +44,7 @@ public class WebController {
         model.addAttribute("allProducts", products);
 
         List<Product> bestSellers = productService.getBestSellers();
-
+        model.addAttribute("featuredProducts", bestSellers);
         // Add user info from JWT
         addUserInfoToModel(model, request);
         

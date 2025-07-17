@@ -17,6 +17,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Entity
@@ -65,8 +66,9 @@ public class CustomerOrder {
     
     // Constructors
     public CustomerOrder() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZoneId vnZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        this.createdAt = LocalDateTime.now(vnZone);
+        this.updatedAt = LocalDateTime.now(vnZone);
         this.status = "PENDING";
         this.paymentMethod = "COD"; // Cash on Delivery
     }

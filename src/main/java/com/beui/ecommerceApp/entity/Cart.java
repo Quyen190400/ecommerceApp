@@ -16,6 +16,7 @@ import jakarta.persistence.Table;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @Entity
@@ -49,8 +50,9 @@ public class Cart {
     
     // Constructors
     public Cart() {
-        this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
+        ZoneId vnZone = ZoneId.of("Asia/Ho_Chi_Minh");
+        this.createdAt = LocalDateTime.now(vnZone);
+        this.updatedAt = LocalDateTime.now(vnZone);
     }
     
     public Cart(AppUser user) {
@@ -117,7 +119,7 @@ public class Cart {
     
     @PreUpdate
     public void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now(ZoneId.of("Asia/Ho_Chi_Minh"));
     }
     
     // Helper method to calculate total price

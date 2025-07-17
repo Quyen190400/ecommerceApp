@@ -2,6 +2,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     loadCart();
     updateCartBadge();
+    bindAddCartEvents();
 });
 
 // Global variables to track selected items
@@ -387,3 +388,65 @@ function showToast(message, type = 'success') {
         };
     }
 }
+
+window.addToCartIndex = function(productId) {
+    fetch('/api/cart/add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+            productId: parseInt(productId),
+            quantity: 1
+        })
+    })
+    .then(response => {
+        if (response.status === 401) {
+            if (window.showToast) {
+                window.showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
+            } else {
+                showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
+            }
+            if (window.showAuthModal) {
+                window.showAuthModal('login');
+            }
+            return;
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data && data.message) {
+            if (window.showToast) {
+                window.showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'success');
+            }
+            updateCartBadge();
+        }
+    })
+    .catch(error => {
+        console.error('Error adding to cart:', error);
+        if (window.showToast) {
+            window.showToast('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+        } else {
+            showToast('Có lỗi xảy ra khi thêm vào giỏ hàng', 'error');
+        }
+    });
+};
+
+function bindAddCartEvents() {
+    document.querySelectorAll('.add-cart-btn').forEach(function(btn) {
+        btn.onclick = function() {
+            var productId = btn.getAttribute('data-product-id');
+            if (productId) {
+                window.addToCartIndex(productId);
+            }
+        };
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    bindAddCartEvents();
+    // Nếu có render lại sản phẩm bằng JS, hãy gọi lại bindAddCartEvents()
+});

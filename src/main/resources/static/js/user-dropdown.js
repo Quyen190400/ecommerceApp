@@ -181,3 +181,78 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     };
 }); 
+
+// === SEARCH DROPDOWN SUGGESTION FOR HEADER ===
+(function() {
+    let allProducts = [];
+    let suggestList = document.getElementById('searchSuggestList');
+    let searchInput = document.getElementById('productSearchInput');
+    let fetched = false;
+    let blurTimeout = null;
+
+    async function fetchProductsForSuggest() {
+        try {
+            let res = await fetch('/api/products');
+            if (res.ok) {
+                let data = await res.json();
+                allProducts = data.filter(p => p.status === true || p.status === 1);
+                fetched = true;
+            }
+        } catch (e) { allProducts = []; }
+    }
+
+    function renderSuggestList(keyword) {
+        if (!suggestList) return;
+        if (!keyword || keyword.trim() === '') {
+            suggestList.classList.remove('show');
+            suggestList.style.display = 'none';
+            suggestList.innerHTML = '';
+            return;
+        }
+        const kw = keyword.trim().toLowerCase();
+        const matches = allProducts.filter(p => p.name && p.name.toLowerCase().includes(kw));
+        if (matches.length === 0) {
+            suggestList.classList.remove('show');
+            suggestList.style.display = 'none';
+            suggestList.innerHTML = '';
+            return;
+        }
+        suggestList.innerHTML = matches.slice(0, 8).map(p =>
+            `<div class="dropdown-item" style="cursor:pointer; padding:8px 16px; border-bottom:1px solid #f0f0f0; background: #fff; color: #222;" data-id="${p.id}">${p.name}</div>`
+        ).join('');
+        suggestList.classList.add('show');
+        suggestList.style.display = 'block';
+        suggestList.style.zIndex = '9999';
+        // Gắn sự kiện click
+        suggestList.querySelectorAll('.dropdown-item').forEach(item => {
+            item.onclick = function() {
+                window.location.href = '/product/' + item.getAttribute('data-id');
+            };
+        });
+    }
+
+    if (searchInput && suggestList) {
+        searchInput.addEventListener('focus', async function() {
+            if (!fetched) {
+                await fetchProductsForSuggest();
+            }
+            if (this.value) renderSuggestList(this.value);
+        });
+        searchInput.addEventListener('input', async function() {
+            if (!fetched) {
+                await fetchProductsForSuggest();
+            }
+            renderSuggestList(this.value);
+        });
+        searchInput.addEventListener('blur', function() {
+            blurTimeout = setTimeout(() => {
+                suggestList.classList.remove('show');
+                suggestList.style.display = 'none';
+            }, 180);
+        });
+        suggestList.addEventListener('mousedown', function(e) {
+            e.preventDefault();
+            clearTimeout(blurTimeout);
+        });
+    }
+})(); 

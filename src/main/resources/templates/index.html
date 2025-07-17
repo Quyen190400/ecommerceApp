@@ -61,7 +61,6 @@
             padding: 15px 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            animation: slideDown 0.3s ease;
         }
         
         .success-message {
@@ -178,7 +177,7 @@
         <div class="topic-card">
             <img src="/images/tra-dao.png" alt="Trà Đạo">
             <h3>Trà Đạo</h3>
-            <p>Nghệ thuật thưởng trà, tĩnh tâm và hòa mình vào thiên nhiên.</p>
+            <p>Nghệ thuật thưởng trà, hòa mình vào thiên nhiên.</p>
         </div>
         <div class="topic-card">
             <img src="/images/tra-nghe.png" alt="Trà Nghệ">
@@ -210,7 +209,12 @@
                 <h4 class="product-title-multiline" th:text="${product.name}">Tên sản phẩm</h4>
                 <p class="sold-count" th:text="'Đã bán: ' + ${product.soldCount} + ' sản phẩm'"></p>
                 <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</p>
-                <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                <div class="product-actions">
+                    <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                    <button type="button" class="add-cart-btn" th:attr="data-product-id=${product.id}" title="Thêm vào giỏ hàng">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -228,7 +232,12 @@
                 <h4 th:text="${product.name}">Tên sản phẩm</h4>
                 <p class="price" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT') + 'đ'}">0đ</p>
                 <p class="description" th:text="${#strings.abbreviate(product.description, 100)}">Mô tả sản phẩm...</p>
-                <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                <div class="product-actions">
+                    <a th:href="@{'/product/' + ${product.id}}" class="view-btn">Xem chi tiết</a>
+                    <button type="button" class="add-cart-btn" th:attr="data-product-id=${product.id}" title="Thêm vào giỏ hàng">
+                        <i class="fas fa-cart-plus"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -301,6 +310,7 @@
           };
         });
       }
+      // Tắt auto chuyển tab
       function resetAutoplay() {
         clearInterval(window.carouselTimer);
         window.carouselTimer = setInterval(() => {
@@ -357,10 +367,10 @@
                 </div>
             </div>
             <div class="social-links">
-                <a href="https://www.facebook.com/hoang.quyen.413118" class="social-link"><i class="fab fa-facebook"></i></a>
-                <a href="https://www.instagram.com/reel/C6lbf5rPk4U/?hl=am-et" class="social-link"><i class="fab fa-instagram"></i></a>
-                <a href="https://youtu.be/15b0Ox8Qwe4" class="social-link"><i class="fab fa-youtube"></i></a>
-                <a href="https://www.tiktok.com/@lku_1974?_r=1&_d=secCgYIASAHKAESPgo8DGXmaBz9jx4Vq%2FngCcolb7py%2BGzxxgp6wOpeq%2FdrUujBA4RbxuMlTmaYkalaLko46ZLly7WMPBCHOIawGgA%3D&_svg=1&checksum=46dc3094fb0baab1ca75d3885b89f850bb663ab4cf19e8e3e46a4c753b74dc49&sec_uid=MS4wLjABAAAAiXafvQo5VcxELh_Ydvl7TaHIzoUBLbs1SCuxlNCdHd8m7_gYrW2E7ss7FD8Dr4yf&sec_user_id=MS4wLjABAAAAiXafvQo5VcxELh_Ydvl7TaHIzoUBLbs1SCuxlNCdHd8m7_gYrW2E7ss7FD8Dr4yf&share_app_id=1180&share_author_id=6977552603525743617&share_link_id=10B943A6-B176-4BE4-90D7-8AE80C4111CC&share_scene=1&sharer_language=vi&social_share_type=4&source=h5_t&timestamp=1752428437&tt_from=copy&u_code=dj9318bba762k5&ug_btm=b8727%2Cb0&user_id=6977552603525743617&utm_campaign=client_share&utm_medium=ios&utm_source=copy" class="social-link"><i class="fab fa-tiktok"></i></a>
+                <a href="https://www.facebook.com/hoang.quyen.413118" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook"></i></a>
+                <a href="https://www.instagram.com/reel/C6lbf5rPk4U/?hl=am-et" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i></a>
+                <a href="https://youtu.be/15b0Ox8Qwe4" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/@lku_1974?_r=1&_d=secCgYIASAHKAESPgo8DGXmaBz9jx4Vq%2FngCcolb7py%2BGzxxgp6wOpeq%2FdrUujBA4RbxuMlTmaYkalaLko46ZLly7WMPBCHOIawGgA%3D&_svg=1&checksum=46dc3094fb0baab1ca75d3885b89f850bb663ab4cf19e8e3e46a4c753b74dc49&sec_uid=MS4wLjABAAAAiXafvQo5VcxELh_Ydvl7TaHIzoUBLbs1SCuxlNCdHd8m7_gYrW2E7ss7FD8Dr4yf&sec_user_id=MS4wLjABAAAAiXafvQo5VcxELh_Ydvl7TaHIzoUBLbs1SCuxlNCdHd8m7_gYrW2E7ss7FD8Dr4yf&share_app_id=1180&share_author_id=6977552603525743617&share_link_id=10B943A6-B176-4BE4-90D7-8AE80C4111CC&share_scene=1&sharer_language=vi&social_share_type=4&source=h5_t&timestamp=1752428437&tt_from=copy&u_code=dj9318bba762k5&ug_btm=b8727%2Cb0&user_id=6977552603525743617&utm_campaign=client_share&utm_medium=ios&utm_source=copy" class="social-link" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
         <div class="map-container">
@@ -599,7 +609,7 @@
                     <span class="error-message" id="loginPasswordError"></span>
                 </div>
 
-                <div class="form-group checkbox-group">
+                <div class="form-group checkbox-group" style="display:none">
                     <label class="checkbox-label">
                         <input type="checkbox" id="rememberMe" name="remember-me">
                         <span class="checkmark"></span>
@@ -613,7 +623,7 @@
                 </button>
             </form>
 
-            <div class="auth-links">
+            <div class="auth-links" style="display:none">
                 <a href="#" class="forgot-password">Quên mật khẩu?</a>
             </div>
 
@@ -708,6 +718,7 @@
     </button>
 </div>
 
+<script th:src="@{/js/cart.js}"></script>
 <script th:src="@{/js/auth-forms.js}"></script>
 <script th:src="@{/js/user-dropdown.js}"></script>
 <script>
@@ -820,5 +831,125 @@
         }
     });
 </script>
+<script>
+// Scroll spy: Gạch chân nav-link khi cuộn tới section tương ứng
+window.addEventListener('DOMContentLoaded', function() {
+    const sections = [
+        {id: 'home', nav: ['/', '/#home']},
+        {id: 'art', nav: ['/\#art']},
+        {id: 'products', nav: ['/\#products']},
+        {id: 'contact', nav: ['/\#contact']}
+    ];
+    const navLinks = document.querySelectorAll('.nav-link, .mobile-nav-link');
+    function onScrollSpy() {
+        let scrollPos = window.scrollY || document.documentElement.scrollTop;
+        let found = false;
+        for (let i = sections.length - 1; i >= 0; i--) {
+            const sec = document.getElementById(sections[i].id);
+            if (sec && scrollPos + 80 >= sec.offsetTop) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (sections[i].nav.some(href => link.getAttribute('href').endsWith(href))) {
+                        link.classList.add('active');
+                    }
+                });
+                found = true;
+                break;
+            }
+        }
+        // Nếu không section nào match, active Trang chủ
+        if (!found) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '/' || link.getAttribute('href') === '/#home') {
+                    link.classList.add('active');
+                }
+            });
+        }
+    }
+    window.addEventListener('scroll', onScrollSpy);
+    onScrollSpy();
+});
+</script>
+<script>
+let allProducts = [];
+let suggestList = document.getElementById('searchSuggestList');
+let searchInput = document.getElementById('productSearchInput');
+let fetched = false;
+let blurTimeout = null;
+
+function renderSuggestList(keyword) {
+    console.log('renderSuggestList called with:', keyword);
+    if (!keyword || keyword.trim() === '') {
+        suggestList.classList.remove('show');
+        suggestList.style.display = 'none';
+        suggestList.innerHTML = '';
+        return;
+    }
+    const kw = keyword.trim().toLowerCase();
+    const matches = allProducts.filter(p => p.name && p.name.toLowerCase().includes(kw));
+    console.log('matches:', matches);
+    if (matches.length === 0) {
+        suggestList.classList.remove('show');
+        suggestList.style.display = 'none';
+        suggestList.innerHTML = '';
+        return;
+    }
+    suggestList.innerHTML = matches.slice(0, 8).map(p =>
+        `<div class="dropdown-item" style="cursor:pointer; padding:8px 16px; border-bottom:1px solid #f0f0f0; background: #fff; color: #222;" data-id="${p.id}">${p.name}</div>`
+    ).join('');
+    suggestList.classList.add('show');
+    suggestList.style.display = 'block';
+    suggestList.style.zIndex = '9999';
+    // Gắn sự kiện click
+    suggestList.querySelectorAll('.dropdown-item').forEach(item => {
+        item.onclick = function() {
+            window.location.href = '/product/' + item.getAttribute('data-id');
+        };
+    });
+    console.log('Dropdown rendered, should be visible now.');
+}
+
+async function fetchProductsForSuggest() {
+    try {
+        let res = await fetch('/api/products');
+        if (res.ok) {
+            let data = await res.json();
+            allProducts = data.filter(p => p.status === true || p.status === 1);
+            fetched = true;
+            console.log('Fetched products:', allProducts);
+        }
+    } catch (e) { allProducts = []; }
+}
+
+if (searchInput) {
+    searchInput.addEventListener('focus', async function() {
+        if (!fetched) {
+            await fetchProductsForSuggest();
+        }
+        if (this.value) renderSuggestList(this.value);
+    });
+    searchInput.addEventListener('input', async function() {
+        if (!fetched) {
+            await fetchProductsForSuggest();
+        }
+        renderSuggestList(this.value);
+    });
+    // Sửa lại sự kiện blur: chỉ ẩn dropdown nếu không click vào dropdown
+    searchInput.addEventListener('blur', function() {
+        blurTimeout = setTimeout(() => {
+            suggestList.classList.remove('show');
+            suggestList.style.display = 'none';
+        }, 180);
+    });
+    // Nếu click vào dropdown thì không ẩn
+    suggestList.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        clearTimeout(blurTimeout);
+    });
+}
+</script>
+<style>
+</style>
 </body>
 </html> 
