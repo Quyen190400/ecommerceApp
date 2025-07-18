@@ -201,9 +201,6 @@ After successful deployment, you can access your app at:
   - **Admin account:**
     - Email: `admin@greentea.com`
     - Password: `123456`
-  - **Test user account:**
-    - Email: `nthquyen@greentea.com`
-    - Password: `123456`
   - **Create your own customer account:**
     - You can register a new account via the website's registration page. New accounts will have the customer role by default.
   - **Usage:**
