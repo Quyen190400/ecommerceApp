@@ -42,28 +42,104 @@
         .toast-success { background: #43AA8B; color: #fff; }
         .toast-error { background: #e57373; color: #fff; }
         @media (max-width: 900px) {
-            .container { padding: 0 8px; }
-            .search-bar { flex-direction: column; align-items: stretch; gap: 8px; }
+            .container { padding: 0 4px; }
+            .search-bar { flex-direction: column; gap: 8px; }
             .search-bar input { min-width: 100px; width: 100%; }
-            .table-users th, .table-users td { font-size: 0.98em; padding: 6px; }
+            .table-users th, .table-users td { font-size: 0.97em; padding: 5px; }
+            .btn-reset { font-size: 0.98em; padding: 5px 10px; }
         }
         @media (max-width: 700px) {
             .container { padding: 0 2px; }
             .table-responsive { overflow-x: auto; }
-            .table-users { min-width: 600px; font-size: 0.97em; }
+            .table-users { min-width: 600px; font-size: 0.95em; }
             .search-bar { flex-direction: column; gap: 6px; }
             .d-flex { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
-            h2.fw-bold { font-size: 1.2rem; }
+            h2.fw-bold { font-size: 1.1rem; }
+            .btn-reset { font-size: 0.95em; padding: 4px 7px; }
+            .badge-status { font-size: 0.85em; padding: 2px 7px; }
         }
         @media (max-width: 500px) {
-            .table-users { min-width: 400px; font-size: 0.95em; }
-            .search-bar input { font-size: 0.95em; }
+            .table-users { min-width: 400px; font-size: 0.92em; }
+            .search-bar input { font-size: 0.92em; }
             .toast-custom { min-width: 120px; max-width: 90vw; right: 8px; top: 8px; padding: 10px 8px; }
             #confirmModal > div { min-width: 90vw; padding: 18px 6px 12px 6px; }
+            h2.fw-bold { font-size: 1rem; }
         }
         @media (max-width: 400px) {
             h2.fw-bold { font-size: 1rem; }
             .table-users th, .table-users td { font-size: 0.92em; }
+        }
+        @media (max-width: 900px) {
+          h2.fw-bold {
+            font-size: 1.15rem !important;
+            text-align: left;
+            word-break: break-word;
+            margin-top: 12px;
+            margin-bottom: 10px;
+            padding: 0 4px;
+            background: none;
+            z-index: 2;
+            position: relative;
+          }
+        }
+        @media (max-width: 700px) {
+          h2.fw-bold {
+            font-size: 1.05rem !important;
+            text-align: center;
+            margin-top: 14px;
+            margin-bottom: 12px;
+            padding: 0 6px;
+            background: #fff;
+            z-index: 2;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(60,60,60,0.03);
+          }
+          .table-responsive {
+            overflow-x: auto;
+            width: 100vw;
+            margin-left: -8px;
+            margin-right: -8px;
+          }
+          .table-users {
+            min-width: 520px;
+            font-size: 0.92em;
+          }
+          .table-users th, .table-users td {
+            padding: 4px 2px;
+            font-size: 0.91em;
+            word-break: break-word;
+          }
+          .badge-status { font-size: 0.8em; padding: 2px 5px; }
+          .btn-reset { font-size: 0.9em; padding: 3px 5px; }
+        }
+        @media (max-width: 500px) {
+          h2.fw-bold {
+            font-size: 0.98rem !important;
+            padding: 8px 2px 6px 2px;
+            margin-top: 8px;
+            margin-bottom: 10px;
+          }
+          .table-users { min-width: 350px; font-size: 0.88em; }
+          .table-users th, .table-users td { font-size: 0.88em; padding: 3px 1px; }
+        }
+        @media (max-width: 700px) {
+          h2.fw-bold {
+            display: block;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: inherit;
+            color: #2e5c3b;
+            border-radius: 10px;
+            margin-top: 10px;
+            margin-bottom: 12px;
+            padding: 10px 6px 8px 6px;
+            box-shadow: 0 2px 8px rgba(60,60,60,0.03);
+          }
+          body.dark-mode h2.fw-bold {
+            background: inherit !important;
+            color: #f6f6e7 !important;
+          }
         }
     </style>
 </head>
@@ -141,25 +217,66 @@
     function showLoading(show) {
         document.getElementById('loadingSpinner').style.display = show ? 'flex' : 'none';
     }
+    function showAuthWarning() {
+        const container = document.querySelector('.container');
+        if (container) {
+            container.innerHTML = `
+                <div class="auth-warning" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320px;">
+                    <div style="font-size: 3.2rem; color: #b71c1c; margin-bottom: 18px;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div style="font-size: 1.25rem; color: #b71c1c; font-weight: 700; margin-bottom: 8px;">
+                        Chỉ quản trị viên (admin) đăng nhập mới được truy cập trang này
+                    </div>
+                    <div style="color: #888; font-size: 1rem;">Vui lòng đăng nhập bằng tài khoản admin để sử dụng chức năng quản trị người dùng.</div>
+                </div>
+            `;
+        }
+    }
+
     function fetchUsers(page=1) {
         currentPage = page;
-        let url = `/api/users?page=${page-1}&size=${pageSize}`;
         showLoading(true);
-        fetch(url, { headers: { 'Accept': 'application/json' } })
-            .then(res => res.json())
+        // Bước 1: Kiểm tra quyền với /api/users/me
+        fetch('/api/users/me', { headers: { 'Accept': 'application/json' } })
+            .then(res => {
+                if (res.status !== 200) throw new Error();
+                return res.json();
+            })
+            .then(user => {
+                // Nếu không phải admin thì không cho truy cập
+                if (!user.role || user.role !== 'ADMIN') {
+                    showAuthWarning();
+                    showLoading(false);
+                    throw new Error();
+                }
+                // Nếu là admin, tiếp tục fetch danh sách user
+                let url = `/api/users?page=${page-1}&size=${pageSize}`;
+                return fetch(url, { headers: { 'Accept': 'application/json' } });
+            })
+            .then(res => {
+                if (!res) return; // đã bị chặn ở trên
+                if (res.status === 401) {
+                    showAuthWarning();
+                    showLoading(false);
+                    throw new Error();
+                }
+                return res.json();
+            })
             .then(data => {
+                if (!data) return;
                 showLoading(false);
-                // Lưu lại toàn bộ user khi lần đầu load
-                if (data.content) {
+                if (data && data.content) {
                     allUsers = data.content;
                     renderUserTable(allUsers);
-                    renderPagination(1, 1); // Không phân trang khi filter frontend
-                } else {
+                    renderPagination(1, 1);
+                } else if (data) {
                     allUsers = data;
                     renderUserTable(allUsers);
                     renderPagination(1, 1);
                 }
-            }).catch(()=>showLoading(false));
+            })
+            .catch(()=>showLoading(false));
     }
     function renderUserTable(users) {
         const tbody = document.getElementById('userTableBody');

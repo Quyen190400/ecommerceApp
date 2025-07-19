@@ -24,6 +24,21 @@ function handleAuthExpired() {
   if (window.showAuthModal) {
     window.showAuthModal('login');
   }
+  // Ẩn bảng sản phẩm, show warning
+  const container = document.querySelector('.admin-products-container');
+  if (container) {
+    container.innerHTML = `
+      <div class="auth-warning" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 320px;">
+        <div style="font-size: 3.2rem; color: #b71c1c; margin-bottom: 18px;">
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <div style="font-size: 1.25rem; color: #b71c1c; font-weight: 700; margin-bottom: 8px;">
+          Chỉ quản trị viên (admin) đăng nhập mới được truy cập trang này
+        </div>
+        <div style="color: #888; font-size: 1rem;">Vui lòng đăng nhập bằng tài khoản admin để sử dụng chức năng quản trị sản phẩm.</div>
+      </div>
+    `;
+  }
 }
 
 // ========== Load loại trà từ category ========== //
@@ -82,11 +97,13 @@ function renderProducts(products) {
           </span>
         </td>
         <td>
-          <button class="action-btn edit" title="Sửa" onclick="openEditProduct(${p.id})"><i class="fa fa-pen"></i></button>
-          <button class="action-btn delete" title="Xoá" onclick="openDeleteProduct(${p.id})"><i class="fa fa-trash"></i></button>
-          <button class="action-btn toggle${p.status ? ' active' : ''}" title="${p.status ? 'Ẩn' : 'Hiện'}" onclick="toggleStatus(${p.id})">
-            <i class="fa fa-eye${p.status ? '-slash' : ''}"></i>
-          </button>
+          <div class="product-actions">
+            <button class="action-btn edit" title="Sửa" onclick="openEditProduct(${p.id})"><i class="fa fa-pen"></i></button>
+            <button class="action-btn delete" title="Xoá" onclick="openDeleteProduct(${p.id})"><i class="fa fa-trash"></i></button>
+            <button class="action-btn toggle${p.status ? ' active' : ''}" title="${p.status ? 'Ẩn' : 'Hiện'}" onclick="toggleStatus(${p.id})">
+              <i class="fa fa-eye${p.status ? '-slash' : ''}"></i>
+            </button>
+          </div>
         </td>
       </tr>
     `;

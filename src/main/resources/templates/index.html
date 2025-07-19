@@ -296,9 +296,15 @@
       }
       let currentIndex = 0;
       const track = document.querySelector('.carousel-track');
+      function getVisibleCount() {
+        if (window.innerWidth < 700) return 1;
+        if (window.innerWidth < 1000) return 2;
+        return 3;
+      }
       function updateDisplay() {
         track.innerHTML = '';
-        for (let i = 0; i < 3; i++) {
+        const visibleCount = getVisibleCount();
+        for (let i = 0; i < visibleCount; i++) {
           const idx = (currentIndex + i) % carts.length;
           track.innerHTML += carts[idx];
         }
@@ -321,15 +327,18 @@
         }, 5000);
       }
       document.querySelector('.carousel-prev').onclick = function() {
-        currentIndex = (currentIndex - 1 + carts.length) % carts.length;
+        const visibleCount = getVisibleCount();
+        currentIndex = (currentIndex - visibleCount + carts.length) % carts.length;
         updateDisplay();
         resetAutoplay();
       };
       document.querySelector('.carousel-next').onclick = function() {
-        currentIndex = (currentIndex + 1) % carts.length;
+        const visibleCount = getVisibleCount();
+        currentIndex = (currentIndex + visibleCount) % carts.length;
         updateDisplay();
         resetAutoplay();
       };
+      window.addEventListener('resize', updateDisplay);
       updateDisplay();
       resetAutoplay();
     });

@@ -68,7 +68,6 @@ public class UserController {
 
     @GetMapping
     @SecurityRequirement(name = "Bearer Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Get all users (requires ADMIN role)")
     public ResponseEntity<?> getAllUsers() {
         // Không kiểm tra active cho danh sách, chỉ trả về danh sách

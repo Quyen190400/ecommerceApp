@@ -521,7 +521,6 @@
 body.dark-theme, .dark-mode, body.dark-mode {
   background: var(--dm-bg-main) !important;
   color: var(--dm-text-main) !important;
-  font-family: var(--dm-font);
   transition: background var(--dm-transition), color var(--dm-transition);
 }
 
@@ -672,7 +671,6 @@ body.dark-theme table {
 }
 .dark-mode th, .dark-mode td,
 body.dark-theme th, body.dark-theme td {
-  padding: 0.75em 1em;
   border-bottom: 1px solid var(--dm-border-light);
 }
 .dark-mode th,
