@@ -377,15 +377,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add share button if not exists
-    if (!document.querySelector('.share-btn')) {
-        const shareBtn = document.createElement('button');
-        shareBtn.className = 'share-btn';
-        shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Chia sẻ';
-        shareBtn.onclick = shareProduct;
-        
-        const productActions = document.querySelector('.product-actions');
-        if (productActions) {
-            productActions.appendChild(shareBtn);
-        }
-    }
+//    if (!document.querySelector('.share-btn')) {
+//        const shareBtn = document.createElement('button');
+//        shareBtn.className = 'share-btn';
+//        shareBtn.innerHTML = '<i class="fas fa-share-alt"></i> Chia sẻ';
+//        shareBtn.onclick = shareProduct;
+//
+//        const productActions = document.querySelector('.product-actions');
+//        if (productActions) {
+//            productActions.appendChild(shareBtn);
+//        }
+//    }
 }); 

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chính sách</title>
+    <link rel="stylesheet" th:href="@{/css/tea-home.css}">
+    <link rel="stylesheet" th:href="@{/css/footer-pages.css}">
+</head>
+<body>
+    <div th:replace="~{fragments/header :: header}"></div>
+    <div class="main-content">
+        <main style="margin-top: 80px; margin-bottom: 10px; max-width: 800px; margin-left: auto; margin-right: auto; padding: 24px; background: #fff; border-radius: 12px;">
+            <h1>Chính sách</h1>
+            <p>Chúng tôi cam kết mang đến cho khách hàng những chính sách mua hàng, đổi trả và bảo mật tốt nhất.</p>
+        </main>
+    </div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script th:src="@{/js/cart.js}"></script>
+    <script th:src="@{/js/auth-forms.js}"></script>
+    <script th:src="@{/js/user-dropdown.js}"></script>
+    <script th:src="@{/js/theme-toggle.js}"></script>
+</body>
+</html> 

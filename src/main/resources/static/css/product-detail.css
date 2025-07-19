@@ -222,7 +222,6 @@
 
 .quantity-btn {
     width: 40px;
-    height: 40px;
     border: 1px solid #ddd;
     background: white;
     border-radius: 8px;
@@ -274,8 +273,8 @@
 }
 
 .add-to-cart-btn {
-    background: #f8f9fa;
-    color: #3e5c3a;
+    background: #234d20;
+    color: white;
     border: 2px solid #3e5c3a;
 }
 
@@ -564,12 +563,8 @@ body.dark-theme label, body.dark-theme .breadcrumb {
 .dark-mode .btn,
 body.dark-theme button,
 body.dark-theme .btn {
-  background: var(--dm-btn-bg) !important;
   color: var(--dm-text-main) !important;
-  border: 1px solid var(--dm-border-light);
   border-radius: var(--dm-btn-radius);
-  padding: 0.5em 1.2em;
-  font-size: 1em;
   cursor: pointer;
   transition: background var(--dm-transition), color var(--dm-transition), border var(--dm-transition), box-shadow var(--dm-transition);
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
@@ -875,10 +870,6 @@ body.dark-theme .add-to-cart-btn,
 body.dark-theme .buy-now-btn,
 .dark-mode .buy-now-btn {
   background: #3e5c3a !important;
-  color: #fff !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(62,92,58,0.10);
-  transition: background 0.2s, color 0.2s;
 }
 body.dark-theme .add-to-cart-btn:hover,
 .dark-mode .add-to-cart-btn:hover,
@@ -905,6 +896,7 @@ body.dark-theme .quantity-btn,
   background: var(--dm-bg-card) !important;
   color: var(--dm-text-main) !important;
   border: 1px solid var(--dm-border-light) !important;
+  font-size: 1.2rem;
 }
 body.dark-theme .quantity-btn:hover,
 .dark-mode .quantity-btn:hover {
@@ -913,16 +905,12 @@ body.dark-theme .quantity-btn:hover,
 }
 body.dark-theme #quantity,
 .dark-mode #quantity {
+  height: fit-content
   background: var(--dm-bg-secondary) !important;
   color: var(--dm-text-main) !important;
   border: 1px solid var(--dm-border-light) !important;
 }
-body.dark-theme .product-actions .add-to-cart-btn,
-.dark-mode .product-actions .add-to-cart-btn {
-  background: var(--dm-bg-hover) !important;
-  color: var(--dm-success) !important;
-  border: 2px solid var(--dm-success) !important;
-}
+
 body.dark-theme .product-actions .add-to-cart-btn:hover,
 .dark-mode .product-actions .add-to-cart-btn:hover {
   background: var(--dm-success) !important;
@@ -1304,4 +1292,4 @@ body.dark-theme .in-stock,
 body.dark-theme .usage-guide,
 .dark-mode .usage-guide {
   color: #fff !important;
-} 
+}

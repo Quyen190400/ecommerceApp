@@ -1,3 +1,5 @@
+
+
 html {
     scroll-behavior: smooth;
 }
@@ -35,7 +37,6 @@ body.dark-theme .dropdown-menu, body.dark-theme .user-dropdown-menu {
     color: #f1f1f1 !important;
 }
 body.dark-theme .btn, body.dark-theme button, body.dark-theme .main-btn {
-    background: #444a57 !important;
     color: #fff !important;
 }
 body.dark-theme input, body.dark-theme textarea, body.dark-theme select {
@@ -301,7 +302,9 @@ body.dark-theme .footer-section ul li a:hover {
 }
 
 body.dark-theme .footer-bottom {
+    background: #2a2a2a !important;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
 }
 
 /* Navbar */
@@ -1936,6 +1939,59 @@ body.dark-theme .toast-close {
 
 body.dark-theme .toast-close:hover {
     color: #ffffff;
+}
+
+/* Enhanced dark mode toast styles */
+body.dark-theme .toast {
+    background: #2a2a2a !important;
+    color: #ffffff !important;
+    border: 1px solid #444 !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.35) !important;
+}
+
+body.dark-theme .toast.success {
+    border-left-color: #28a745 !important;
+}
+
+body.dark-theme .toast.error {
+    border-left-color: #dc3545 !important;
+}
+
+body.dark-theme .toast.warning {
+    border-left-color: #ffc107 !important;
+}
+
+body.dark-theme .toast.info {
+    border-left-color: #17a2b8 !important;
+}
+
+body.dark-theme .toast.success .toast-icon {
+    color: #28a745 !important;
+}
+
+body.dark-theme .toast.error .toast-icon {
+    color: #dc3545 !important;
+}
+
+body.dark-theme .toast.warning .toast-icon {
+    color: #ffc107 !important;
+}
+
+body.dark-theme .toast.info .toast-icon {
+    color: #17a2b8 !important;
+}
+
+body.dark-theme .toast-message {
+    color: #ffffff !important;
+}
+
+body.dark-theme .toast-close {
+    color: #cccccc !important;
+}
+
+body.dark-theme .toast-close:hover {
+    background: #444 !important;
+    color: #ffffff !important;
 }
 
 /* Mobile responsive for toast */

@@ -7,7 +7,7 @@
     <link rel="stylesheet" th:href="@{/css/tea-home.css}">
     <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
         /* Cart specific styles */
         .cart-container {
@@ -361,6 +361,12 @@
         }
         body.dark-theme .item-checkbox input[type="checkbox"] {
             accent-color: #6b8e23;
+        }
+        
+        body.dark-theme .checkout-btn:disabled {
+            background: #666 !important;
+            color: #999 !important;
+            cursor: not-allowed;
         }
         
         @media (max-width: 768px) {

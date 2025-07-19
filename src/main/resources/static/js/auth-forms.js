@@ -70,6 +70,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    window.switchForm = function(formName) {
+        const authForms = document.querySelectorAll('.auth-form');
+        authForms.forEach(form => {
+            form.classList.remove('active');
+        });
+        var form = document.getElementById(formName + 'Form');
+        if (form) {
+            form.classList.add('active');
+        }
+    }
+
     // Event listeners for form switching
     const showRegisterForm = document.getElementById('showRegisterForm');
     const showLoginForm = document.getElementById('showLoginForm');

@@ -28,13 +28,13 @@
             --white-dark: #23272f;
             --mint-bg: #e6f6f2;
             --block-green: #D8F3DC;
-            --block-green-dark: #2a2e38;
-            --block-orange: #FFE5B4;
-            --block-orange-dark: #3a2e1a;
-            --block-blue: #B5EAEA;
-            --block-blue-dark: #1e2a3a;
-            --block-done: #B7E4C7;
-            --block-done-dark: #1e3a2a;
+            --block-green-dark: #244c8b;
+            --block-orange: #F4A261;
+            --block-orange-dark: #6e6209;
+            --block-blue: #dee250;
+            --block-blue-dark: #9d6805;
+            --block-done: #2db8a1;
+            --block-done-dark: #23b260;
             --block-border: #b7e4c7;
             --block-border-dark: #444a57;
             --order-header: #f0f4ef;
@@ -42,7 +42,7 @@
             --badge-pending: #ffe5b4;
             --badge-pending-dark: #3a2e1a;
             --badge-shipping: #b5eaea;
-            --badge-shipping-dark: #1e2a3a;
+            --badge-shipping-dark: #9d6805;
             --badge-done: #b7e4c7;
             --badge-done-dark: #1e3a2a;
             --badge-cancel: #f8d7da;
@@ -67,9 +67,9 @@
             --btn-outline-dark: #23272f;
             --btn-outline-border-dark: #444a57;
             --badge-pending-dark: #3a2e1a;
-            --badge-shipping-dark: #1e2a3a;
+            --badge-shipping-dark: #9d6805;
             --badge-done-dark: #1e3a2a;
-            --badge-cancel-dark: #3a1e1e;
+            --badge-cancel-dark: #a00404;
             --badge-text-dark: #f1f1f1;
             --empty-bg-dark: #23272f;
             --empty-text-dark: #aaa;
@@ -121,11 +121,11 @@
             letter-spacing: 1px;
         }
         .admin-orders-page .admin-header h1 i {
-            color: var(--main-green);
+            color: #acacb7;
             font-size: 2.4rem;
         }
         .admin-orders-page .admin-header p {
-            color: var(--header-green);
+            color: #000000;
             font-size: 1.25rem;
             margin-bottom: 0;
             font-weight: 500;
@@ -610,7 +610,7 @@
         }
         body.dark-theme .admin-orders-page .admin-header h1,
         body.dark-theme .admin-orders-page .admin-header p {
-            color: #b7e4c7;
+            color: #dbff00d4;
         }
         body.dark-theme .admin-orders-page .admin-stats {
             /* giữ nguyên layout */
@@ -629,7 +629,7 @@
             background: var(--block-done-dark);
         }
         body.dark-theme .admin-orders-page .admin-stat-block .stat-label {
-            color: #b7e4c7;
+            color: #ffffff;
         }
         body.dark-theme .admin-orders-page .admin-stat-block .stat-value {
             color: #fff;
@@ -649,12 +649,12 @@
             border-color: var(--main-green);
         }
         body.dark-theme .admin-orders-page .admin-filter-box .filter-btn {
-            background: linear-gradient(135deg, #23272f 0%, #43AA8B 100%);
+            background: linear-gradient(135deg, #23272f 0%, #5ddd70 100%);
             color: #fff;
             box-shadow: 0 2px 8px rgba(60,80,60,0.18);
         }
         body.dark-theme .admin-orders-page .admin-filter-box .filter-btn:hover {
-            background: linear-gradient(135deg, #40916C 0%, #43AA8B 100%);
+            background: linear-gradient(135deg, #40916C 0%, #06951b 100%) !important;
         }
         body.dark-theme .admin-orders-page .orders-list {
             background: var(--card-bg-dark);
@@ -667,18 +667,20 @@
         }
         body.dark-theme .admin-orders-page .order-card.active,
         body.dark-theme .admin-orders-page .order-card:hover {
-            border: 2px solid var(--main-green);
+            border: 2px solid #696969;
         }
         body.dark-theme .admin-orders-page .order-header {
             border-bottom: 1.2px solid var(--btn-outline-border-dark);
         }
+
+
         body.dark-theme .admin-orders-page .order-id,
         body.dark-theme .admin-orders-page .order-date,
         body.dark-theme .admin-orders-page .order-customer {
-            color: #b7e4c7;
+            color: #ffffff;
         }
         body.dark-theme .admin-orders-page .order-status.status-pending {
-            background: var(--badge-pending-dark);
+            background: var(--block-orange-dark);
             color: var(--badge-text-dark);
             border: 1.2px solid var(--badge-pending-dark);
         }
@@ -688,7 +690,7 @@
             border: 1.2px solid var(--badge-shipping-dark);
         }
         body.dark-theme .admin-orders-page .order-status.status-completed {
-            background: var(--badge-done-dark);
+            background: #23b260;
             color: var(--badge-text-dark);
             border: 1.2px solid var(--badge-done-dark);
         }
@@ -701,7 +703,7 @@
             background: var(--card-bg-dark);
         }
         body.dark-theme .admin-orders-page .detail-label {
-            color: #b7e4c7;
+            color: #489826;
         }
         body.dark-theme .admin-orders-page .detail-value {
             color: #fff;
@@ -709,14 +711,12 @@
         body.dark-theme .admin-orders-page .order-items {
             background: var(--input-bg-dark);
         }
-        body.dark-theme .admin-orders-page .item-name {
-            color: #b7e4c7;
-        }
+        body.dark-theme .admin-orders-page .item-name,
         body.dark-theme .admin-orders-page .item-details {
-            color: #b7e4c7;
+            color: #ffffff;
         }
         body.dark-theme .admin-orders-page .item-total {
-            color: #43AA8B;
+            color: #fbdf9e;
         }
         body.dark-theme .admin-orders-page .order-actions {
             border-top: 1.2px solid var(--btn-outline-border-dark);
@@ -803,6 +803,10 @@
         body.dark-theme .toast .toast-close:hover {
             background: #40916C;
             color: #fff;
+        }
+        .dark-mode input, .dark-mode select, .dark-mode textarea,
+         body.dark-theme input, body.dark-theme select, body.dark-theme textarea {
+            background: #3e3e3e !important
         }
     </style>
     <script th:inline="javascript">
