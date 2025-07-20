@@ -1021,7 +1021,7 @@ body.dark-theme .modal,
 }
 body.dark-theme .modal-content,
 .dark-mode .modal-content {
-  background: var(--dm-bg-card) !important;
+  background: #495a43 !important;
   color: var(--dm-text-main) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
 }
