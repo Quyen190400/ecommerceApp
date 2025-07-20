@@ -220,7 +220,18 @@
         /*]]>*/
     </script>
 </head>
-<body>
+<body class="light-theme" >
+<script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark-theme');
+          document.body && document.body.classList.add('dark-theme');
+        }
+      } catch(e){}
+    })();
+</script>
 <div th:replace="~{fragments/header :: header}"></div>
 <div th:replace="~{fragments/auth-modal :: authModal}"></div>
 <div id="adminProductsContent">
