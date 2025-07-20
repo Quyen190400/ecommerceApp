@@ -1259,6 +1259,14 @@
             document.getElementById('filterStatus').addEventListener('change', filterOrders);
         });
 
+        function onStatusSelectChange(orderId, oldStatus) {
+            const select = document.getElementById(`statusSelect-${orderId}`);
+            const newStatus = select.value;
+            if (newStatus === oldStatus) return;
+            // Hiển thị xác nhận trước khi cập nhật
+            const statusText = getStatusText(newStatus);
+            showConfirmStatusModal(orderId, newStatus, statusText);
+        }
 
         // Show toast notification
     </script>

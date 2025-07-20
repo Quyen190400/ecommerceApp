@@ -527,7 +527,6 @@ body.dark-theme label, body.dark-theme .breadcrumb {
 body.dark-theme button,
 body.dark-theme .btn {
   color: var(--dm-text-main) !important;
-  font-size: 1em;
   cursor: pointer;
   transition: background var(--dm-transition), color var(--dm-transition), border var(--dm-transition), box-shadow var(--dm-transition);
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);

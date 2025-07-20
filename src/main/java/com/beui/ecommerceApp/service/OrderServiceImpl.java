@@ -55,6 +55,12 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (OrderItem item : order.getOrderItems()) {
             totalPrice = totalPrice.add(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            // Trừ kho ngay khi tạo đơn
+            Product product = item.getProduct();
+            int newStock = product.getStockQuantity() - item.getQuantity();
+            if (newStock < 0) throw new RuntimeException("Sản phẩm không đủ tồn kho");
+            product.setStockQuantity(newStock);
+            productRepository.save(product);
         }
         order.setTotalPrice(totalPrice);
         CustomerOrder savedOrder = orderRepository.save(order);
@@ -71,19 +77,19 @@ public class OrderServiceImpl implements OrderService {
         Optional<CustomerOrder> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             CustomerOrder order = optionalOrder.get();
-            if ("PENDING".equals(order.getStatus()) && "SHIPPING".equals(status)) {
+            // Đã trừ kho khi tạo đơn, không cần trừ khi chuyển sang SHIPPING nữa
+            if (!order.getStatus().equals(status)) {
+                // TODO: Lưu vào bảng audit log nếu cần
+            }
+            // Nếu chuyển sang CANCELLED thì cộng lại kho
+            if ("CANCELLED".equals(status) && !"CANCELLED".equals(order.getStatus())) {
                 List<OrderItem> items = getOrderItems(orderId);
                 for (OrderItem item : items) {
                     Product product = item.getProduct();
-                    int newStock = product.getStockQuantity() - item.getQuantity();
-                    if (newStock >= 0) {
-                        product.setStockQuantity(newStock);
-                        productRepository.save(product);
-                    }
+                    int newStock = product.getStockQuantity() + item.getQuantity();
+                    product.setStockQuantity(newStock);
+                    productRepository.save(product);
                 }
-            }
-            if (!order.getStatus().equals(status)) {
-                // TODO: Lưu vào bảng audit log nếu cần
             }
             order.setStatus(status);
             order.setUpdatedAt(java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh")));
@@ -128,6 +134,12 @@ public class OrderServiceImpl implements OrderService {
         if (productOpt.isEmpty()) return null;
         Product product = productOpt.get();
         if (product.getStockQuantity() < quantity) return null;
+        // Trừ kho ngay khi tạo đơn
+        int newStock = product.getStockQuantity() - quantity;
+        if (newStock < 0) throw new RuntimeException("Sản phẩm không đủ tồn kho");
+        product.setStockQuantity(newStock);
+        productRepository.save(product);
+
         CustomerOrder order = new CustomerOrder();
         order.setUser(user);
         order.setShippingAddress(orderRequest.getShippingAddress());
