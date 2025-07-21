@@ -12,6 +12,10 @@ import com.beui.ecommerceApp.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
@@ -32,6 +36,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<CustomerOrder> getAllOrders() {
         return orderRepository.findAll();
+    }
+
+    @Override
+    public Page<CustomerOrder> getAllOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAll(pageable);
     }
 
     @Override
@@ -302,7 +312,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<CustomerOrder> filterOrdersForAdmin(String status, String orderId, String startDate, String endDate, String search) {
+    public Page<CustomerOrder> filterOrdersForAdmin(String status, String orderId, String startDate, String endDate, String search, int page, int size) {
         List<CustomerOrder> orders = orderRepository.findAll();
         // Parse status thành List<String> và lọc theo nhiều trạng thái
         if (status != null && !status.trim().isEmpty()) {
@@ -326,6 +336,9 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         // TODO: Lọc theo startDate, endDate, search nếu cần
-        return orders;
+        int start = page * size;
+        int end = Math.min(start + size, orders.size());
+        List<CustomerOrder> pageContent = (start < end) ? orders.subList(start, end) : java.util.Collections.emptyList();
+        return new PageImpl<>(pageContent, PageRequest.of(page, size), orders.size());
     }
 } 

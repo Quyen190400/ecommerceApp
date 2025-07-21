@@ -4,6 +4,8 @@ import com.beui.ecommerceApp.dto.OrderRequest;
 import com.beui.ecommerceApp.entity.AppUser;
 import com.beui.ecommerceApp.entity.CustomerOrder;
 import com.beui.ecommerceApp.entity.OrderItem;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -27,5 +29,6 @@ public interface OrderService {
     CustomerOrder createBuyNowOrder(AppUser user, Long productId, Integer quantity, OrderRequest orderRequest);
     org.springframework.http.ResponseEntity<?> handleBuyNow(AppUser user, java.util.Map<String, Object> payload);
     List<CustomerOrder> filterOrdersByUser(Long userId, String status, String orderId, String startDate, String endDate, String search);
-    List<CustomerOrder> filterOrdersForAdmin(String status, String orderId, String startDate, String endDate, String search);
+    Page<CustomerOrder> filterOrdersForAdmin(String status, String orderId, String startDate, String endDate, String search, int page, int size);
+    Page<CustomerOrder> getAllOrders(int page, int size);
 } 
