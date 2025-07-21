@@ -745,9 +745,10 @@ function renderSuggestList(keyword) {
     const matches = allProducts.filter(p => p.name && p.name.toLowerCase().includes(kw));
     console.log('matches:', matches);
     if (matches.length === 0) {
-        suggestList.classList.remove('show');
-        suggestList.style.display = 'none';
-        suggestList.innerHTML = '';
+        suggestList.innerHTML = `<div class="dropdown-item" style="cursor:default; padding:8px 16px; color:#888; background:#fff;">Không tìm thấy sản phẩm phù hợp</div>`;
+        suggestList.classList.add('show');
+        suggestList.style.display = 'block';
+        suggestList.style.zIndex = '9999';
         return;
     }
     suggestList.innerHTML = matches.slice(0, 8).map(p =>
