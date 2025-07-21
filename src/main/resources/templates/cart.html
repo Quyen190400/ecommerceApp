@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
     <style>
+        html, body { font-family: 'Roboto', 'Noto Serif SC', serif; }
         /* Cart specific styles */
         .cart-container {
             max-width: 1200px;
@@ -362,12 +363,22 @@
             accent-color: #6b8e23;
         }
         
-        body.dark-theme .checkout-btn:disabled {
+        body.dark-theme .checkout-btn:disabled,
+        body.dark-theme .checkout-btn:disabled:hover {
             background: #666 !important;
             color: #999 !important;
             cursor: not-allowed;
         }
-        
+        body.dark-theme .checkout-btn:hover {
+            background: #3e7936 !important;
+        }
+        body.dark-theme .remove-btn:hover {
+            background: #b50011 !important;
+        }
+        body.dark-theme button,
+        body.dark-theme button:hover {
+            background: #d3445200 !important;
+        }
         @media (max-width: 768px) {
             .cart-content {
                 grid-template-columns: 1fr;

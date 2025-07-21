@@ -877,9 +877,18 @@ body.dark-theme .buy-now-btn:hover,
   color: #fff !important;
 }
 
-/* Tăng độ rõ text phần mô tả/cách sử dụng ở dark mode */
+/* Đồng nhất màu chữ cho mô tả, cách sử dụng, lợi ích */
+.tab-content p,
+.usage-guide,
+.health-benefits {
+  color: #495057;
+}
 body.dark-theme .tab-content p,
-.dark-mode .tab-content p {
+body.dark-theme .usage-guide,
+body.dark-theme .health-benefits,
+.dark-mode .tab-content p,
+.dark-mode .usage-guide,
+.dark-mode .health-benefits {
   color: #e0e0e0 !important;
   text-shadow: 0 1px 2px rgba(0,0,0,0.12);
   font-size: 1.08em;
@@ -1290,4 +1299,17 @@ body.dark-theme .in-stock,
 body.dark-theme .usage-guide,
 .dark-mode .usage-guide {
   color: #fff !important;
+}
+
+/* ĐẢM BẢO ĐỒNG NHẤT MÀU CHỮ PHẦN MÔ TẢ, CÁCH SỬ DỤNG, LỢI ÍCH Ở DARK MODE */
+body.dark-theme .tab-content p,
+body.dark-theme .usage-guide,
+body.dark-theme .health-benefits,
+.dark-mode .tab-content p,
+.dark-mode .usage-guide,
+.dark-mode .health-benefits {
+  color: #e0e0e0 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  font-size: 1.08em;
+  line-height: 1.7;
 }
