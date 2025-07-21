@@ -173,6 +173,19 @@
             color: #666;
         }
 
+        body.dark-theme .detail-label {
+            font-weight: 500;
+            color: #fffdfd;
+        }
+        body.dark-theme .detail-value {
+            font-weight: 600;
+            color: #fffdfd;
+        }
+        body.dark-theme .item-total {
+            font-weight: 600;
+            color: #5fcb50;
+        }
+
         .detail-value {
             font-weight: 600;
             color: #333;
@@ -886,7 +899,7 @@
             margin-bottom: 20px;
         }
 
-        /* Pagination */
+        /* Pagination (old) */
         .pagination {
             display: flex;
             justify-content: center;
@@ -896,7 +909,6 @@
             padding-top: 20px;
             border-top: 1px solid #e1e5e9;
         }
-
         .page-btn {
             padding: 8px 16px;
             border: 1px solid #ddd;
@@ -909,43 +921,205 @@
             align-items: center;
             gap: 5px;
         }
-
         .page-btn:hover {
             background: #3e5c3a;
             color: white;
             border-color: #3e5c3a;
         }
-
         .page-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-
         .page-numbers {
             display: flex;
             gap: 5px;
         }
-
-        .page-number {
-            padding: 8px 12px;
-            border: 1px solid #ddd;
-            background: white;
-            color: #333;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        /* New pagination style for page numbers (1,2,...) */
+        .pagination-custom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 18px;
+        }
+        .pagination-custom .page-number {
+            min-width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid #43aa8b;
+            background: #f8faf7;
+            color: #2e5c3b;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+            margin: 0 2px;
+            box-shadow: 0 1px 4px #0001;
+        }
+        .pagination-custom .page-number.active, .pagination-custom .page-number:disabled {
+            background: #43aa8b;
+            color: #fff;
+            cursor: default;
+            font-weight: 700;
+        }
+        .pagination-custom .page-number:hover:not(.active):not(:disabled) {
+            background: #18561e !important;
+            color: #2e5c3b;
+        }
+        body.dark-theme .pagination-custom .page-number,
+        .dark-mode .pagination-custom .page-number {
+            background: #23272f;
+            color: #43aa8b;
+            border: 1.5px solid #43aa8b;
+        }
+        body.dark-theme .pagination-custom .page-number.active,
+        body.dark-theme .pagination-custom .page-number:disabled,
+        .dark-mode .pagination-custom .page-number.active,
+        .dark-mode .pagination-custom .page-number:disabled {
+            background: #43aa8b;
+            color: #fff;
+            border: 1.5px solid #43aa8b;
+        }
+        body.dark-theme .pagination-custom .page-number.active:hover,
+        .dark-mode .pagination-custom .page-number.active:hover,
+        body.dark-theme .pagination-custom .page-number:disabled:hover,
+        .dark-mode .pagination-custom .page-number:disabled:hover {
+            background: #1b7258 !important;
+            color: #fff !important;
+            border: 1.5px solid #43aa8b !important;
+            cursor: default;
+        }
+        body.dark-theme .pagination-custom .page-number:hover:not(.active):not(:disabled),
+        .dark-mode .pagination-custom .page-number:hover:not(.active):not(:disabled) {
+            background: #18561e !important;
+            color: #2e5c3b;
         }
 
-        .page-number:hover {
-            background: #3e5c3a;
-            color: white;
-            border-color: #3e5c3a;
+        /* Pagination: tất cả nút đều tròn, đồng bộ kích thước, border, màu sắc, font, icon căn giữa */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            margin-top: 18px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
         }
-
-        .page-number.active {
-            background: #3e5c3a;
-            color: white;
-            border-color: #3e5c3a;
+        .pagination .page-btn, .pagination .page-number {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            min-height: 44px;
+            border-radius: 50%;
+            border: 2px solid #43aa8b;
+            background: #f8faf7;
+            color: #2e5c3b;
+            font-weight: 700;
+            font-size: 1.18rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+            margin: 0 2px;
+            box-shadow: 0 1px 4px #0001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            padding: 0;
+        }
+        .pagination .page-number.active, .pagination .page-number:disabled, .pagination .page-btn:disabled {
+            background: #43aa8b;
+            color: #fff;
+            cursor: default;
+            font-weight: 800;
+            border: 2px solid #43aa8b;
+        }
+        .pagination .page-number:hover:not(.active):not(:disabled), .pagination .page-btn:hover:not(:disabled) {
+            background: #e0f7ef !important;
+            color: #18561e;
+            border-color: #43aa8b;
+        }
+        body.dark-theme .pagination .page-btn,
+        body.dark-theme .pagination .page-number,
+        .dark-mode .pagination .page-btn,
+        .dark-mode .pagination .page-number {
+            background: #23272f;
+            color: #43aa8b;
+            border: 2px solid #43aa8b;
+        }
+        body.dark-theme .pagination .page-number.active,
+        body.dark-theme .pagination .page-number:disabled,
+        body.dark-theme .pagination .page-btn:disabled,
+        .dark-mode .pagination .page-number.active,
+        .dark-mode .pagination .page-number:disabled,
+        .dark-mode .pagination .page-btn:disabled {
+            background: #43aa8b;
+            color: #fff;
+            border: 2px solid #43aa8b;
+        }
+        body.dark-theme .pagination .page-number.active:hover,
+        .dark-mode .pagination .page-number.active:hover,
+        body.dark-theme .pagination .page-number:disabled:hover,
+        .dark-mode .pagination .page-number:disabled:hover,
+        body.dark-theme .pagination .page-btn:disabled:hover,
+        .dark-mode .pagination .page-btn:disabled:hover {
+            background: #1b7258 !important;
+            color: #fff !important;
+            border: 2px solid #43aa8b !important;
+            cursor: default;
+        }
+        body.dark-theme .pagination .page-number:hover:not(.active):not(:disabled),
+        .dark-mode .pagination .page-number:hover:not(.active):not(:disabled),
+        body.dark-theme .pagination .page-btn:hover:not(:disabled),
+        .dark-mode .pagination .page-btn:hover:not(:disabled) {
+            background: #18561e !important;
+            color: #fff;
+            border-color: #43aa8b;
+        }
+        /* Pagination Prev/Sau giống admin-orders */
+        .pagination .page-btn {
+            min-width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #43aa8b;
+            background: #f8faf7;
+            color: #2e5c3b;
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: background 0.18s, color 0.18s, border 0.18s;
+            margin: 0 2px;
+            box-shadow: 0 1px 4px #0001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+            padding: 0;
+        }
+        .pagination .page-btn:disabled {
+            background: #43aa8b;
+            color: #fff;
+            cursor: default;
+            border: 2px solid #43aa8b;
+        }
+        .pagination .page-btn:hover:not(:disabled) {
+            background: #18561e !important;
+            color: #fff;
+            border-color: #43aa8b;
+        }
+        body.dark-theme .pagination .page-btn,
+        .dark-mode .pagination .page-btn {
+            background: #23272f;
+            color: #43aa8b;
+            border: 2px solid #43aa8b;
+        }
+        body.dark-theme .pagination .page-btn:disabled,
+        .dark-mode .pagination .page-btn:disabled {
+            background: #43aa8b;
+            color: #fff;
+            border: 2px solid #43aa8b;
+        }
+        body.dark-theme .pagination .page-btn:hover:not(:disabled),
+        .dark-mode .pagination .page-btn:hover:not(:disabled) {
+            background: #18561e !important;
+            color: #fff;
+            border-color: #43aa8b;
         }
 
         @media (max-width: 768px) {
@@ -1017,11 +1191,11 @@
         <div id="pagination" class="pagination" style="display: none;">
             <button id="prevPage" class="page-btn">
                 <i class="fas fa-chevron-left"></i>
-                Trước
+
             </button>
             <div id="pageNumbers" class="page-numbers"></div>
             <button id="nextPage" class="page-btn">
-                Sau
+
                 <i class="fas fa-chevron-right"></i>
             </button>
         </div>
@@ -1169,7 +1343,7 @@
     let allOrders = [];
     let filteredOrders = [];
     let currentPage = 1;
-    const ordersPerPage = 5;
+    const ordersPerPage = 10;
 
     // Debounce function to prevent multiple rapid API calls
     let loadOrdersTimeout;
