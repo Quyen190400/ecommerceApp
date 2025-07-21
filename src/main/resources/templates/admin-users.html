@@ -162,7 +162,7 @@
             <h2 class="fw-bold" style="color:#2e5c3b; font-size: 1.7rem;">Quản lý người dùng</h2>
             <div class="search-bar">
                 <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm email hoặc họ tên...">
-                <button onclick="fetchUsers(1)" title="Tìm kiếm"><i class="fas fa-search"></i> Tìm kiếm</button>
+                <button type="button" onclick="refreshUsers()" title="Làm mới"><i class="fas fa-sync-alt"></i> Refresh</button>
             </div>
         </div>
         <div class="table-responsive">
@@ -338,6 +338,14 @@
             .catch(() => { showLoading(false); showToast('Có lỗi xảy ra!', 'error'); });
         });
     }
+
+    function refreshUsers() {
+        // Clear the search input
+        document.getElementById('searchInput').value = '';
+        // Fetch users with page 1
+        fetchUsers(1);
+    }
+
     // Popup xác nhận bật/tắt
     let confirmCallback = null;
     let confirmCancelCallback = null;
