@@ -535,7 +535,7 @@ body.dark-theme .btn {
 .dark-mode .btn:hover,
 body.dark-theme button:hover,
 body.dark-theme .btn:hover {
-  background: var(--dm-btn-hover) !important;
+  background: var(--dm-btn-hover);
   color: var(--dm-text-main) !important;
   border-color: var(--dm-btn-active);
 }
@@ -978,6 +978,10 @@ body.dark-theme .breadcrumb {
     color: #3e5c3a;
 }
 
+body.dark-theme .dropdown-header i {
+    font-size: 18px;
+    color: #ffffff;
+}
 .dropdown-header span {
     font-weight: 600;
     color: #333;
@@ -1161,6 +1165,7 @@ body.dark-theme .mobile-dropdown-item {
 body.dark-theme .dropdown-item:hover,
 body.dark-theme .mobile-dropdown-item:hover {
     background: #4a5568;
+
     color: #68d391;
 }
 

@@ -169,6 +169,11 @@ document.addEventListener('DOMContentLoaded', function() {
         let shippingMethod = '';
         if (payment === 'COD') shippingMethod = 'STANDARD';
         else if (payment === 'BANK') shippingMethod = 'EXPRESS';
+        // Validate số điện thoại 10 hoặc 11 số, không chứa chữ
+        if (!/^\d{10,11}$/.test(phone)) {
+            showToast('Số điện thoại phải là 10 hoặc 11 số, không chứa ký tự chữ.', 'warning');
+            return;
+        }
         fetch('/api/orders/buy-now', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

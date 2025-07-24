@@ -252,21 +252,10 @@ public class Product {
         usageGuideSteps = new ArrayList<>();
         if (usageGuide != null && !usageGuide.isBlank()) {
             // Tách theo số thứ tự (1. 2. ...)
-            Pattern p = Pattern.compile("(\\d+\\.\\s*[^\\d]+)");
-            Matcher m = p.matcher(usageGuide);
-            while (m.find()) {
-                String step = m.group(1).trim();
-                // Loại bỏ số thứ tự ở đầu
-                step = step.replaceFirst("^\\d+\\.\\s*", "").trim();
+            String[] parts = usageGuide.split("\\d+\\.\\s*");
+            for (String part : parts) {
+                String step = part.trim();
                 if (!step.isEmpty()) usageGuideSteps.add(step);
-            }
-            // Nếu không match, fallback: tách theo dấu chấm
-            if (usageGuideSteps.isEmpty()) {
-                String[] parts = usageGuide.split("(?<=\\.)\\s*");
-                for (String part : parts) {
-                    String step = part.replaceFirst("^\\d+\\.\\s*", "").trim();
-                    if (!step.isEmpty()) usageGuideSteps.add(step);
-                }
             }
         }
         return usageGuideSteps;
