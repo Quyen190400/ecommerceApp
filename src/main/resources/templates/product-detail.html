@@ -92,9 +92,9 @@
                 <div class="quantity-selector" th:if="${product.stockQuantity > 0}">
                     <label for="quantity">Số lượng:</label>
                     <div class="quantity-controls">
-                        <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+<!--                        <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>-->
                         <input type="number" id="quantity" value="1" min="1" th:max="${product.stockQuantity}">
-                        <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+<!--                        <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>-->
                     </div>
                 </div>
 
@@ -118,7 +118,7 @@
         <div class="tabs-container">
             <div class="tabs-header">
                 <button class="tab-btn active" onclick="showTab('description')">Mô tả</button>
-                <button class="tab-btn" onclick="showTab('usage')" th:if="${product.usageGuide != null}">Cách sử dụng</button>
+                <button class="tab-btn" onclick="showTab('usage')" th:if="${product.usageGuideSteps != null && #lists.size(product.usageGuideSteps) > 0}">Cách sử dụng</button>
                 <button class="tab-btn" onclick="showTab('benefits')" th:if="${product.healthBenefit != null}">Lợi ích</button>
                 <button class="tab-btn" onclick="showTab('details')">Thông tin chi tiết</button>
             </div>
@@ -131,10 +131,12 @@
                 </div>
                 
                 <!-- Usage Guide Tab -->
-                <div id="usage" class="tab-content" th:if="${product.usageGuide != null}">
+                <div id="usage" class="tab-content" th:if="${product.usageGuideSteps != null && #lists.size(product.usageGuideSteps) > 0}">
                     <h3>Cách sử dụng</h3>
-                    <div class="usage-guide" th:utext="${product.usageGuide}">
-                        <p>Hướng dẫn cách sử dụng...</p>
+                    <div class="usage-guide">
+                        <ol>
+                            <li th:each="step : ${product.usageGuideSteps}" th:text="${step}"></li>
+                        </ol>
                     </div>
                 </div>
                 

@@ -2320,8 +2320,8 @@ body.dark-theme .carousel-track {
   justify-content: flex-start;
 }
 .product-title-multiline, .product-info h4 {
-  min-height: 2.7em;
-  max-height: 2.7em;
+  min-height: 2.6em;
+  max-height: 2.6em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;

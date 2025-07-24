@@ -746,7 +746,7 @@ body.dark-theme .modal {
 
 .dark-mode .auth-container,
 body.dark-theme .auth-container {
-  background: #362f2f !important;
+  background: #2b2626 !important;
   color: var(--dm-text-main) !important;
   border: 1px solid var(--dm-border-light) !important;
 }
