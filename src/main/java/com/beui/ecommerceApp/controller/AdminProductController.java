@@ -37,7 +37,7 @@ public class AdminProductController {
     public ResponseEntity<PageDTO<AdminProductResponse>> getAllProducts(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "10") int size) {
-        return ResponseEntity.ok(PageDTO.of(productService.getAllAdminProducts(PageRequest.of(page, size))));
+        return ResponseEntity.ok(new PageDTO<>(productService.getAllAdminProducts(PageRequest.of(page, size))));
     }
 
     @Operation(description = "Create a new product (requires ADMIN role)")

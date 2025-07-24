@@ -1,5 +1,5 @@
 <!-- Auth Modal Fragment -->
-<div class="auth-modal" id="authModal" th:fragment="authModal">
+<div class="auth-modal" id="authModal" th:fragment="authModal" xmlns:th="http://www.w3.org/1999/xhtml">
     <div class="auth-container">
         <!-- Close Button -->
         <button class="auth-close-btn" id="authCloseBtn">
@@ -71,7 +71,7 @@
                     Gửi mật khẩu mới
                 </button>
                 <div class="auth-login-link" style="margin-top: 12px; text-align: right;">
-                    <a href="#" id="backToLoginForm">Quay lại đăng nhập</a>
+                    <a href="#" id="backToLoginForm" onclick="event.preventDefault(); switchForm('login');">Quay lại đăng nhập</a>
                 </div>
             </form>
         </div>
@@ -143,7 +143,7 @@
 </div>
 <script>
 console.log('[DEBUG] auth-modal.js loaded');
-function switchForm(formName) {
+window.switchForm = function(formName) {
     const authForms = document.querySelectorAll('.auth-form');
     authForms.forEach(form => {
         form.classList.remove('active');

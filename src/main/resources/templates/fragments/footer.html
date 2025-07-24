@@ -1,0 +1,32 @@
+<!-- fragments/footer.html -->
+<footer th:fragment="footer" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div class="footer-content" style="display: flex; justify-content: center; gap: 48px; color: #fff; padding: 48px 0 0 0; flex-wrap: wrap;">
+        <!-- Về chúng tôi -->
+        <div class="footer-section" style="flex: 1 1 260px; min-width: 220px;">
+            <h4 style="color: #fff; margin-bottom: 16px; font-size: 1.3em;">Về chúng tôi</h4>
+            <p style="color: #fff; line-height: 1.6;">Tinh hoa trà đạo phương Đông, mang đến những sản phẩm trà chất lượng cao.</p>
+        </div>
+        <!-- Liên kết nhanh -->
+        <div class="footer-section" style="flex: 1 1 180px; min-width: 180px;">
+            <h4 style="color: #fff; margin-bottom: 16px; font-size: 1.3em;">Liên kết nhanh</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li><a th:href="@{/}" style="color: #fff; text-decoration: none;">Trang chủ</a></li>
+                <li><a th:href="@{/#products}" style="color: #fff; text-decoration: none;">Sản phẩm</a></li>
+                <li><a th:href="@{/#contact}" style="color: #fff; text-decoration: none;">Liên hệ</a></li>
+            </ul>
+        </div>
+        <!-- Chính sách -->
+        <div class="footer-section" style="flex: 1 1 180px; min-width: 180px;">
+            <h4 style="color: #fff; margin-bottom: 16px; font-size: 1.3em;">Chính sách</h4>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li><a th:href="@{/privacy}" style="color: #fff; text-decoration: none;">Chính sách bảo mật</a></li>
+                <li><a th:href="@{/terms}" style="color: #fff; text-decoration: none;">Điều khoản sử dụng</a></li>
+                <li><a th:href="@{/return-policy}" style="color: #fff; text-decoration: none;">Chính sách đổi trả</a></li>
+                <li><a th:href="@{/guide}" style="color: #fff; text-decoration: none;">Hướng dẫn mua hàng</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom" style="text-align: center; padding: 18px 0; background: #355233; color: #fff; font-size: 1em; border-top: 1px solid #e6f2e6;">
+        <p style="margin: 0;">© 2024 Trà Xanh Việt. Tinh hoa trà đạo phương Đông.</p>
+    </div>
+</footer> 

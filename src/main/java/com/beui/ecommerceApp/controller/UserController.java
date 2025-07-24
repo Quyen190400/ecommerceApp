@@ -68,11 +68,13 @@ public class UserController {
 
     @GetMapping
     @SecurityRequirement(name = "Bearer Authentication")
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Get all users (requires ADMIN role)")
-    public ResponseEntity<?> getAllUsers() {
-        // Không kiểm tra active cho danh sách, chỉ trả về danh sách
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "keyword", required = false) String keyword
+    ) {
+        return userService.getAllUsers(page, size, keyword);
     }
 
     @GetMapping("/email/{email}")

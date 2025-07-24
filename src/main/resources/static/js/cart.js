@@ -163,12 +163,13 @@ function updateCartSummary() {
 // Show empty cart message
 function showEmptyCart(message) {
     const cartItemsContainer = document.getElementById('cartItems');
+    if (!cartItemsContainer) return;
     const cartSummary = document.getElementById('cartSummary');
     
     cartItemsContainer.innerHTML = `
-        <div class="empty-cart">
-            <i class="fas fa-shopping-cart"></i>
-            <h2>${message}</h2>
+        <div class="empty-cart" style="text-align:center;padding:60px 20px;">
+            <i class="fas fa-shopping-cart" style="font-size:3rem;color:#bdbdbd;"></i>
+            <h2 style="color:#bdbdbd;">${message}</h2>
             <a href="/#products" class="continue-shopping">Tiếp tục mua sắm</a>
         </div>
     `;
@@ -443,6 +444,17 @@ window.addToCartIndex = function(productId) {
     })
     .then(response => response.json().then(data => ({status: response.status, body: data})))
     .then(({status, body}) => {
+        if (status === 401) {
+            if (window.showToast) {
+                window.showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
+            } else {
+                showToast('Vui lòng đăng nhập để sử dụng tính năng giỏ hàng.', 'warning');
+            }
+            if (window.showAuthModal) {
+                window.showAuthModal('login');
+            }
+            return;
+        }
         if (status === 403 && body && body.message === "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ quản trị viên.") {
             showToast(body.message, 'error');
             return;

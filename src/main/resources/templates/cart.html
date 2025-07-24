@@ -7,8 +7,10 @@
     <link rel="stylesheet" th:href="@{/css/tea-home.css}">
     <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <style>
+        html, body { font-family: 'Roboto', 'Noto Serif SC', serif; }
         /* Cart specific styles */
         .cart-container {
             max-width: 1200px;
@@ -276,7 +278,6 @@
         .form-group input,
         .form-group select,
         .form-group textarea {
-            width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -363,6 +364,22 @@
             accent-color: #6b8e23;
         }
         
+        body.dark-theme .checkout-btn:disabled,
+        body.dark-theme .checkout-btn:disabled:hover {
+            background: #666 !important;
+            color: #999 !important;
+            cursor: not-allowed;
+        }
+        body.dark-theme .checkout-btn:hover {
+            background: #3e7936 !important;
+        }
+        body.dark-theme .remove-btn:hover {
+            background: #b50011 !important;
+        }
+        body.dark-theme button,
+        body.dark-theme button:hover {
+            background: #d3445200 !important;
+        }
         @media (max-width: 768px) {
             .cart-content {
                 grid-template-columns: 1fr;
@@ -409,7 +426,18 @@
         /*]]>*/
     </script>
 </head>
-<body>
+<body class="light-theme" >
+<script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark-theme');
+          document.body && document.body.classList.add('dark-theme');
+        }
+      } catch(e){}
+    })();
+</script>
     <!-- Include Header Fragment -->
     <div th:replace="~{fragments/header :: header}"></div>
 
