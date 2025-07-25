@@ -137,11 +137,12 @@ document.addEventListener('DOMContentLoaded', function() {
         authCloseBtn.addEventListener('click', hideAuthModal);
     }
     if (authModal) {
-        authModal.addEventListener('click', function(e) {
-            if (e.target === authModal) {
-                hideAuthModal();
-            }
-        });
+        // Không đóng modal khi click bên ngoài nữa
+        // authModal.addEventListener('click', function(e) {
+        //     if (e.target === authModal) {
+        //         hideAuthModal();
+        //     }
+        // });
     }
 
     // Password toggle functionality
@@ -794,13 +795,3 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 }); 
-
-// Thêm vào cuối file hoặc trong block CSS toast
-const style = document.createElement('style');
-style.innerHTML = `
-body.dark-theme .toast.success { background: #22543d; color: #fff; }
-body.dark-theme .toast.error { background: #7b2222; color: #fff; }
-body.dark-theme .toast.warning { background: #b7791f; color: #fff; }
-body.dark-theme .toast { box-shadow: 0 4px 16px rgba(0,0,0,0.25); }
-`;
-document.head.appendChild(style); 
