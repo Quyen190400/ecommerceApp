@@ -227,5 +227,47 @@
         </form>
       </div>
     </div>
+    <script>
+    function updateCartBadge() {
+        fetch('/api/cart/count', {
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.status === 401 || response.status === 403) {
+                const cartBadge = document.getElementById('cartBadge');
+                if (cartBadge) {
+                    cartBadge.textContent = '';
+                    cartBadge.style.display = 'none';
+                }
+                return null;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return;
+            const cartBadge = document.getElementById('cartBadge');
+            if (cartBadge) {
+                if (data.count && data.count > 0) {
+                    cartBadge.textContent = data.count;
+                    cartBadge.style.display = 'inline-block';
+                } else {
+                    cartBadge.textContent = '';
+                    cartBadge.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => {
+            const cartBadge = document.getElementById('cartBadge');
+            if (cartBadge) {
+                cartBadge.textContent = '';
+                cartBadge.style.display = 'none';
+            }
+            console.error('Error updating cart badge:', error);
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCartBadge();
+    });
+</script>
 </body>
 </html> 

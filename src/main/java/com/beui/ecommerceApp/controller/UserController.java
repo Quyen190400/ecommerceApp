@@ -68,6 +68,7 @@ public class UserController {
 
     @GetMapping
     @SecurityRequirement(name = "Bearer Authentication")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Get all users (requires ADMIN role)")
     public ResponseEntity<?> getAllUsers(
             @RequestParam(name = "page", defaultValue = "0") int page,
