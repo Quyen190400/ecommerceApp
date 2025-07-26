@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hồ sơ người dùng - Trà Đạo Quản Trị</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
+    <link th:href="@{/css/tea-home.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
+    <link th:href="@{/css/profile.css}" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/images/logo.png">
+    <style>
+        :root {
+            --color-green: #329538;
+            --color-green-dark: #64af50;
+            --color-brown: #a67c52;
+            --color-brown-dark: #C3B091;
+            --color-gray: #bdbdbd;
+            --color-bg: #f5f5f2;
+            --color-bg-card: #fff;
+            --color-text: #222;
+            --color-placeholder: #888;
+            --color-error: #dc3545;
+            --border-radius: 2rem;
+            --shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --shadow-hover: 0 4px 16px rgba(123,196,127,0.15);
+        }
+        html, body {
+            background: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Roboto', 'Noto Serif SC', serif;
+            margin: 0;
+            padding: 0;
+        }
+        html.dark body, body.dark-theme {
+            background: #23281e;
+            color: #f5f5f2;
+        }
+        html.dark .container.profile-container, body.dark-theme .container.profile-container {
+            background: #2d3324;
+            color: #f5f5f2;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+        }
+        html.dark .profile-left, body.dark-theme .profile-left {
+            background: #23281e;
+            color: #f5f5f2;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.12);
+        }
+        html.dark .profile-details, body.dark-theme .profile-details {
+            background: transparent;
+            color: #f5f5f2;
+        }
+        html.dark .profile-breadcrumb, body.dark-theme .profile-breadcrumb {
+            color: #bdbdbd;
+        }
+        html.dark .breadcrumb-list, body.dark-theme .breadcrumb-list {
+            background: #2d3324;
+            color: #bdbdbd;
+        }
+        html.dark .breadcrumb-item.active, body.dark-theme .breadcrumb-item.active {
+            color: #7bc47f;
+        }
+        html.dark .profile-header h1, body.dark-theme .profile-header h1 {
+            color: #7bc47f;
+        }
+        /* html.dark .profile-badges .badge-green, body.dark-theme .profile-badges .badge-green {
+            background: #486241;
+            color: #fff;
+        } */
+        html.dark .profile-badges .badge-gray, body.dark-theme .profile-badges .badge-gray {
+            background: #444;
+            color: #eee;
+        }
+        html.dark .profile-actions .btn-green, body.dark-theme .profile-actions .btn-green {
+            background: #486241;
+            color: #fff;
+            border: 1.5px solid #7bc47f;
+        }
+        /* html.dark .profile-actions .btn-brown, body.dark-theme .profile-actions .btn-brown {
+            background: #a67c52;
+            color: #fff;
+            border: 1.5px solid #C3B091;
+        }
+        html.dark .profile-actions .btn-green:hover, body.dark-theme .profile-actions .btn-green:hover {
+            background: #46b64d !important;
+            color: #fff;
+        } */
+        html.dark .profile-actions .btn-brown:hover, body.dark-theme .profile-actions .btn-brown:hover {
+            background: #8b6b4a;
+            color: #fff;
+        }
+        html.dark .profile-details dl dt, body.dark-theme .profile-details dl dt {
+            color: #bdbdbd;
+        }
+        html.dark .profile-details dl dd, body.dark-theme .profile-details dl dd {
+            color: #f5f5f2;
+        }
+        html.dark .profile-placeholder, body.dark-theme .profile-placeholder {
+            color: #888;
+        }
+        
+        /* Toast Notification Styles - Ensure it shows in top-right corner */
+        .toast-container {
+            position: fixed !important;
+            top: 20px !important;
+            right: 20px !important;
+            z-index: 9999 !important;
+            pointer-events: none !important;
+        }
+        
+        .toast {
+            background: #ffffff !important;
+            color: #333333 !important;
+            padding: 15px 20px !important;
+            border-radius: 8px !important;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+            margin-bottom: 10px !important;
+            max-width: 350px !important;
+            pointer-events: auto !important;
+            transform: translateX(100%) !important;
+            transition: transform 0.3s ease !important;
+            border-left: 4px solid #3e5c3a !important;
+        }
+        
+        .toast.show {
+            transform: translateX(0) !important;
+        }
+        
+        .toast.success {
+            border-left-color: #28a745 !important;
+        }
+        
+        .toast.warning {
+            border-left-color: #ffc107 !important;
+        }
+        
+        .toast.error {
+            border-left-color: #dc3545 !important;
+        }
+        
+        .toast.info {
+            border-left-color: #17a2b8 !important;
+        }
+        
+        .toast-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            margin-bottom: 5px !important;
+        }
+        
+        .toast-title {
+            font-weight: 600 !important;
+            font-size: 14px !important;
+        }
+        
+        .toast-close {
+            background: none !important;
+            border: none !important;
+            color: #666 !important;
+            cursor: pointer !important;
+            font-size: 16px !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+        }
+        
+        .toast-close:hover {
+            color: #333 !important;
+        }
+        
+        .toast-message {
+            font-size: 13px !important;
+            line-height: 1.4 !important;
+        }
+        
+        /* Dark theme for toast */
+        body.dark-theme .toast {
+            background: #2a2a2a !important;
+            color: #ffffff !important;
+            border-left-color: #3e5c3a !important;
+        }
+        
+        body.dark-theme .toast.success {
+            border-left-color: #28a745 !important;
+        }
+        
+        body.dark-theme .toast.warning {
+            border-left-color: #ffc107 !important;
+        }
+        
+        body.dark-theme .toast.error {
+            border-left-color: #dc3545 !important;
+        }
+        
+        body.dark-theme .toast.info {
+            border-left-color: #17a2b8 !important;
+        }
+        
+        @media (max-width: 768px) {
+            .toast-container {
+                top: 10px !important;
+                right: 10px !important;
+                left: 10px !important;
+            }
+            
+            .toast {
+                max-width: none !important;
+                margin-bottom: 8px !important;
+            }
+        }
+        html.dark .edit-form, body.dark-theme .edit-form,
+        html.dark .password-form, body.dark-theme .password-form {
+            background: #23281e;
+            color: #f5f5f2;
+            border: 1px solid #444;
+        }
+        html.dark .form-group label, body.dark-theme .form-group label {
+            color: #bdbdbd;
+        }
+        html.dark .profile-input, body.dark-theme .profile-input {
+            background: #23281e;
+            color: #f5f5f2;
+            border: 1px solid #444;
+        }
+        html.dark .avatar-wrapper, body.dark-theme .avatar-wrapper {
+            background: #23281e;
+        }
+        html.dark .avatar-img, body.dark-theme .avatar-img,
+        html.dark .avatar-preview, body.dark-theme .avatar-preview {
+            background: #23281e;
+            border: 2px solid #7bc47f;
+        }
+        html.dark .avatar-upload-btn, body.dark-theme .avatar-upload-btn {
+            background: #605d0b;
+            color: #7bc47f;
+            border: 1.5px solid #7bc47f;
+        }
+        html.dark .avatar-upload-btn:hover, body.dark-theme .avatar-upload-btn:hover {
+            background: #486241;
+            color: #fff;
+        }
+        html.dark .avatar-action-btns .btn-green, body.dark-theme .avatar-action-btns .btn-green {
+            background: #486241;
+            color: #fff;
+        }
+        html.dark .avatar-action-btns .btn-brown, body.dark-theme .avatar-action-btns .btn-brown {
+            background: #a67c52;
+            color: #fff;
+        }
+        html.dark .alert-success, body.dark-theme .alert-success {
+            background: rgba(123,196,127,0.18) !important;
+            color: #7bc47f !important;
+            border: 1px solid #7bc47f !important;
+        }
+        html.dark .alert-danger, body.dark-theme .alert-danger {
+            background: rgba(220,53,69,0.18) !important;
+            color: #ffb3b3 !important;
+            border: 1px solid #dc3545 !important;
+        }
+        
+        /* Dark mode for dropdown menu */
+        html.dark .user-dropdown-menu, body.dark-theme .user-dropdown-menu {
+            background: #232323 !important;
+            border: 1px solid #444 !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+        }
+        
+        html.dark .dropdown-header, body.dark-theme .dropdown-header {
+            background: #4a5568 !important;
+            color: #f5f5f2 !important;
+            border-bottom: 1px solid #444 !important;
+        }
+        
+        html.dark .dropdown-header span, body.dark-theme .dropdown-header span {
+            color: #f5f5f2 !important;
+        }
+        
+        html.dark .dropdown-item, body.dark-theme .dropdown-item {
+            color: #f5f5f2 !important;
+            background: transparent !important;
+        }
+        
+        html.dark .dropdown-item:hover, body.dark-theme .dropdown-item:hover {
+            background: #23281e !important;
+            color: #7bc47f !important;
+        }
+        
+        html.dark .dropdown-divider, body.dark-theme .dropdown-divider {
+            background: #444 !important;
+        }
+        
+        html.dark .logout-btn, body.dark-theme .logout-btn {
+            color: #ff6b6b !important;
+        }
+        
+        html.dark .logout-btn:hover, body.dark-theme .logout-btn:hover {
+            background: rgba(255, 107, 107, 0.1) !important;
+            color: #ff6b6b !important;
+        }
+        
+        /* Mobile dropdown dark mode */
+        html.dark .mobile-user-menu, body.dark-theme .mobile-user-menu {
+            background: #2d3324 !important;
+            border: 1px solid #444 !important;
+        }
+        
+        html.dark .mobile-dropdown-header, body.dark-theme .mobile-dropdown-header {
+            background: #23281e !important;
+            color: #f5f5f2 !important;
+            border-bottom: 1px solid #444 !important;
+        }
+        
+        html.dark .mobile-dropdown-header span, body.dark-theme .mobile-dropdown-header span {
+            color: #f5f5f2 !important;
+        }
+        
+        html.dark .mobile-dropdown-item, body.dark-theme .mobile-dropdown-item {
+            color: #f5f5f2 !important;
+            background: transparent !important;
+        }
+        
+        html.dark .mobile-dropdown-item:hover, body.dark-theme .mobile-dropdown-item:hover {
+            background: #23281e !important;
+            color: #7bc47f !important;
+        }
+        
+        html.dark .mobile-dropdown-divider, body.dark-theme .mobile-dropdown-divider {
+            background: #444 !important;
+        }
+        .container.profile-container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 32px 16px;
+            background: var(--color-bg-card);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        .profile-breadcrumb {
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb-list {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+            font-size: 0.98rem;
+            background: transparent;
+            color: #9CAF88;
+        }
+        .breadcrumb-item {
+            color: #9CAF88;
+            margin-right: 0.5em;
+        }
+        .breadcrumb-item:not(:last-child)::after {
+            content: '/';
+            color: #C3B091;
+            margin-left: 0.5em;
+        }
+        .breadcrumb-item.active {
+            color: var(--color-green-dark);
+            font-weight: 600;
+        }
+        .profile-header {
+            margin-bottom: 32px;
+        }
+        .profile-header h1 {
+            font-size: 2.2rem;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--color-green-dark);
+        }
+        .profile-body {
+            display: flex;
+            gap: 40px;
+            align-items: flex-start;
+        }
+        .profile-left {
+            flex: 0 0 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            background: rgba(123,196,127,0.03);
+            border-radius: var(--border-radius);
+            padding: 32px 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+        .avatar-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        .avatar-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin-bottom: 8px;
+        }
+        .avatar-img, .avatar-preview {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--color-green);
+            background: #fff;
+            box-shadow: 0 4px 16px rgba(123,196,127,0.12);
+            position: absolute;
+            top: 0; left: 0;
+            transition: opacity 0.3s;
+        }
+        .avatar-img {
+            z-index: 1;
+        }
+        .avatar-preview {
+            z-index: 2;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .avatar-upload-btn {
+            background: #fff;
+            color: var(--color-green-dark);
+            border: 1px solid var(--color-green);
+            padding: 8px 18px;
+            position: absolute;
+            bottom: -8px; right: -15px;
+            z-index: 3;
+            justify-content: center;
+        }
+        .avatar-upload-btn:hover {
+            background: var(--color-green);
+            color: #fff;
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+        }
+        .avatar-upload-btn:active {
+            transform: translateY(0);
+        }
+        .avatar-file-input {
+            display: none;
+        }
+        .avatar-action-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .btn-green {
+            background: var(--color-green);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-green:hover {
+            background: var(--color-green-dark);
+            box-shadow: var(--shadow-hover);
+        }
+        .btn-brown {
+            background: var(--color-brown);
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .btn-brown:hover {
+            background: var(--color-brown-dark);
+            box-shadow: var(--shadow-hover);
+        }
+        .user-info {
+            text-align: center;
+            width: 100%;
+        }
+        .profile-name {
+            font-size: 1.6rem;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .profile-name .leaf-icon {
+            font-size: 1.4rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        .profile-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+        .badge-green {
+            background: var(--color-green);
+            color: #fff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .profile-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+        .profile-right {
+            flex: 1;
+        }
+        .profile-details {
+            background: rgba(123,196,127,0.07);
+            border-radius: var(--border-radius);
+            padding: 32px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+        .profile-details h3 {
+            color: var(--color-green);
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.4rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        /* body.dark-theme .profile-header h1, body.dark-theme h3, body.dark-theme h4 {
+            color: #a5a52a !important;
+        } */
+        .profile-details dl {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            row-gap: 16px;
+            column-gap: 16px;
+            margin: 0;
+        }
+        .profile-details dt {
+            font-weight: 600;
+            color: var(--color-green);
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .profile-details dd {
+            margin: 0;
+            color: inherit;
+            display: flex;
+            align-items: center;
+        }
+        .profile-placeholder {
+            color: var(--color-placeholder);
+            font-style: italic;
+        }
+        .edit-form, .password-form {
+            background: rgba(123,196,127,0.05);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-top: 24px;
+        }
+        .edit-form h4, .password-form h4 {
+            color: var(--color-green);
+            margin-bottom: 20px;
+            font-family: 'Noto Serif SC', serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+        .required-star {
+            color: var(--color-error);
+        }
+        .profile-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid #ddd;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: border 0.2s, box-shadow 0.2s;
+        }
+        .profile-input:focus {
+            outline: none;
+            border-color: var(--color-green);
+            box-shadow: 0 0 0 3px rgba(123,196,127,0.08);
+        }
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        @media (max-width: 900px) {
+            .container.profile-container {
+                padding: 16px 2vw;
+            }
+            .profile-body {
+                flex-direction: column;
+                gap: 24px;
+            }
+            .profile-left {
+                width: 100%;
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 24px 12px;
+            }
+            .profile-details {
+                padding: 24px 12px;
+            }
+            .profile-details dl {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .profile-details dt {
+                text-align: center;
+                justify-content: center;
+                margin-bottom: 4px;
+            }
+        }
+        @media (max-width: 600px) {
+            .profile-header h1 {
+                font-size: 1.4rem;
+            }
+            .profile-name {
+                font-size: 1.1rem;
+            }
+            .avatar-wrapper, .avatar-img, .avatar-preview {
+                width: 100px;
+                height: 100px;
+            }
+            .container.profile-container {
+                padding: 8px 0;
+                margin: 8px auto;
+            }
+            .form-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .form-actions .btn-green, .form-actions .btn-brown {
+                width: 100%;
+            }
+        }
+        
+        /* Alert animations */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+        
+        .alert {
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .alert.hide {
+            animation: slideOut 0.3s ease-out forwards;
+        }
+        
+        /* Dropdown Menu Styles - Override any conflicting styles */
+        .user-dropdown-menu {
+            background: #ffffff !important;
+            border: 1px solid #e1e5e9 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+            color: #333 !important;
+        }
+        
+        .dropdown-header {
+            background: #f8f9fa !important;
+            color: #333 !important;
+            border-bottom: 1px solid #e1e5e9 !important;
+        }
+        
+        .dropdown-header span {
+            color: #333 !important;
+            font-weight: 600 !important;
+        }
+        
+        .dropdown-item {
+            color: #333 !important;
+            background: transparent !important;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa !important;
+            color: #3e5c3a !important;
+        }
+        
+        .dropdown-divider {
+            background: #e1e5e9 !important;
+        }
+        
+        /* Mobile dropdown styles */
+        .mobile-user-menu {
+            background: #ffffff !important;
+            border: 1px solid #e1e5e9 !important;
+            color: #333 !important;
+        }
+        
+        .mobile-dropdown-header {
+            background: #f8f9fa !important;
+            color: #333 !important;
+            border-bottom: 1px solid #e1e5e9 !important;
+        }
+        
+        .mobile-dropdown-header span {
+            color: #333 !important;
+            font-weight: 600 !important;
+        }
+        
+        .mobile-dropdown-item {
+            color: #333 !important;
+            background: transparent !important;
+        }
+        
+        .mobile-dropdown-item:hover {
+            background: #f8f9fa !important;
+            color: #3e5c3a !important;
+        }
+        
+        .mobile-dropdown-divider {
+            background: #e1e5e9 !important;
+        }
+        
+        /* Dropdown Menu Styles - Override any conflicting styles */
+        .user-dropdown-menu {
+            background: #ffffff !important;
+            border: 1px solid #e1e5e9 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+            color: #333 !important;
+        }
+        
+        .dropdown-header {
+            background: #f8f9fa !important;
+            color: #333 !important;
+            border-bottom: 1px solid #e1e5e9 !important;
+        }
+        
+        .dropdown-header span {
+            color: #333 !important;
+            font-weight: 600 !important;
+        }
+        
+        .dropdown-item {
+            color: #333 !important;
+            background: transparent !important;
+        }
+        
+        .dropdown-item:hover {
+            background: #f8f9fa !important;
+            color: #3e5c3a !important;
+        }
+        
+        .dropdown-divider {
+            background: #e1e5e9 !important;
+        }
+        
+        /* Mobile dropdown styles */
+        .mobile-user-menu {
+            background: #ffffff !important;
+            border: 1px solid #e1e5e9 !important;
+            color: #333 !important;
+        }
+        
+        .mobile-dropdown-header {
+            background: #f8f9fa !important;
+            color: #333 !important;
+            border-bottom: 1px solid #e1e5e9 !important;
+        }
+        
+        .mobile-dropdown-header span {
+            color: #333 !important;
+            font-weight: 600 !important;
+        }
+        
+        .mobile-dropdown-item {
+            color: #333 !important;
+            background: transparent !important;
+        }
+        
+        .mobile-dropdown-item:hover {
+            background: #f8f9fa !important;
+            color: #3e5c3a !important;
+        }
+        
+        .mobile-dropdown-divider {
+            background: #e1e5e9 !important;
+        }
+        /* Breadcrumb link color by role */
+        .breadcrumb-link-admin {
+            color: #00a1ff !important;
+        }
+        .breadcrumb-link-user {
+            color: #a67c52 !important;
+        }
+        .breadcrumb-link-admin:hover,
+        .breadcrumb-link-user:hover {
+            text-decoration: underline;
+            opacity: 0.85;
+        }
+    </style>
+</head>
+<body class="light-theme" >
+<script>
+    (function() {
+      try {
+        var theme = localStorage.getItem('theme');
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark-theme');
+          document.body && document.body.classList.add('dark-theme');
+        }
+      } catch(e){}
+    })();
+</script>
+<div th:replace="~{fragments/header :: header}"></div>
+
+<div th:if="${user != null}">
+    <!-- Toàn bộ nội dung profile ở đây (giữ nguyên từ <div class="container profile-container"> ... đến hết) -->
+    <div class="container profile-container">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="profile-breadcrumb">
+            <ol class="breadcrumb-list">
+                <li class="breadcrumb-item">
+                    <a href="/" th:classappend="${user.role == 'ADMIN'} ? 'breadcrumb-link-admin' : (user.role == 'USER' ? 'breadcrumb-link-user' : '')">Trang chủ</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/profile" th:classappend="${user.role == 'ADMIN'} ? 'breadcrumb-link-admin' : (user.role == 'USER' ? 'breadcrumb-link-user' : '')">Hồ sơ người dùng</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${user.fullName}">Tên người dùng</li>
+            </ol>
+        </nav>
+        <div class="profile-header">
+            <h1><span class="profile-header-icon">🧑‍🌾</span> Hồ sơ người dùng</h1>
+        </div>
+        <!-- Success/Error Messages -->
+        <div th:if="${success}" class="alert alert-success" style="
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(123,196,127,0.1);
+            color: var(--color-green);
+            border: 1px solid var(--color-green);
+        ">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${success}"></span>
+        </div>
+        <div th:if="${error}" class="alert alert-danger" style="
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            animation: slideIn 0.3s ease-out;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(220,53,69,0.1);
+            color: #dc3545;
+            border: 1px solid #dc3545;
+        ">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${error}"></span>
+        </div>
+        <div class="profile-body">
+            <!-- Left: Avatar & Basic Info -->
+            <div class="profile-left">
+                <div class="avatar-section">
+                    <div class="avatar-wrapper">
+                        <img id="avatarImg"
+                             th:src="${user.avatarUrl != null && !#strings.isEmpty(user.avatarUrl) ? user.avatarUrl : '/images/default-avatar.png'}"
+                             alt="Avatar"
+                             class="avatar-img"
+                             onerror="this.src='/images/default-avatar.png'">
+                        <img id="avatarPreview" class="avatar-preview" style="opacity:0; pointer-events:none;">
+                        <label for="avatarInput" class="avatar-upload-btn">
+                            <i class="fas fa-camera"></i> Đổi ảnh
+                            <input type="file" id="avatarInput" name="avatar" accept="image/*" class="avatar-file-input">
+                        </label>
+                    </div>
+                    <div id="avatarActionButtons" class="avatar-action-btns" style="display:none;">
+                        <button id="confirmAvatarBtn" type="button" class="btn-green"><i class="fas fa-check"></i> Xác nhận</button>
+                        <button id="cancelAvatarBtn" type="button" class="btn-brown"><i class="fas fa-times"></i> Hủy</button>
+                    </div>
+                    <!-- Hidden form for upload -->
+                    <form id="avatarUploadForm" th:action="@{/profile/avatar}" method="post" enctype="multipart/form-data" style="display:none;">
+                        <input type="file" name="avatar" id="avatarHiddenInput" accept="image/*">
+                    </form>
+                </div>
+                <div class="user-info">
+                    <div class="profile-name"><span th:text="${user.fullName}">Trần Nhật Minh</span></div>
+                    <div class="profile-badges">
+                        <span class="badge-green" th:text="${user.role}">User</span>
+                        <span class="badge-green" th:if="${user.active}">Hoạt động</span>
+                        <span class="badge-gray" th:unless="${user.active}">Đã khóa</span>
+                    </div>
+                </div>
+                <div class="profile-actions" th:if="${user.role == 'USER'}">
+                    <button class="btn-green" onclick="togglePasswordForm()" type="button"><i class="fas fa-key"></i> Đổi mật khẩu</button>
+                    <button class="btn-brown" type="button"><i class="fas fa-lock"></i> Khoá tài khoản</button>
+                </div>
+                <div class="profile-actions" th:if="${user.role == 'ADMIN'}">
+                    <!-- Admin không có đổi mật khẩu/khóa tài khoản -->
+                </div>
+                <div class="profile-actions">
+                    <button class="btn-brown" onclick="toggleEditForm()" type="button"><i class="fas fa-edit"></i> Chỉnh sửa hồ sơ</button>
+                </div>
+            </div>
+            <!-- Right: Details & Forms -->
+            <div class="profile-right">
+                <div class="profile-details">
+                    <h3><i class="fas fa-info-circle"></i> Thông tin chi tiết</h3>
+                    <dl>
+                        <dt><i class="fas fa-envelope"></i> Email:</dt>
+                        <dd th:text="${user.email}">minh.tran@example.com</dd>
+                        <dt><i class="fas fa-phone"></i> SĐT:</dt>
+                        <dd th:if="${user.phone != null && !#strings.isEmpty(user.phone)}" th:text="${user.phone}">0987 654 321</dd>
+                        <dd th:unless="${user.phone != null && !#strings.isEmpty(user.phone)}" class="profile-placeholder">Chưa cập nhật</dd>
+                        <dt><i class="fas fa-id-card"></i> ID:</dt>
+                        <dd th:text="'#' + ${user.id}">#1001</dd>
+                        <dt><i class="fas fa-calendar"></i> Ngày đăng ký:</dt>
+                        <dd th:text="${user.createdAt != null ? user.createdAt : 'Chưa có thông tin'}">15/05/2023</dd>
+                        <dt><i class="fas fa-user-tag"></i> Vai trò:</dt>
+                        <dd th:text="${user.role}">User</dd>
+                        <dt><i class="fas fa-circle"></i> Trạng thái:</dt>
+                        <dd th:if="${user.active}">Hoạt động</dd>
+                        <dd th:unless="${user.active}">Đã khóa</dd>
+                    </dl>
+                </div>
+                <!-- Edit Profile Form -->
+                <div class="edit-form" id="editForm" style="display: none;">
+                    <h4><i class="fas fa-edit"></i> Chỉnh sửa thông tin</h4>
+                    <form th:action="@{/profile/update}" method="post">
+                        <input type="hidden" name="id" th:value="${user.id}">
+                        <input type="hidden" name="email" th:value="${user.email}">
+                        <input type="hidden" name="role" th:value="${user.role}">
+                        <input type="hidden" name="active" th:value="${user.active}">
+                        <input type="hidden" name="createdAt" th:value="${user.createdAt}">
+                        <div class="form-group">
+                            <label for="fullName">Họ tên: <span class="required-star">*</span></label>
+                            <input type="text" id="fullName" name="fullName" class="profile-input" th:value="${user.fullName}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại:</label>
+                            <input type="tel" id="phone" name="phone" class="profile-input" th:value="${user.phone}">
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-green"><i class="fas fa-check"></i> Cập nhật</button>
+                            <button type="button" class="btn-brown" onclick="closeEditForm()"><i class="fas fa-times"></i> Hủy</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- Change Password Form -->
+                <div class="password-form" id="passwordForm" style="display: none;">
+                    <h4><i class="fas fa-key"></i> Đổi mật khẩu</h4>
+                    <form th:action="@{/profile/change-password}" method="post">
+                        <div class="form-group">
+                            <label for="currentPassword">Mật khẩu hiện tại:</label>
+                            <input type="password" id="currentPassword" name="currentPassword" class="profile-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Mật khẩu mới:</label>
+                            <input type="password" id="newPassword" name="newPassword" class="profile-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Xác nhận mật khẩu mới:</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="profile-input" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn-green"><i class="fas fa-check"></i> Đổi mật khẩu</button>
+                            <button type="button" class="btn-brown" onclick="closePasswordForm()"><i class="fas fa-times"></i> Hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:if="${user == null}">
+    <div class="container profile-container" style="text-align:center; padding: 60px 0;">
+        <h2>Không tìm thấy thông tin người dùng hoặc bạn chưa đăng nhập.</h2>
+        <a href="/" class="btn-green" style="margin-top: 24px;">Quay về trang chủ</a>
+    </div>
+</div>
+    <div th:replace="~{fragments/footer :: footer}"></div>
+    <script th:src="@{/js/profile.js}"></script>
+    <script th:src="@{/js/cart.js}"></script>
+    <script th:src="@{/js/auth-forms.js}"></script>
+    <script th:src="@{/js/user-dropdown.js}"></script>
+    <script th:src="@{/js/theme-toggle.js}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof window.updateCartBadge === 'function') {
+                window.updateCartBadge();
+            }
+        });
+    </script>
+
+    <div th:replace="~{fragments/auth-modal :: authModal}"></div>
+
+</body>
+</html> 

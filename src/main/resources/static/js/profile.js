@@ -1,0 +1,405 @@
+// Profile Page JavaScript - Trà Đạo Quản Trị Theme
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize profile functionality
+    initializeProfile();
+});
+
+function initializeProfile() {
+    // Auto-hide alerts after 5 seconds
+    setTimeout(function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            if (!alert.classList.contains('hide')) {
+                alert.classList.add('hide');
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 300);
+            }
+        });
+    }, 5000);
+
+    // Add form validation
+    setupFormValidation();
+    
+    // Setup avatar upload
+    setupAvatarUpload();
+    
+    // Setup alert toggles
+    setupAlertToggles();
+}
+
+function setupAlertToggles() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        // Add close button
+        const closeBtn = document.createElement('button');
+        closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        closeBtn.style.cssText = `
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            margin-left: auto;
+            padding: 4px;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        `;
+        closeBtn.addEventListener('mouseenter', () => {
+            closeBtn.style.background = 'rgba(0,0,0,0.1)';
+        });
+        closeBtn.addEventListener('mouseleave', () => {
+            closeBtn.style.background = 'none';
+        });
+        closeBtn.addEventListener('click', () => {
+            alert.classList.add('hide');
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 300);
+        });
+        alert.appendChild(closeBtn);
+    });
+}
+
+function setupAvatarUpload() {
+    const avatarInput = document.getElementById('avatarInput');
+    const avatarImg = document.getElementById('avatarImg');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarActionButtons = document.getElementById('avatarActionButtons');
+    const confirmBtn = document.getElementById('confirmAvatarBtn');
+    const cancelBtn = document.getElementById('cancelAvatarBtn');
+    const avatarUploadForm = document.getElementById('avatarUploadForm');
+    const avatarHiddenInput = document.getElementById('avatarHiddenInput');
+    
+    let selectedFile = null;
+    
+    // Handle avatar image load error
+    if (avatarImg) {
+        avatarImg.addEventListener('error', function() {
+            console.log('Avatar image failed to load, using default avatar');
+            this.src = '/images/default-avatar.png';
+        });
+    }
+    
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file && file.type.startsWith('image/')) {
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    showError('Kích thước file không được vượt quá 5MB');
+                    this.value = '';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // Hiển thị preview đè lên ảnh gốc
+                    avatarPreview.src = e.target.result;
+                    avatarPreview.style.opacity = '1';
+                    avatarPreview.style.pointerEvents = 'auto';
+                    
+                    // Handle preview image load error
+                    avatarPreview.onerror = function() {
+                        console.log('Preview image failed to load');
+                        this.style.display = 'none';
+                    };
+                    
+                    // Hiển thị action buttons
+                    avatarActionButtons.style.display = 'flex';
+                    
+                    selectedFile = file;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                showError('Vui lòng chọn file ảnh hợp lệ');
+                this.value = '';
+            }
+        });
+    }
+    
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', function() {
+            // Ẩn preview và action buttons
+            avatarPreview.style.opacity = '0';
+            avatarPreview.style.pointerEvents = 'none';
+            avatarActionButtons.style.display = 'none';
+            
+            // Reset file input
+            avatarInput.value = '';
+            selectedFile = null;
+        });
+    }
+    
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', function() {
+            if (selectedFile) {
+                // Hiển thị loading state
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tải...';
+                confirmBtn.disabled = true;
+                
+                // Tạo form upload ẩn
+                const formData = new FormData();
+                formData.append('avatar', selectedFile);
+                
+                // Gửi request upload
+                fetch('/profile/avatar', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json().catch(() => ({})); // Handle non-JSON response
+                    } else {
+                        throw new Error('Upload failed');
+                    }
+                })
+                .then(data => {
+                    // Cập nhật ảnh hiện tại với URL mới từ server
+                    if (data.avatarUrl) {
+                        avatarImg.src = data.avatarUrl;
+                    } else {
+                        // Fallback to preview if no URL returned
+                        avatarImg.src = avatarPreview.src;
+                    }
+                    showSuccess('Cập nhật ảnh đại diện thành công!');
+                    
+                    // Ẩn preview và action buttons
+                    avatarPreview.style.opacity = '0';
+                    avatarPreview.style.pointerEvents = 'none';
+                    avatarActionButtons.style.display = 'none';
+                    
+                    // Reset
+                    avatarInput.value = '';
+                    selectedFile = null;
+                })
+                .catch(error => {
+                    showError('Lỗi upload ảnh: ' + error.message);
+                })
+                .finally(() => {
+                    // Reset button
+                    confirmBtn.innerHTML = '<i class="fas fa-check"></i> Xác nhận';
+                    confirmBtn.disabled = false;
+                });
+            }
+        });
+    }
+}
+
+function toggleEditForm() {
+    const editForm = document.getElementById('editForm');
+    const passwordForm = document.getElementById('passwordForm');
+    
+    // Ẩn password form nếu đang mở
+    passwordForm.style.display = 'none';
+    
+    // Toggle edit form
+    if (editForm.style.display === 'none' || editForm.style.display === '') {
+        editForm.style.display = 'block';
+        // Focus on first input when form is shown
+        setTimeout(() => {
+            const firstInput = editForm.querySelector('input[type="text"]');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }, 100);
+    }
+}
+
+function closeEditForm() {
+    const editForm = document.getElementById('editForm');
+    editForm.style.display = 'none';
+}
+
+function togglePasswordForm() {
+    const editForm = document.getElementById('editForm');
+    const passwordForm = document.getElementById('passwordForm');
+    
+    // Ẩn edit form nếu đang mở
+    editForm.style.display = 'none';
+    
+    // Toggle password form
+    if (passwordForm.style.display === 'none' || passwordForm.style.display === '') {
+        passwordForm.style.display = 'block';
+        // Focus on first input when form is shown
+        setTimeout(() => {
+            const firstInput = passwordForm.querySelector('input[type="password"]');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }, 100);
+    }
+}
+
+function closePasswordForm() {
+    const passwordForm = document.getElementById('passwordForm');
+    passwordForm.style.display = 'none';
+}
+
+function setupFormValidation() {
+    // Phone number formatting
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function() {
+            this.value = formatPhoneNumber(this.value);
+        });
+    }
+    
+    // Form submission validation
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (!validateForm(this)) {
+                e.preventDefault();
+            }
+        });
+    });
+}
+
+function validateForm(form) {
+    let isValid = true;
+    
+    // Validate required fields
+    const requiredFields = form.querySelectorAll('[required]');
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            showFieldError(field, 'Trường này là bắt buộc');
+            isValid = false;
+        } else {
+            clearFieldError(field);
+        }
+    });
+    
+    // Validate phone number if present
+    const phoneField = form.querySelector('input[type="tel"]');
+    if (phoneField && phoneField.value.trim()) {
+        if (!isValidPhone(phoneField.value)) {
+            showFieldError(phoneField, 'Số điện thoại không hợp lệ');
+            isValid = false;
+        } else {
+            clearFieldError(phoneField);
+        }
+    }
+    
+    // Validate password confirmation
+    const passwordField = form.querySelector('#newPassword');
+    const confirmPasswordField = form.querySelector('#confirmPassword');
+    if (passwordField && confirmPasswordField) {
+        if (passwordField.value !== confirmPasswordField.value) {
+            showFieldError(confirmPasswordField, 'Mật khẩu xác nhận không khớp');
+            isValid = false;
+        } else {
+            clearFieldError(confirmPasswordField);
+        }
+    }
+    
+    return isValid;
+}
+
+function isValidPhone(phone) {
+    // Vietnamese phone number validation
+    const phoneRegex = /^(0|\+84)(3[2-9]|5[689]|7[06-9]|8[1-689]|9[0-46-9])[0-9]{7}$/;
+    return phoneRegex.test(phone.replace(/\s/g, ''));
+}
+
+function showFieldError(field, message) {
+    // Remove existing error
+    clearFieldError(field);
+    
+    // Add error class
+    field.classList.add('error');
+    
+    // Create error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'field-error';
+    errorDiv.textContent = message;
+    errorDiv.style.color = 'var(--color-error)';
+    errorDiv.style.fontSize = '0.85rem';
+    errorDiv.style.marginTop = '4px';
+    
+    // Insert after field
+    field.parentNode.insertBefore(errorDiv, field.nextSibling);
+}
+
+function clearFieldError(field) {
+    field.classList.remove('error');
+    const errorDiv = field.parentNode.querySelector('.field-error');
+    if (errorDiv) {
+        errorDiv.remove();
+    }
+}
+
+function showError(message) {
+    removeExistingAlerts();
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger';
+    alertDiv.style.cssText = `
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        animation: slideIn 0.3s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(220,53,69,0.1);
+        color: #dc3545;
+        border: 1px solid #dc3545;
+    `;
+    alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+    document.querySelector('.profile-container').insertBefore(alertDiv, document.querySelector('.profile-header'));
+}
+
+function showSuccess(message) {
+    removeExistingAlerts();
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-success';
+    alertDiv.style.cssText = `
+        padding: 16px 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+        animation: slideIn 0.3s ease-out;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(123,196,127,0.1);
+        color: var(--color-green);
+        border: 1px solid var(--color-green);
+    `;
+    alertDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+    document.querySelector('.profile-container').insertBefore(alertDiv, document.querySelector('.profile-header'));
+}
+
+function removeExistingAlerts() {
+    const existingAlerts = document.querySelectorAll('.alert');
+    existingAlerts.forEach(alert => alert.remove());
+}
+
+function formatPhoneNumber(input) {
+    // Remove all non-digits
+    let value = input.replace(/\D/g, '');
+    
+    // Format Vietnamese phone number
+    if (value.length > 0) {
+        if (value.startsWith('84')) {
+            value = '0' + value.substring(2);
+        }
+        
+        // Add spaces for better readability
+        if (value.length >= 4) {
+            value = value.substring(0, 4) + ' ' + value.substring(4);
+        }
+        if (value.length >= 8) {
+            value = value.substring(0, 8) + ' ' + value.substring(8);
+        }
+        if (value.length >= 12) {
+            value = value.substring(0, 12) + ' ' + value.substring(12);
+        }
+    }
+    
+    return value;
+} 
