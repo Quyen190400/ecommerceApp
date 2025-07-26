@@ -91,6 +91,7 @@ public class SecurityConfig {
                     .requestMatchers(HttpMethod.PUT, "/api/orders/*/status").hasRole("ADMIN")
                     .requestMatchers("/uploads/images/**").permitAll()
                     .requestMatchers("/api/products/benefit/**").permitAll()
+                    .requestMatchers("/profile/**").authenticated()
                     .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -102,6 +103,9 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID", "jwt_token", "remember-me")
+                .clearAuthentication(true)
                 .permitAll()
             )
             .sessionManagement(session -> session

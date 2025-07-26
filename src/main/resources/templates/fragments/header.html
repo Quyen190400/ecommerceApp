@@ -58,9 +58,13 @@
                     <div class="user-dropdown-menu" id="userDropdownMenu">
                         <div class="dropdown-header">
                             <i class="fas fa-user-circle"></i>
-                            <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
+                            <span th:text="${currentUser != null and currentUser.email != null ? currentUser.email : (currentUser != null and currentUser.username != null ? currentUser.username : 'Tài khoản')}">Email</span>
                         </div>
                         <div class="dropdown-divider"></div>
+                        <a href="/profile" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Hồ sơ của tôi</span>
+                        </a>
                         <a href="/orders" class="dropdown-item" th:if="${currentUser != null and (currentUser.active == null or currentUser.active)}">
                             <i class="fas fa-box"></i>
                             <span>Đơn hàng của tôi</span>
@@ -127,9 +131,13 @@
                     <div class="mobile-user-menu" id="mobileUserMenu">
                         <div class="mobile-dropdown-header">
                             <i class="fas fa-user-circle"></i>
-                            <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
+                            <span th:text="${currentUser != null and currentUser.email != null ? currentUser.email : (currentUser != null and currentUser.username != null ? currentUser.username : 'Tài khoản')}">Email</span>
                         </div>
                         <div class="mobile-dropdown-divider"></div>
+                        <a href="/profile" class="mobile-dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Hồ sơ của tôi</span>
+                        </a>
                         <a href="/orders" class="mobile-dropdown-item" th:if="${currentUser != null and (currentUser.active == null or currentUser.active)}">
                             <i class="fas fa-box"></i>
                             <span>Đơn hàng của tôi</span>

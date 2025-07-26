@@ -439,6 +439,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Logout function
     window.logout = function() {
+        // Clear cookies manually first
+        document.cookie = "jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "remember-me=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
         // Call logout API to clear JWT cookie
         fetch('/api/auth/logout', {
             method: 'POST',
@@ -449,29 +454,30 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (response.ok) {
-                if (window.showToast) {
-                    window.showToast('Đăng xuất thành công!', 'success');
-                }
                 // Clear all localStorage and sessionStorage
                 localStorage.clear();
                 sessionStorage.clear();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                // Show success message
+                if (window.showToast) {
+                    window.showToast('Đăng xuất thành công!', 'success');
+                }
+                sessionStorage.setItem('logoutSuccess', '1');
+                // Redirect to home page immediately
+                window.location.href = '/?logout=true';
             } else {
                 throw new Error('Logout failed');
             }
         })
         .catch(error => {
             console.error('Logout error:', error);
+            // Even if API fails, redirect to login
             localStorage.clear();
             sessionStorage.clear();
             if (window.showToast) {
                 window.showToast('Đăng xuất thành công!', 'success');
             }
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            // Redirect immediately even on error
+            window.location.href = '/?logout=true';
         });
     };
 

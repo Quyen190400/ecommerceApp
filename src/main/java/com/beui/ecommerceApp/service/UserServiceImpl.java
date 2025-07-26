@@ -1,5 +1,6 @@
 package com.beui.ecommerceApp.service;
 
+import com.beui.ecommerceApp.dto.UserInfo;
 import com.beui.ecommerceApp.entity.AppUser;
 import com.beui.ecommerceApp.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import java.time.format.DateTimeFormatter;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -148,5 +150,75 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<AppUser> findById(Long id) {
         return userRepository.findById(id);
+    }
+
+    // New methods for profile functionality
+    @Override
+    public UserInfo getUserInfoByUsername(String username) {
+        Optional<AppUser> userOpt = userRepository.findByEmail(username);
+        if (userOpt.isPresent()) {
+            AppUser user = userOpt.get();
+            UserInfo userInfo = new UserInfo();
+            userInfo.setId(user.getId());
+            userInfo.setFullName(user.getFullName());
+            userInfo.setEmail(user.getEmail());
+            userInfo.setUsername(user.getEmail()); // Set username to email for consistency
+            userInfo.setPhone(user.getPhone());
+            userInfo.setRole(user.getRole());
+            userInfo.setActive(user.getActive());
+            userInfo.setAvatarUrl(user.getAvatarUrl());
+            if (user.getCreatedAt() != null) {
+                userInfo.setCreatedAt(user.getCreatedAt().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+            }
+            
+            // Debug logging
+            System.out.println("🔍 Debug getUserInfoByUsername:");
+            System.out.println("  - Username param: " + username);
+            System.out.println("  - User email: " + user.getEmail());
+            System.out.println("  - UserInfo email: " + userInfo.getEmail());
+            System.out.println("  - UserInfo username: " + userInfo.getUsername());
+            
+            return userInfo;
+        }
+        throw new RuntimeException("User not found");
+    }
+
+    @Override
+    public void updateUserProfile(UserInfo userInfo) {
+        Optional<AppUser> userOpt = userRepository.findById(userInfo.getId());
+        if (userOpt.isPresent()) {
+            AppUser user = userOpt.get();
+            user.setFullName(userInfo.getFullName());
+            user.setPhone(userInfo.getPhone());
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
+    }
+
+    @Override
+    public boolean changePassword(String username, String currentPassword, String newPassword) {
+        Optional<AppUser> userOpt = userRepository.findByEmail(username);
+        if (userOpt.isPresent()) {
+            AppUser user = userOpt.get();
+            if (passwordEncoder.matches(currentPassword, user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(newPassword));
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void updateUserAvatarUrl(String username, String url) {
+        Optional<AppUser> userOpt = userRepository.findByEmail(username);
+        if (userOpt.isPresent()) {
+            AppUser user = userOpt.get();
+            user.setAvatarUrl(url);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 } 

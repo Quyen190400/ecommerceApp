@@ -1,5 +1,6 @@
 package com.beui.ecommerceApp.service;
 
+import com.beui.ecommerceApp.dto.UserInfo;
 import com.beui.ecommerceApp.entity.AppUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -23,4 +24,10 @@ public interface UserService {
     boolean forgotPassword(String email);
     void sendMail(SimpleMailMessage message);
     Optional<AppUser> findById(Long id);
+    
+    // New methods for profile functionality
+    UserInfo getUserInfoByUsername(String username);
+    void updateUserProfile(UserInfo userInfo);
+    boolean changePassword(String username, String currentPassword, String newPassword);
+    void updateUserAvatarUrl(String username, String url);
 } 
