@@ -27,6 +27,99 @@ function initializeProfile() {
     
     // Setup alert toggles
     setupAlertToggles();
+    
+    // Setup mobile-specific enhancements
+    setupMobileEnhancements();
+}
+
+function setupMobileEnhancements() {
+    // Add touch-friendly interactions for mobile
+    const isMobile = window.innerWidth <= 768;
+    
+    if (isMobile) {
+        // Enhance button touch targets
+        const buttons = document.querySelectorAll('.btn-green, .btn-brown, .avatar-upload-btn');
+        buttons.forEach(button => {
+            button.style.minHeight = '44px'; // iOS recommended touch target
+            button.style.minWidth = '44px';
+        });
+        
+        // Add swipe gestures for form toggles
+        setupSwipeGestures();
+        
+        // Optimize form inputs for mobile
+        setupMobileFormInputs();
+        
+        // Add mobile-specific keyboard handling
+        setupMobileKeyboardHandling();
+    }
+}
+
+function setupSwipeGestures() {
+    let startX = 0;
+    let startY = 0;
+    let endX = 0;
+    let endY = 0;
+    
+    document.addEventListener('touchstart', function(e) {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+    });
+    
+    document.addEventListener('touchend', function(e) {
+        endX = e.changedTouches[0].clientX;
+        endY = e.changedTouches[0].clientY;
+        
+        const diffX = startX - endX;
+        const diffY = startY - endY;
+        
+        // Swipe left to close forms
+        if (Math.abs(diffX) > Math.abs(diffY) && diffX > 50) {
+            const editForm = document.getElementById('editForm');
+            const passwordForm = document.getElementById('passwordForm');
+            
+            if (editForm.style.display === 'block') {
+                closeEditForm();
+            } else if (passwordForm.style.display === 'block') {
+                closePasswordForm();
+            }
+        }
+    });
+}
+
+function setupMobileFormInputs() {
+    const inputs = document.querySelectorAll('.profile-input');
+    inputs.forEach(input => {
+        // Add mobile-specific attributes
+        input.setAttribute('autocomplete', 'off');
+        input.setAttribute('autocorrect', 'off');
+        input.setAttribute('autocapitalize', 'off');
+        
+        // Enhance focus behavior for mobile
+        input.addEventListener('focus', function() {
+            this.style.fontSize = '16px'; // Prevent zoom on iOS
+        });
+        
+        input.addEventListener('blur', function() {
+            this.style.fontSize = ''; // Reset font size
+        });
+    });
+}
+
+function setupMobileKeyboardHandling() {
+    // Handle viewport adjustments when keyboard appears
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            // Scroll to input with offset for mobile
+            setTimeout(() => {
+                this.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 300);
+        });
+    });
 }
 
 function setupAlertToggles() {
@@ -49,6 +142,8 @@ function setupAlertToggles() {
             align-items: center;
             justify-content: center;
             transition: background 0.2s;
+            min-width: 44px;
+            min-height: 44px;
         `;
         closeBtn.addEventListener('mouseenter', () => {
             closeBtn.style.background = 'rgba(0,0,0,0.1)';
@@ -206,6 +301,13 @@ function toggleEditForm() {
             const firstInput = editForm.querySelector('input[type="text"]');
             if (firstInput) {
                 firstInput.focus();
+                // Scroll to form on mobile
+                if (window.innerWidth <= 768) {
+                    editForm.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }
             }
         }, 100);
     }
@@ -231,6 +333,13 @@ function togglePasswordForm() {
             const firstInput = passwordForm.querySelector('input[type="password"]');
             if (firstInput) {
                 firstInput.focus();
+                // Scroll to form on mobile
+                if (window.innerWidth <= 768) {
+                    passwordForm.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'start' 
+                    });
+                }
             }
         }, 100);
     }
@@ -318,9 +427,15 @@ function showFieldError(field, message) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'field-error';
     errorDiv.textContent = message;
-    errorDiv.style.color = 'var(--color-error)';
-    errorDiv.style.fontSize = '0.85rem';
-    errorDiv.style.marginTop = '4px';
+    errorDiv.style.cssText = `
+        color: var(--color-error);
+        font-size: 0.85rem;
+        margin-top: 4px;
+        padding: 4px 8px;
+        background: rgba(220,53,69,0.1);
+        border-radius: 6px;
+        border-left: 3px solid #dc3545;
+    `;
     
     // Insert after field
     field.parentNode.insertBefore(errorDiv, field.nextSibling);
@@ -349,6 +464,7 @@ function showError(message) {
         background: rgba(220,53,69,0.1);
         color: #dc3545;
         border: 1px solid #dc3545;
+        position: relative;
     `;
     alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
     document.querySelector('.profile-container').insertBefore(alertDiv, document.querySelector('.profile-header'));
@@ -369,6 +485,7 @@ function showSuccess(message) {
         background: rgba(123,196,127,0.1);
         color: var(--color-green);
         border: 1px solid var(--color-green);
+        position: relative;
     `;
     alertDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
     document.querySelector('.profile-container').insertBefore(alertDiv, document.querySelector('.profile-header'));

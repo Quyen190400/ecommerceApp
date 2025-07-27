@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 sessionStorage.setItem('logoutSuccess', '1');
                 // Redirect to home page immediately
-                window.location.href = '/?logout=true';
+                window.location.href = '/';
             } else {
                 throw new Error('Logout failed');
             }
@@ -477,7 +477,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.showToast('Đăng xuất thành công!', 'success');
             }
             // Redirect immediately even on error
-            window.location.href = '/?logout=true';
+            window.location.href = '/';
         });
     };
 

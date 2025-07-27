@@ -6,6 +6,7 @@
     <title th:text="${product.name} + ' - Trà Đạo'">Chi tiết sản phẩm</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/tea-home.css}">
+    <link rel="stylesheet" th:href="@{/css/footer-pages.css}">
     <link rel="stylesheet" th:href="@{/css/product-detail.css}">
     <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
@@ -185,6 +186,7 @@
 
     <!-- Scripts -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <div th:replace="~{fragments/footer :: footer}"></div>
     <script th:src="@{/js/user-dropdown.js}"></script>
     <script th:src="@{/js/auth-forms.js}"></script>
     <script th:src="@{/js/product-detail.js}"></script>

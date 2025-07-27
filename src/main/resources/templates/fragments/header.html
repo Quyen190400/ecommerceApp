@@ -35,7 +35,7 @@
                     <!-- Gợi ý sẽ được render ở đây -->
                 </div>
             </div>
-            <!-- Cart Icon -->
+            <!-- Cart Icon (đã di chuyển ra ngoài search-container) -->
             <a href="#" class="action-btn cart-btn" id="cartBtn" onclick="handleCartClick(event)">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-badge" id="cartBadge">0</span>
@@ -52,7 +52,8 @@
                 <div class="user-dropdown" th:if="${isAuthenticated != null && isAuthenticated}" id="userDropdown">
                     <button class="user-dropdown-btn" id="userDropdownBtn">
                         <i class="fas fa-user-circle"></i>
-                        <span class="user-name" th:text="${currentUser != null ? currentUser.fullName : (currentUser != null ? currentUser.username : 'Tài khoản')}">Username</span>
+                        <span class="user-name d-none d-md-inline" th:text="${currentUser != null ? currentUser.fullName : (currentUser != null ? currentUser.username : 'Tài khoản')}">Username</span>
+                        <span class="user-name user-name-mobile d-inline d-md-none" th:text="${currentUser != null and currentUser.fullName != null ? #strings.listSplit(currentUser.fullName, ' ').get(#lists.size(#strings.listSplit(currentUser.fullName, ' ')) - 1) : (currentUser != null ? currentUser.username : 'Tài khoản')}">Tên</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="user-dropdown-menu" id="userDropdownMenu">
