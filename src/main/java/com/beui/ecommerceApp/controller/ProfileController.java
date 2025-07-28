@@ -77,21 +77,54 @@ public class ProfileController {
     }
 
     @PostMapping("/change-password")
-    public String changePassword(@RequestParam String currentPassword,
-                               @RequestParam String newPassword,
-                               @RequestParam String confirmPassword,
-                               RedirectAttributes redirectAttributes) {
+    public String changePassword(
+        @RequestParam("currentPassword") String currentPassword,
+        @RequestParam("newPassword") String newPassword,
+        @RequestParam("confirmPassword") String confirmPassword,
+        RedirectAttributes redirectAttributes) {
         try {
-            if (!newPassword.equals(confirmPassword)) {
-                redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không khớp!");
+            // Validation
+            if (currentPassword == null || currentPassword.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Vui lòng nhập mật khẩu hiện tại!");
                 return "redirect:/profile";
             }
-            
+            if (newPassword == null || newPassword.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Vui lòng nhập mật khẩu mới!");
+                return "redirect:/profile";
+            }
+            if (confirmPassword == null || confirmPassword.trim().isEmpty()) {
+                redirectAttributes.addFlashAttribute("error", "Vui lòng xác nhận mật khẩu mới!");
+                return "redirect:/profile";
+            }
+            if (newPassword.length() < 6) {
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu mới phải có ít nhất 6 ký tự!");
+                return "redirect:/profile";
+            }
+            if (newPassword.length() > 50) {
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không được quá 50 ký tự!");
+                return "redirect:/profile";
+            }
+            if (!newPassword.equals(confirmPassword)) {
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp!");
+                return "redirect:/profile";
+            }
+            if (currentPassword.equals(newPassword)) {
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu mới không được trùng với mật khẩu hiện tại!");
+                return "redirect:/profile";
+            }
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
-            userService.changePassword(username, currentPassword, newPassword);
-            redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
+            boolean success = userService.changePassword(username, currentPassword, newPassword);
+            if (success) {
+                redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+                SecurityContextHolder.clearContext();
+                return "redirect:/login";
+            } else {
+                redirectAttributes.addFlashAttribute("error", "Mật khẩu hiện tại không đúng!");
+                return "redirect:/profile";
+            }
         } catch (Exception e) {
+            System.err.println("❌ Error in changePassword: " + e.getMessage());
             redirectAttributes.addFlashAttribute("error", "Đổi mật khẩu thất bại: " + e.getMessage());
         }
         return "redirect:/profile";

@@ -342,6 +342,50 @@ function togglePasswordForm() {
                 }
             }
         }, 100);
+        
+        // Setup password validation
+        setupPasswordValidation();
+    }
+}
+
+function setupPasswordValidation() {
+    const newPasswordInput = document.getElementById('newPassword');
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    
+    if (newPasswordInput && confirmPasswordInput) {
+        // Real-time password validation
+        newPasswordInput.addEventListener('input', function() {
+            validatePasswordStrength(this.value);
+        });
+        
+        confirmPasswordInput.addEventListener('input', function() {
+            validatePasswordConfirmation(newPasswordInput.value, this.value);
+        });
+    }
+}
+
+function validatePasswordStrength(password) {
+    const newPasswordInput = document.getElementById('newPassword');
+    if (!newPasswordInput) return true;
+    // Password strength validation
+    if (password.length < 6) {
+        showFieldError(newPasswordInput, 'Mật khẩu phải có ít nhất 6 ký tự');
+        return false;
+    } else {
+        clearFieldError(newPasswordInput);
+        return true;
+    }
+}
+
+function validatePasswordConfirmation(password, confirmPassword) {
+    const confirmPasswordInput = document.getElementById('confirmPassword');
+    
+    if (password !== confirmPassword) {
+        showFieldError(confirmPasswordInput, 'Mật khẩu xác nhận không khớp');
+        return false;
+    } else {
+        clearFieldError(confirmPasswordInput);
+        return true;
     }
 }
 
@@ -373,6 +417,19 @@ function setupFormValidation() {
 function validateForm(form) {
     let isValid = true;
     
+    // Clear all previous errors
+    const errorMessages = form.querySelectorAll('.error-message');
+    errorMessages.forEach(error => {
+        error.textContent = '';
+        error.style.display = 'none';
+    });
+    
+    // Remove error classes from inputs
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.classList.remove('error');
+    });
+    
     // Validate required fields
     const requiredFields = form.querySelectorAll('[required]');
     requiredFields.forEach(field => {
@@ -395,11 +452,36 @@ function validateForm(form) {
         }
     }
     
-    // Validate password confirmation
+    // Validate password confirmation for password form
     const passwordField = form.querySelector('#newPassword');
     const confirmPasswordField = form.querySelector('#confirmPassword');
-    if (passwordField && confirmPasswordField) {
-        if (passwordField.value !== confirmPasswordField.value) {
+    const currentPasswordField = form.querySelector('#currentPassword');
+    
+    if (passwordField && confirmPasswordField && currentPasswordField) {
+        // Validate current password
+        if (currentPasswordField.value.trim().length === 0) {
+            showFieldError(currentPasswordField, 'Vui lòng nhập mật khẩu hiện tại');
+            isValid = false;
+        } else {
+            clearFieldError(currentPasswordField);
+        }
+        
+        // Validate new password strength
+        if (passwordField.value.length < 6) {
+            showFieldError(passwordField, 'Mật khẩu mới phải có ít nhất 6 ký tự');
+            isValid = false;
+        } else if (passwordField.value.length > 50) {
+            showFieldError(passwordField, 'Mật khẩu mới không được quá 50 ký tự');
+            isValid = false;
+        } else if (passwordField.value === currentPasswordField.value) {
+            showFieldError(passwordField, 'Mật khẩu mới không được trùng với mật khẩu hiện tại');
+            isValid = false;
+        } else {
+            clearFieldError(passwordField);
+        }
+        
+        // Validate password confirmation
+        if (confirmPasswordField.value !== passwordField.value) {
             showFieldError(confirmPasswordField, 'Mật khẩu xác nhận không khớp');
             isValid = false;
         } else {
@@ -449,46 +531,58 @@ function clearFieldError(field) {
     }
 }
 
-function showError(message) {
-    removeExistingAlerts();
-    const alertDiv = document.createElement('div');
-    alertDiv.className = 'alert alert-danger';
-    alertDiv.style.cssText = `
-        padding: 16px 20px;
-        border-radius: 12px;
-        margin-bottom: 24px;
-        animation: slideIn 0.3s ease-out;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(220,53,69,0.1);
-        color: #dc3545;
-        border: 1px solid #dc3545;
-        position: relative;
-    `;
-    alertDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
-    document.querySelector('.profile-container').insertBefore(alertDiv, document.querySelector('.profile-header'));
-}
-
 function showSuccess(message) {
     removeExistingAlerts();
+    
     const alertDiv = document.createElement('div');
     alertDiv.className = 'alert alert-success';
-    alertDiv.style.cssText = `
-        padding: 16px 20px;
-        border-radius: 12px;
-        margin-bottom: 24px;
-        animation: slideIn 0.3s ease-out;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        background: rgba(123,196,127,0.1);
-        color: var(--color-green);
-        border: 1px solid var(--color-green);
-        position: relative;
+    alertDiv.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+        <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
     `;
-    alertDiv.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
-    document.querySelector('.profile-container').insertBefore(alertDiv, document.querySelector('.profile-header'));
+    
+    // Insert at the top of profile container
+    const profileContainer = document.querySelector('.profile-container');
+    if (profileContainer) {
+        profileContainer.insertBefore(alertDiv, profileContainer.firstChild);
+        
+        // Auto remove after 5 seconds
+        setTimeout(() => {
+            if (alertDiv.parentElement) {
+                alertDiv.remove();
+            }
+        }, 5000);
+    }
+}
+
+function showError(message) {
+    removeExistingAlerts();
+    
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-danger';
+    alertDiv.innerHTML = `
+        <i class="fas fa-exclamation-circle"></i>
+        <span>${message}</span>
+        <button type="button" class="alert-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    
+    // Insert at the top of profile container
+    const profileContainer = document.querySelector('.profile-container');
+    if (profileContainer) {
+        profileContainer.insertBefore(alertDiv, profileContainer.firstChild);
+        
+        // Auto remove after 8 seconds for errors
+        setTimeout(() => {
+            if (alertDiv.parentElement) {
+                alertDiv.remove();
+            }
+        }, 8000);
+    }
 }
 
 function removeExistingAlerts() {

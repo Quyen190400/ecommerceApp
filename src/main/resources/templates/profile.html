@@ -73,7 +73,7 @@
             color: #eee;
         }
         html.dark .profile-actions .btn-green, body.dark-theme .profile-actions .btn-green {
-            background: #486241;
+            background: #4b9e34;
             color: #fff;
             border: 1.5px solid #7bc47f;
         }
@@ -1139,10 +1139,11 @@
     })();
 </script>
 <div th:replace="~{fragments/header :: header}"></div>
+    
+    <!-- Flash Messages -->
+    <!-- Đã xóa block alert alert-success và alert alert-danger để tránh trùng lặp, chỉ dùng alert động bằng JS -->
 
-<div th:if="${user != null}">
-    <!-- Toàn bộ nội dung profile ở đây (giữ nguyên từ <div class="container profile-container"> ... đến hết) -->
-    <div class="container profile-container">
+    <div class="container profile-container" th:if="${user != null}">
         <!-- Breadcrumb -->
         <nav aria-label="breadcrumb" class="profile-breadcrumb">
             <ol class="breadcrumb-list">
@@ -1222,15 +1223,12 @@
                         <span class="badge-gray" th:unless="${user.active}">Đã khóa</span>
                     </div>
                 </div>
-                <div class="profile-actions" th:if="${user.role == 'USER'}">
-                    <button class="btn-green" onclick="togglePasswordForm()" type="button"><i class="fas fa-key"></i> Đổi mật khẩu</button>
-                    <button class="btn-brown" type="button"><i class="fas fa-lock"></i> Khoá tài khoản</button>
-                </div>
-                <div class="profile-actions" th:if="${user.role == 'ADMIN'}">
-                    <!-- Admin không có đổi mật khẩu/khóa tài khoản -->
+                <div class="profile-actions" th:if="${#strings.equalsIgnoreCase(user.role, 'CUSTOMER') or #strings.equalsIgnoreCase(user.role, 'USER')}">
+<!--                    <button class="btn-green" onclick="togglePasswordForm()" type="button"><i class="fas fa-key"></i> Đổi mật khẩu</button>-->
+                    <!-- <button class="btn-brown" type="button"><i class="fas fa-lock"></i> Khoá tài khoản</button> -->
                 </div>
                 <div class="profile-actions">
-                    <button class="btn-brown" onclick="toggleEditForm()" type="button"><i class="fas fa-edit"></i> Chỉnh sửa hồ sơ</button>
+                    <button class="btn-outline-brown" onclick="toggleEditForm()" type="button"><i class="fas fa-edit"></i> Chỉnh sửa hồ sơ</button>
                 </div>
             </div>
             <!-- Right: Details & Forms -->

@@ -135,7 +135,7 @@ public class UserServiceImpl implements UserService {
             // Gửi email
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
-            message.setSubject("Mật khẩu mới cho tài khoản Trà Đạo");
+            message.setSubject("Green tea | Mật khẩu mới cho tài khoản của bạn");
             message.setText("Mật khẩu mới của bạn là: " + defaultPassword + "\nVui lòng đăng nhập và đổi mật khẩu ngay!");
             mailSender.send(message);
             return true;
@@ -198,16 +198,41 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean changePassword(String username, String currentPassword, String newPassword) {
-        Optional<AppUser> userOpt = userRepository.findByEmail(username);
-        if (userOpt.isPresent()) {
-            AppUser user = userOpt.get();
-            if (passwordEncoder.matches(currentPassword, user.getPassword())) {
-                user.setPassword(passwordEncoder.encode(newPassword));
-                userRepository.save(user);
-                return true;
+        try {
+            System.out.println("🔍 Debug changePassword:");
+            System.out.println("  - Username: " + username);
+            System.out.println("  - Current password length: " + (currentPassword != null ? currentPassword.length() : "NULL"));
+            System.out.println("  - New password length: " + (newPassword != null ? newPassword.length() : "NULL"));
+            
+            Optional<AppUser> userOpt = userRepository.findByEmail(username);
+            if (userOpt.isPresent()) {
+                AppUser user = userOpt.get();
+                System.out.println("  - User found: " + user.getEmail());
+                System.out.println("  - User active: " + user.getActive());
+                
+                if (user.getActive()) {
+                    if (passwordEncoder.matches(currentPassword, user.getPassword())) {
+                        user.setPassword(passwordEncoder.encode(newPassword));
+                        userRepository.save(user);
+                        System.out.println("✅ Password changed successfully for user: " + user.getEmail());
+                        return true;
+                    } else {
+                        System.out.println("❌ Current password doesn't match for user: " + user.getEmail());
+                        return false;
+                    }
+                } else {
+                    System.out.println("❌ User is inactive: " + user.getEmail());
+                    return false;
+                }
+            } else {
+                System.out.println("❌ User not found: " + username);
+                return false;
             }
+        } catch (Exception e) {
+            System.err.println("❌ Error in changePassword: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
-        return false;
     }
 
     @Override
