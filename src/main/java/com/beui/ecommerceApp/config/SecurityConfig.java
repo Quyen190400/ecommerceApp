@@ -71,6 +71,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authz -> authz
                     .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/swagger-resources/**", "/webjars/**", "/swagger/**").permitAll()
+                    .requestMatchers("/guide", "/primary", "/policy", "/return-policy", "/terms", "/privacy").permitAll()
                     .requestMatchers("/", "/login", "/register", "/test", "/css/**", "/js/**", "/images/**", "/app/**", "/api/upload/image", "/api/upload/image/custom", "/api/upload/image/url", "/auth/create-admin", "/auth/check-auth").permitAll()
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers("/api/users/forgot-password").permitAll() // Cho phép quên mật khẩu không cần đăng nhập

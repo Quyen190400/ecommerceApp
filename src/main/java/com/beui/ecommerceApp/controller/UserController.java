@@ -153,7 +153,7 @@ public class UserController {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
             message.setSubject("Mật khẩu đã được reset");
-            message.setText("Mật khẩu mới của bạn là: TeaShop@123git stat");
+            message.setText("Mật khẩu mới của bạn là: TeaShop@123");
             userService.sendMail(message);
         });
         return ResponseEntity.ok().body(Map.of("message", "Đã reset mật khẩu và gửi email cho người dùng."));
