@@ -7,7 +7,10 @@
   <link rel="stylesheet" href="/css/tea-home.css">
   <link rel="stylesheet" href="/css/auth-forms.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/images/logo.png">
   <style>
+    html, body { font-family: 'Roboto', 'Noto Serif SC', serif; }
     body {
       background: #f6f8f4;
       font-family: 'Roboto', 'Noto Serif SC', serif;
@@ -372,7 +375,18 @@
     /*]]>*/
   </script>
 </head>
-<body>
+<body class="light-theme" >
+<script>
+  (function() {
+    try {
+      var theme = localStorage.getItem('theme');
+      if (theme === 'dark') {
+        document.documentElement.classList.add('dark-theme');
+        document.body && document.body.classList.add('dark-theme');
+      }
+    } catch(e){}
+  })();
+</script>
     <!-- Include Header Fragment -->
     <div th:replace="~{fragments/header :: header}"></div>
 <div class="tea-benefit-page">

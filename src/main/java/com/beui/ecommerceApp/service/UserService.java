@@ -10,6 +10,7 @@ public interface UserService {
     ResponseEntity<?> getCurrentUser(Authentication auth);
     ResponseEntity<?> getUserById(Long id);
     ResponseEntity<?> getAllUsers();
+    ResponseEntity<?> getAllUsers(int page, int size, String keyword);
     ResponseEntity<?> getUserByEmail(String email);
     ResponseEntity<?> createUser(AppUser user);
     ResponseEntity<?> updateUser(Long id, AppUser userDetails);

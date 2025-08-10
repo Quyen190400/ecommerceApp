@@ -222,7 +222,6 @@
 
 .quantity-btn {
     width: 40px;
-    height: 40px;
     border: 1px solid #ddd;
     background: white;
     border-radius: 8px;
@@ -274,8 +273,8 @@
 }
 
 .add-to-cart-btn {
-    background: #f8f9fa;
-    color: #3e5c3a;
+    background: #234d20;
+    color: white;
     border: 2px solid #3e5c3a;
 }
 
@@ -522,7 +521,6 @@
 body.dark-theme, .dark-mode, body.dark-mode {
   background: var(--dm-bg-main) !important;
   color: var(--dm-text-main) !important;
-  font-family: var(--dm-font);
   transition: background var(--dm-transition), color var(--dm-transition);
 }
 
@@ -564,12 +562,8 @@ body.dark-theme label, body.dark-theme .breadcrumb {
 .dark-mode .btn,
 body.dark-theme button,
 body.dark-theme .btn {
-  background: var(--dm-btn-bg) !important;
   color: var(--dm-text-main) !important;
-  border: 1px solid var(--dm-border-light);
   border-radius: var(--dm-btn-radius);
-  padding: 0.5em 1.2em;
-  font-size: 1em;
   cursor: pointer;
   transition: background var(--dm-transition), color var(--dm-transition), border var(--dm-transition), box-shadow var(--dm-transition);
   box-shadow: 0 2px 8px rgba(0,0,0,0.10);
@@ -677,7 +671,6 @@ body.dark-theme table {
 }
 .dark-mode th, .dark-mode td,
 body.dark-theme th, body.dark-theme td {
-  padding: 0.75em 1em;
   border-bottom: 1px solid var(--dm-border-light);
 }
 .dark-mode th,
@@ -875,10 +868,6 @@ body.dark-theme .add-to-cart-btn,
 body.dark-theme .buy-now-btn,
 .dark-mode .buy-now-btn {
   background: #3e5c3a !important;
-  color: #fff !important;
-  border: none !important;
-  box-shadow: 0 2px 8px rgba(62,92,58,0.10);
-  transition: background 0.2s, color 0.2s;
 }
 body.dark-theme .add-to-cart-btn:hover,
 .dark-mode .add-to-cart-btn:hover,
@@ -888,9 +877,18 @@ body.dark-theme .buy-now-btn:hover,
   color: #fff !important;
 }
 
-/* Tăng độ rõ text phần mô tả/cách sử dụng ở dark mode */
+/* Đồng nhất màu chữ cho mô tả, cách sử dụng, lợi ích */
+.tab-content p,
+.usage-guide,
+.health-benefits {
+  color: #495057;
+}
 body.dark-theme .tab-content p,
-.dark-mode .tab-content p {
+body.dark-theme .usage-guide,
+body.dark-theme .health-benefits,
+.dark-mode .tab-content p,
+.dark-mode .usage-guide,
+.dark-mode .health-benefits {
   color: #e0e0e0 !important;
   text-shadow: 0 1px 2px rgba(0,0,0,0.12);
   font-size: 1.08em;
@@ -905,6 +903,7 @@ body.dark-theme .quantity-btn,
   background: var(--dm-bg-card) !important;
   color: var(--dm-text-main) !important;
   border: 1px solid var(--dm-border-light) !important;
+  font-size: 1.2rem;
 }
 body.dark-theme .quantity-btn:hover,
 .dark-mode .quantity-btn:hover {
@@ -913,16 +912,12 @@ body.dark-theme .quantity-btn:hover,
 }
 body.dark-theme #quantity,
 .dark-mode #quantity {
+  height: fit-content
   background: var(--dm-bg-secondary) !important;
   color: var(--dm-text-main) !important;
   border: 1px solid var(--dm-border-light) !important;
 }
-body.dark-theme .product-actions .add-to-cart-btn,
-.dark-mode .product-actions .add-to-cart-btn {
-  background: var(--dm-bg-hover) !important;
-  color: var(--dm-success) !important;
-  border: 2px solid var(--dm-success) !important;
-}
+
 body.dark-theme .product-actions .add-to-cart-btn:hover,
 .dark-mode .product-actions .add-to-cart-btn:hover {
   background: var(--dm-success) !important;
@@ -1035,7 +1030,7 @@ body.dark-theme .modal,
 }
 body.dark-theme .modal-content,
 .dark-mode .modal-content {
-  background: var(--dm-bg-card) !important;
+  background: #495a43 !important;
   color: var(--dm-text-main) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
 }
@@ -1304,4 +1299,17 @@ body.dark-theme .in-stock,
 body.dark-theme .usage-guide,
 .dark-mode .usage-guide {
   color: #fff !important;
-} 
+}
+
+/* ĐẢM BẢO ĐỒNG NHẤT MÀU CHỮ PHẦN MÔ TẢ, CÁCH SỬ DỤNG, LỢI ÍCH Ở DARK MODE */
+body.dark-theme .tab-content p,
+body.dark-theme .usage-guide,
+body.dark-theme .health-benefits,
+.dark-mode .tab-content p,
+.dark-mode .usage-guide,
+.dark-mode .health-benefits {
+  color: #e0e0e0 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.12);
+  font-size: 1.08em;
+  line-height: 1.7;
+}

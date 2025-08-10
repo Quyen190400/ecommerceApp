@@ -37,6 +37,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.data.domain.Page;
+import com.beui.ecommerceApp.dto.PageDTO;
 
 @Tag(name = "Order", description = "APIs for managing orders: place, view, update, cancel, and get order statistics.")
 @RestController
@@ -318,23 +320,20 @@ public class OrderController {
             @RequestParam(value = "startDate", required = false) String startDate,
             @RequestParam(value = "endDate", required = false) String endDate,
             @RequestParam(value = "search", required = false) String search,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
             HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
         if (userOpt.isEmpty() || !"ADMIN".equals(userOpt.get().getRole())) {
             return ResponseEntity.status(403).body(Map.of("message", "Không có quyền truy cập"));
         }
         try {
-            List<CustomerOrder> orders = orderService.filterOrdersForAdmin(status, orderId, startDate, endDate, search);
-            List<OrderResponse> orderResponses = orders.stream()
-                    .map(order -> {
-                        List<OrderItem> orderItems = orderService.getOrderItems(order.getId());
-                        return convertToOrderResponse(order, orderItems);
-                    })
-                    .collect(Collectors.toList());
-            Map<String, Object> response = new HashMap<>();
-            response.put("success", true);
-            response.put("orders", orderResponses);
-            return ResponseEntity.ok(response);
+            Page<CustomerOrder> pageResult = orderService.filterOrdersForAdmin(status, orderId, startDate, endDate, search, page, size);
+            Page<OrderResponse> responsePage = pageResult.map(order -> {
+                List<OrderItem> orderItems = orderService.getOrderItems(order.getId());
+                return convertToOrderResponse(order, orderItems);
+            });
+            return ResponseEntity.ok(new PageDTO<>(responsePage));
         } catch (Exception e) {
             return ResponseEntity.status(500).body(Map.of("success", false, "message", "Lỗi khi lọc đơn hàng"));
         }
@@ -539,32 +538,24 @@ public class OrderController {
     // Admin: Lấy tất cả đơn hàng (endpoint cho admin-orders.html)
     @Operation(description = "Admin: Get all orders for admin-orders.html (requires ADMIN role)")
     @GetMapping("/admin")
-    public ResponseEntity<?> getAdminOrders(HttpServletRequest request) {
+    public ResponseEntity<?> getAdminOrders(
+        @RequestParam(name = "page", defaultValue = "0") int page,
+        @RequestParam(name = "size", defaultValue = "10") int size,
+        HttpServletRequest request) {
         Optional<AppUser> userOpt = getCurrentUser(request);
-        
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(401).body(Map.of("message", "Vui lòng đăng nhập"));
         }
-        
         AppUser user = userOpt.get();
         if (!"ADMIN".equals(user.getRole())) {
             return ResponseEntity.status(403).body(Map.of("message", "Không có quyền truy cập"));
         }
-        
-        List<CustomerOrder> orders = orderService.getAllOrders();
-        
-        List<OrderResponse> orderResponses = orders.stream()
-                .map(order -> {
-                    List<OrderItem> orderItems = orderService.getOrderItems(order.getId());
-                    return convertToOrderResponse(order, orderItems);
-                })
-                .collect(Collectors.toList());
-        
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("orders", orderResponses);
-        
-        return ResponseEntity.ok(response);
+        Page<CustomerOrder> pageResult = orderService.getAllOrders(page, size);
+        Page<OrderResponse> responsePage = pageResult.map(order -> {
+            List<OrderItem> orderItems = orderService.getOrderItems(order.getId());
+            return convertToOrderResponse(order, orderItems);
+        });
+        return ResponseEntity.ok(new PageDTO<>(responsePage));
     }
     
     // Admin: Lấy thống kê đơn hàng

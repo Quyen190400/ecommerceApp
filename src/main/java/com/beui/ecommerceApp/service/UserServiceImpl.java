@@ -10,6 +10,9 @@ import java.util.Optional;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -38,6 +41,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userRepository.findAll());
+    }
+
+    @Override
+    public ResponseEntity<?> getAllUsers(int page, int size, String keyword) {
+        Pageable pageable = PageRequest.of(page, size);
+        if (keyword != null && !keyword.isEmpty()) {
+            return ResponseEntity.ok(userRepository.findByKeyword(keyword, pageable));
+        }
+        return ResponseEntity.ok(userRepository.findAll(pageable));
     }
 
     @Override

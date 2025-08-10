@@ -12,6 +12,10 @@ import com.beui.ecommerceApp.repository.AppUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageImpl;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
@@ -35,6 +39,12 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Page<CustomerOrder> getAllOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAll(pageable);
+    }
+
+    @Override
     public Optional<CustomerOrder> getOrderById(Long id) {
         return orderRepository.findById(id);
     }
@@ -55,6 +65,12 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal totalPrice = BigDecimal.ZERO;
         for (OrderItem item : order.getOrderItems()) {
             totalPrice = totalPrice.add(item.getUnitPrice().multiply(BigDecimal.valueOf(item.getQuantity())));
+            // Trừ kho ngay khi tạo đơn
+            Product product = item.getProduct();
+            int newStock = product.getStockQuantity() - item.getQuantity();
+            if (newStock < 0) throw new RuntimeException("Sản phẩm không đủ tồn kho");
+            product.setStockQuantity(newStock);
+            productRepository.save(product);
         }
         order.setTotalPrice(totalPrice);
         CustomerOrder savedOrder = orderRepository.save(order);
@@ -71,19 +87,19 @@ public class OrderServiceImpl implements OrderService {
         Optional<CustomerOrder> optionalOrder = orderRepository.findById(orderId);
         if (optionalOrder.isPresent()) {
             CustomerOrder order = optionalOrder.get();
-            if ("PENDING".equals(order.getStatus()) && "SHIPPING".equals(status)) {
+            // Đã trừ kho khi tạo đơn, không cần trừ khi chuyển sang SHIPPING nữa
+            if (!order.getStatus().equals(status)) {
+                // TODO: Lưu vào bảng audit log nếu cần
+            }
+            // Nếu chuyển sang CANCELLED thì cộng lại kho
+            if ("CANCELLED".equals(status) && !"CANCELLED".equals(order.getStatus())) {
                 List<OrderItem> items = getOrderItems(orderId);
                 for (OrderItem item : items) {
                     Product product = item.getProduct();
-                    int newStock = product.getStockQuantity() - item.getQuantity();
-                    if (newStock >= 0) {
-                        product.setStockQuantity(newStock);
-                        productRepository.save(product);
-                    }
+                    int newStock = product.getStockQuantity() + item.getQuantity();
+                    product.setStockQuantity(newStock);
+                    productRepository.save(product);
                 }
-            }
-            if (!order.getStatus().equals(status)) {
-                // TODO: Lưu vào bảng audit log nếu cần
             }
             order.setStatus(status);
             order.setUpdatedAt(java.time.LocalDateTime.now(java.time.ZoneId.of("Asia/Ho_Chi_Minh")));
@@ -128,6 +144,12 @@ public class OrderServiceImpl implements OrderService {
         if (productOpt.isEmpty()) return null;
         Product product = productOpt.get();
         if (product.getStockQuantity() < quantity) return null;
+        // Trừ kho ngay khi tạo đơn
+        int newStock = product.getStockQuantity() - quantity;
+        if (newStock < 0) throw new RuntimeException("Sản phẩm không đủ tồn kho");
+        product.setStockQuantity(newStock);
+        productRepository.save(product);
+
         CustomerOrder order = new CustomerOrder();
         order.setUser(user);
         order.setShippingAddress(orderRequest.getShippingAddress());
@@ -290,7 +312,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<CustomerOrder> filterOrdersForAdmin(String status, String orderId, String startDate, String endDate, String search) {
+    public Page<CustomerOrder> filterOrdersForAdmin(String status, String orderId, String startDate, String endDate, String search, int page, int size) {
         List<CustomerOrder> orders = orderRepository.findAll();
         // Parse status thành List<String> và lọc theo nhiều trạng thái
         if (status != null && !status.trim().isEmpty()) {
@@ -314,6 +336,9 @@ public class OrderServiceImpl implements OrderService {
             }
         }
         // TODO: Lọc theo startDate, endDate, search nếu cần
-        return orders;
+        int start = page * size;
+        int end = Math.min(start + size, orders.size());
+        List<CustomerOrder> pageContent = (start < end) ? orders.subList(start, end) : java.util.Collections.emptyList();
+        return new PageImpl<>(pageContent, PageRequest.of(page, size), orders.size());
     }
 } 

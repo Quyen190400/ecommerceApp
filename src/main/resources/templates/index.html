@@ -2,11 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Beui | Trang chủ</title>
     <link rel="stylesheet" th:href="@{/css/tea-home.css}">
     <link rel="stylesheet" th:href="@{/css/auth-forms.css}">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="/images/logo.png">
     <style>
         html, body { scroll-behavior: smooth; }
         :root {
@@ -82,7 +84,9 @@
         .error-message i {
             color: #dc3545;
         }
-        
+        body.dark-theme, .dark-mode, body.dark-mode {
+            background: #1a1a1a !important
+        }
         @keyframes slideDown {
             from {
                 opacity: 0;
@@ -128,7 +132,7 @@
 </script>
 <!-- Include Header Fragment -->
 <div th:replace="~{fragments/header :: header}"></div>
-
+<div class="main-content">
 <!-- Success/Error Messages -->
 <div class="message-container" th:if="${success}">
     <div class="success-message">
@@ -294,9 +298,15 @@
       }
       let currentIndex = 0;
       const track = document.querySelector('.carousel-track');
+      function getVisibleCount() {
+        if (window.innerWidth < 700) return 1;
+        if (window.innerWidth < 1000) return 2;
+        return 3;
+      }
       function updateDisplay() {
         track.innerHTML = '';
-        for (let i = 0; i < 3; i++) {
+        const visibleCount = getVisibleCount();
+        for (let i = 0; i < visibleCount; i++) {
           const idx = (currentIndex + i) % carts.length;
           track.innerHTML += carts[idx];
         }
@@ -319,15 +329,18 @@
         }, 5000);
       }
       document.querySelector('.carousel-prev').onclick = function() {
-        currentIndex = (currentIndex - 1 + carts.length) % carts.length;
+        const visibleCount = getVisibleCount();
+        currentIndex = (currentIndex - visibleCount + carts.length) % carts.length;
         updateDisplay();
         resetAutoplay();
       };
       document.querySelector('.carousel-next').onclick = function() {
-        currentIndex = (currentIndex + 1) % carts.length;
+        const visibleCount = getVisibleCount();
+        currentIndex = (currentIndex + visibleCount) % carts.length;
         updateDisplay();
         resetAutoplay();
       };
+      window.addEventListener('resize', updateDisplay);
       updateDisplay();
       resetAutoplay();
     });
@@ -385,35 +398,8 @@
     <i class="fas fa-chevron-up"></i>
 </button>
 
-<footer>
-    <div class="footer-content">
-        <div class="footer-section">
-            <h4>Về chúng tôi</h4>
-            <p>Tinh hoa trà đạo phương Đông, mang đến những sản phẩm trà chất lượng cao.</p>
-        </div>
-        <div class="footer-section">
-            <h4>Liên kết nhanh</h4>
-            <ul>
-                <li><a href="#">Trang chủ</a></li>
-                <li><a href="#">Sản phẩm</a></li>
-                <li><a href="#">Về chúng tôi</a></li>
-                <li><a href="#">Liên hệ</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h4>Chính sách</h4>
-            <ul>
-                <li><a href="#">Chính sách bảo mật</a></li>
-                <li><a href="#">Điều khoản sử dụng</a></li>
-                <li><a href="#">Chính sách đổi trả</a></li>
-                <li><a href="#">Hướng dẫn mua hàng</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>© 2024 Trà Xanh Việt. Tinh hoa trà đạo phương Đông.</p>
-        </div>
-    </footer>
+</div>
+<div th:replace="~{fragments/footer :: footer}"></div>
 
 <script>
     // Theme switching functionality
@@ -759,9 +745,10 @@ function renderSuggestList(keyword) {
     const matches = allProducts.filter(p => p.name && p.name.toLowerCase().includes(kw));
     console.log('matches:', matches);
     if (matches.length === 0) {
-        suggestList.classList.remove('show');
-        suggestList.style.display = 'none';
-        suggestList.innerHTML = '';
+        suggestList.innerHTML = `<div class="dropdown-item" style="cursor:default; padding:8px 16px; color:#888; background:#fff;">Không tìm thấy sản phẩm phù hợp</div>`;
+        suggestList.classList.add('show');
+        suggestList.style.display = 'block';
+        suggestList.style.zIndex = '9999';
         return;
     }
     suggestList.innerHTML = matches.slice(0, 8).map(p =>

@@ -1,0 +1,76 @@
+/* ===================== DARK MODE THEME ===================== */
+:root {
+  --dm-bg-main: #121212;
+  --dm-bg-secondary: #1e1e1e;
+  --dm-bg-card: #1f1f1f;
+  --dm-bg-hover: #232323;
+  --dm-text-main: #e0e0e0;
+  --dm-text-secondary: #bdbdbd;
+  --dm-border: #333;
+  --dm-border-light: #444;
+  --dm-success: #4caf50;
+  --dm-error: #f44336;
+  --dm-warning: #ff9800;
+  --dm-info: #2196f3;
+  --dm-inactive: #9e9e9e;
+  --dm-btn-bg: #232323;
+  --dm-btn-hover: #333;
+  --dm-btn-active: #4caf50;
+  --dm-btn-radius: 6px;
+  --dm-transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+  --dm-font: "Roboto", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+html, body {
+    height: 100%;
+    min-height: 100%;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+.main-content {
+    flex: 1 0 auto;
+    margin-top: 10px;
+    margin-bottom: 16px;
+    width: 100vw;
+    box-sizing: border-box;
+}
+footer {
+    flex-shrink: 0;
+}
+
+/* Dark mode styles for footer pages */
+body.dark-theme, .dark-mode, body.dark-mode {
+  background: var(--dm-bg-main) !important;
+  color: var(--dm-text-main) !important;
+  font-family: var(--dm-font);
+  transition: background var(--dm-transition), color var(--dm-transition);
+}
+
+.dark-mode main,
+body.dark-theme main {
+    background: var(--dm-bg-card) !important;
+    color: var(--dm-text-main) !important;
+    border: 1px solid var(--dm-border-light) !important;
+}
+
+.dark-mode .main-content main,
+body.dark-theme .main-content main {
+    background: var(--dm-bg-card) !important;
+    color: var(--dm-text-main) !important;
+    border: 1px solid var(--dm-border-light) !important;
+}
+
+.dark-mode h1, .dark-mode h2, .dark-mode h3, .dark-mode h4,
+body.dark-theme h1, body.dark-theme h2, body.dark-theme h3, body.dark-theme h4 {
+  color: var(--dm-text-main) !important;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.dark-mode p,
+body.dark-theme p {
+  color: var(--dm-text-secondary) !important;
+} 
