@@ -6,6 +6,10 @@ public class UserInfo {
     private String email;
     private String username;
     private String role;
+    private String phone;
+    private boolean active;
+    private String createdAt;
+    private String avatarUrl;
     
     // Constructors
     public UserInfo() {}
@@ -57,5 +61,36 @@ public class UserInfo {
     
     public void setRole(String role) {
         this.role = role;
+    }
+    
+    public String getPhone() {
+        return phone;
+    }
+    
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
+    public boolean isActive() {
+        return active;
+    }
+    
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+    
+    public String getCreatedAt() {
+        return createdAt;
+    }
+    
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
 } 

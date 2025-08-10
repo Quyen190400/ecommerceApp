@@ -40,6 +40,9 @@ public class AppUser {
     @Column(name = "role", length = 50)
     private String role;
     
+    @Column(name = "phone", length = 20)
+    private String phone;
+    
     @Column(name = "active")
     private Boolean active = true;
     
@@ -48,6 +51,9 @@ public class AppUser {
     
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+    
+    @Column(name = "avatar_url", length = 512)
+    private String avatarUrl;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -121,6 +127,14 @@ public class AppUser {
         this.role = role;
     }
     
+    public String getPhone() {
+        return phone;
+    }
+    
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    
     public Boolean getActive() {
         return active;
     }
@@ -142,6 +156,13 @@ public class AppUser {
     
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+    
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
     }
     
     public List<CustomerOrder> getOrders() {

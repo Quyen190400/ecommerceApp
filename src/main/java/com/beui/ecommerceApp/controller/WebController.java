@@ -236,8 +236,43 @@ public class WebController {
     }
 
     @GetMapping("/admin/users")
-    @PreAuthorize("hasRole('ADMIN')")
     public String adminUsers(Model model, HttpServletRequest request) {
+        // Check JWT and role
+        try {
+            Cookie[] cookies = request.getCookies();
+            String token = null;
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if ("jwt_token".equals(cookie.getName())) {
+                        token = cookie.getValue();
+                        break;
+                    }
+                }
+            }
+            if (token == null) {
+                model.addAttribute("error", "Vui lòng đăng nhập với tài khoản quản trị viên.");
+                return "redirect:/";
+            }
+            String email = jwtService.extractUsername(token);
+            if (email == null) {
+                model.addAttribute("error", "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.");
+                return "redirect:/";
+            }
+            ResponseEntity<?> userResponse = userService.getUserByEmail(email);
+            AppUser user = null;
+            if (userResponse.getStatusCode().is2xxSuccessful() && userResponse.getBody() instanceof AppUser) {
+                user = (AppUser) userResponse.getBody();
+            }
+            if (user == null || user.getRole() == null || !user.getRole().equals("ADMIN")) {
+                model.addAttribute("error", "Bạn không có quyền truy cập trang này. Vui lòng đăng nhập với tài khoản quản trị viên.");
+                return "redirect:/";
+            }
+            model.addAttribute("currentUser", user);
+            model.addAttribute("isAuthenticated", true);
+        } catch (Exception e) {
+            model.addAttribute("error", "Có lỗi xác thực. Vui lòng đăng nhập lại.");
+            return "redirect:/";
+        }
         addUserInfoToModel(model, request);
         return "admin-users";
     }

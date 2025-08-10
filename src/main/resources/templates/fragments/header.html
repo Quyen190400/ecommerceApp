@@ -35,7 +35,7 @@
                     <!-- Gợi ý sẽ được render ở đây -->
                 </div>
             </div>
-            <!-- Cart Icon -->
+            <!-- Cart Icon (đã di chuyển ra ngoài search-container) -->
             <a href="#" class="action-btn cart-btn" id="cartBtn" onclick="handleCartClick(event)">
                 <i class="fas fa-shopping-cart"></i>
                 <span class="cart-badge" id="cartBadge">0</span>
@@ -52,30 +52,35 @@
                 <div class="user-dropdown" th:if="${isAuthenticated != null && isAuthenticated}" id="userDropdown">
                     <button class="user-dropdown-btn" id="userDropdownBtn">
                         <i class="fas fa-user-circle"></i>
-                        <span class="user-name" th:text="${currentUser != null ? currentUser.fullName : (currentUser != null ? currentUser.username : 'Tài khoản')}">Username</span>
+                        <span class="user-name d-none d-md-inline" th:text="${currentUser != null ? currentUser.fullName : (currentUser != null ? currentUser.username : 'Tài khoản')}">Username</span>
+                        <span class="user-name user-name-mobile d-inline d-md-none" th:text="${currentUser != null and currentUser.fullName != null ? #strings.listSplit(currentUser.fullName, ' ').get(#lists.size(#strings.listSplit(currentUser.fullName, ' ')) - 1) : (currentUser != null ? currentUser.username : 'Tài khoản')}">Tên</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     <div class="user-dropdown-menu" id="userDropdownMenu">
                         <div class="dropdown-header">
                             <i class="fas fa-user-circle"></i>
-                            <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
+                            <span th:text="${currentUser != null and currentUser.email != null ? currentUser.email : (currentUser != null and currentUser.username != null ? currentUser.username : 'Tài khoản')}">Email</span>
                         </div>
                         <div class="dropdown-divider"></div>
+                        <a href="/profile" class="dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Hồ sơ của tôi</span>
+                        </a>
                         <a href="/orders" class="dropdown-item" th:if="${currentUser != null and (currentUser.active == null or currentUser.active)}">
                             <i class="fas fa-box"></i>
                             <span>Đơn hàng của tôi</span>
                         </a>
                         <a href="/admin/orders" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-clipboard-list"></i>
-                            <span>Quản lý đơn hàng (Admin)</span>
+                            <span>Quản lý đơn hàng</span>
                         </a>
                         <a href="/admin/products" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-boxes"></i>
-                            <span>Quản lý sản phẩm (Admin)</span>
+                            <span>Quản lý sản phẩm</span>
                         </a>
                         <a href="/admin/users" class="dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-users-cog"></i>
-                            <span>Quản lý người dùng (Admin)</span>
+                            <span>Quản lý người dùng</span>
                         </a>
                         <button class="dropdown-item theme-toggle-btn" id="themeToggleBtn">
                             <i class="fas fa-moon"></i>
@@ -127,24 +132,28 @@
                     <div class="mobile-user-menu" id="mobileUserMenu">
                         <div class="mobile-dropdown-header">
                             <i class="fas fa-user-circle"></i>
-                            <span th:text="${currentUser != null ? currentUser.username : 'Tài khoản'}">Username</span>
+                            <span th:text="${currentUser != null and currentUser.email != null ? currentUser.email : (currentUser != null and currentUser.username != null ? currentUser.username : 'Tài khoản')}">Email</span>
                         </div>
                         <div class="mobile-dropdown-divider"></div>
+                        <a href="/profile" class="mobile-dropdown-item">
+                            <i class="fas fa-user"></i>
+                            <span>Hồ sơ của tôi</span>
+                        </a>
                         <a href="/orders" class="mobile-dropdown-item" th:if="${currentUser != null and (currentUser.active == null or currentUser.active)}">
                             <i class="fas fa-box"></i>
                             <span>Đơn hàng của tôi</span>
                         </a>
                         <a href="/admin/orders" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-clipboard-list"></i>
-                            <span>Quản lý đơn hàng (Admin)</span>
+                            <span>Quản lý đơn hàng</span>
                         </a>
                         <a href="/admin/products" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-boxes"></i>
-                            <span>Quản lý sản phẩm (Admin)</span>
+                            <span>Quản lý sản phẩm</span>
                         </a>
                         <a href="/admin/users" class="mobile-dropdown-item" th:if="${currentUser != null and currentUser.role == 'ADMIN'}">
                             <i class="fas fa-users-cog"></i>
-                            <span>Quản lý người dùng (Admin)</span>
+                            <span>Quản lý người dùng</span>
                         </a>
                         <button class="mobile-dropdown-item theme-toggle-btn" id="mobileThemeToggleBtn">
                             <i class="fas fa-moon"></i>

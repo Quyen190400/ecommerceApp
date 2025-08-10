@@ -68,6 +68,7 @@ public class UserController {
 
     @GetMapping
     @SecurityRequirement(name = "Bearer Authentication")
+//    @PreAuthorize("hasRole('ADMIN')")
     @Operation(description = "Get all users (requires ADMIN role)")
     public ResponseEntity<?> getAllUsers(
             @RequestParam(name = "page", defaultValue = "0") int page,
@@ -152,7 +153,7 @@ public class UserController {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setTo(user.getEmail());
             message.setSubject("Mật khẩu đã được reset");
-            message.setText("Mật khẩu mới của bạn là: TeaShop@123\nVui lòng đăng nhập và đổi mật khẩu ngay!");
+            message.setText("Mật khẩu mới của bạn là: TeaShop@123");
             userService.sendMail(message);
         });
         return ResponseEntity.ok().body(Map.of("message", "Đã reset mật khẩu và gửi email cho người dùng."));

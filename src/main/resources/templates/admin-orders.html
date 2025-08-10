@@ -9,8 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/png" href="/images/logo.png">
-    <!--    &lt;!&ndash; Bootstrap CSS chỉ cho modal &ndash;&gt;-->
-<!--    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">-->
     <style>
         html, body { font-family: 'Roboto', 'Noto Serif SC', serif; }
         :root {
@@ -329,7 +327,6 @@
             padding: 0 22px;
             border-radius: 8px !important;
             font-size: 1.05rem !important;
-            font-weight: 700 !important;
             text-transform: none !important;
             box-shadow: none;
             transition: background 0.2s, color 0.2s, box-shadow 0.2s;
@@ -932,7 +929,7 @@
                 <option value="CANCELLED">Đã hủy</option>
             </select>
             <input id="filterOrderId" class="filter-input" type="hidden" placeholder="Nhập mã đơn hàng...">
-            <button id="filterBtn" class="filter-btn"><i class="fas fa-search"></i> Lọc</button>
+            <button id="filterBtn" class="filter-btn" style="display:none"><i class="fas fa-search"></i> Lọc</button>
         </div>
         <div id="ordersList"></div>
     </div>
@@ -1209,7 +1206,7 @@
                 <div class="order-card">
                     <div class="order-header">
                         <div>
-                            <div class="order-id">Đơn hàng #${order.id}</div>
+                            <div class="order-id">Đơn hàng M00${order.id}</div>
                             <div class="order-date">Ngày đặt: ${orderDate}</div>
                             <div class="order-customer">Khách hàng: ${order.user.fullName} (${order.user.email})</div>
                         </div>
@@ -1397,5 +1394,47 @@
             }, 200);
         });
     </script>
+    <script>
+    function updateCartBadge() {
+        fetch('/api/cart/count', {
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.status === 401 || response.status === 403) {
+                const cartBadge = document.getElementById('cartBadge');
+                if (cartBadge) {
+                    cartBadge.textContent = '';
+                    cartBadge.style.display = 'none';
+                }
+                return null;
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (!data) return;
+            const cartBadge = document.getElementById('cartBadge');
+            if (cartBadge) {
+                if (data.count && data.count > 0) {
+                    cartBadge.textContent = data.count;
+                    cartBadge.style.display = 'inline-block';
+                } else {
+                    cartBadge.textContent = '';
+                    cartBadge.style.display = 'none';
+                }
+            }
+        })
+        .catch(error => {
+            const cartBadge = document.getElementById('cartBadge');
+            if (cartBadge) {
+                cartBadge.textContent = '';
+                cartBadge.style.display = 'none';
+            }
+            console.error('Error updating cart badge:', error);
+        });
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCartBadge();
+    });
+</script>
 </body>
 </html> 

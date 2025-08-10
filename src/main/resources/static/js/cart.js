@@ -285,6 +285,11 @@ function checkout() {
         showToast('Vui lòng nhập số điện thoại.', 'warning');
         return;
     }
+    // Validate số điện thoại 10 hoặc 11 số, không chứa chữ
+    if (!/^\d{10,11}$/.test(phoneNumber)) {
+        showToast('Số điện thoại phải là 10 hoặc 11 số, không chứa ký tự chữ.', 'warning');
+        return;
+    }
     
     // Disable button and show loading
     checkoutBtn.disabled = true;
