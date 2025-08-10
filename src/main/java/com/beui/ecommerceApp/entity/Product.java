@@ -19,6 +19,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import jakarta.persistence.Transient;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
@@ -78,6 +82,9 @@ public class Product {
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderItem> orderItems;
+    
+    @Transient
+    private List<String> usageGuideSteps;
     
     // Constructors
     public Product() {
@@ -238,6 +245,20 @@ public class Product {
     
     public void setOrderItems(List<OrderItem> orderItems) {
         this.orderItems = orderItems;
+    }
+    
+    public List<String> getUsageGuideSteps() {
+        if (usageGuideSteps != null) return usageGuideSteps;
+        usageGuideSteps = new ArrayList<>();
+        if (usageGuide != null && !usageGuide.isBlank()) {
+            // Tách theo số thứ tự (1. 2. ...)
+            String[] parts = usageGuide.split("\\d+\\.\\s*");
+            for (String part : parts) {
+                String step = part.trim();
+                if (!step.isEmpty()) usageGuideSteps.add(step);
+            }
+        }
+        return usageGuideSteps;
     }
     
     @PreUpdate

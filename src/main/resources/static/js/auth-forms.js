@@ -36,6 +36,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const modalInputs = document.querySelectorAll('#authModal input');
             modalInputs.forEach(input => input.blur());
         }, 0);
+        // Reset form login khi mở modal đăng nhập
+        if (form === 'login') {
+            const loginForm = document.getElementById('loginFormElement');
+            if (loginForm) loginForm.reset();
+            // Xóa error message nếu có
+            ['loginEmailError', 'loginPasswordError'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = '';
+            });
+        }
         // Dùng lại biến authModal đã khai báo ở đầu file
         authModal.classList.add('show');
         document.body.classList.add('modal-open');
@@ -67,6 +77,21 @@ document.addEventListener('DOMContentLoaded', function() {
             if (form.id === formName + 'Form') {
                 form.classList.add('active');
             }
+        });
+        // Reset form đăng ký khi chuyển sang tab đăng ký
+        if (formName === 'register') {
+            resetRegisterForm();
+        }
+    }
+
+    // Hàm reset form đăng ký
+    function resetRegisterForm() {
+        const registerForm = document.getElementById('registerFormElement');
+        if (registerForm) registerForm.reset();
+        // Xóa các error message nếu có
+        ['registerNameError', 'registerEmailError', 'registerPasswordError', 'registerConfirmPasswordError', 'agreeTermsError'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = '';
         });
     }
 
@@ -112,11 +137,12 @@ document.addEventListener('DOMContentLoaded', function() {
         authCloseBtn.addEventListener('click', hideAuthModal);
     }
     if (authModal) {
-        authModal.addEventListener('click', function(e) {
-            if (e.target === authModal) {
-                hideAuthModal();
-            }
-        });
+        // Không đóng modal khi click bên ngoài nữa
+        // authModal.addEventListener('click', function(e) {
+        //     if (e.target === authModal) {
+        //         hideAuthModal();
+        //     }
+        // });
     }
 
     // Password toggle functionality
@@ -163,9 +189,9 @@ document.addEventListener('DOMContentLoaded', function() {
             let targetElement = document.getElementById(inputId);
             
             // Nếu không tìm thấy input, tìm theo tên khác
-            if (!targetElement && inputId === 'agreeTerms') {
-                targetElement = document.querySelector('input[name="agreeTerms"]');
-            }
+//            if (!targetElement && inputId === 'agreeTerms') {
+//                targetElement = document.querySelector('input[name="agreeTerms"]');
+//            }
             
             if (targetElement && targetElement.parentNode) {
                 targetElement.parentNode.appendChild(errorElement);
@@ -257,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const registerEmail = document.getElementById('registerEmail');
         const registerPassword = document.getElementById('registerPassword');
         const registerConfirmPassword = document.getElementById('registerConfirmPassword');
-        const agreeTerms = document.getElementById('agreeTerms');
+//        const agreeTerms = document.getElementById('agreeTerms');
 
         // --- Cập nhật cho register form ---
         if (registerName) {
@@ -353,23 +379,23 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        if (agreeTerms) {
-            let interacted = false;
-            agreeTerms.addEventListener('change', function() {
-                interacted = true;
-                if (!this.checked) {
-                    showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
-                } else {
-                    hideError('agreeTermsError');
-                }
-            });
-            agreeTerms.addEventListener('blur', function() {
-                interacted = true;
-                if (!this.checked) {
-                    showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
-                }
-            });
-        }
+//        if (agreeTerms) {
+//            let interacted = false;
+//            agreeTerms.addEventListener('change', function() {
+//                interacted = true;
+//                if (!this.checked) {
+//                    showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
+//                } else {
+//                    hideError('agreeTermsError');
+//                }
+//            });
+//            agreeTerms.addEventListener('blur', function() {
+//                interacted = true;
+//                if (!this.checked) {
+//                    showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
+//                }
+//            });
+//        }
         // --- END cập nhật ---
     }
 
@@ -413,6 +439,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Logout function
     window.logout = function() {
+        // Clear cookies manually first
+        document.cookie = "jwt_token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "remember-me=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        
         // Call logout API to clear JWT cookie
         fetch('/api/auth/logout', {
             method: 'POST',
@@ -423,29 +454,30 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => {
             if (response.ok) {
-                if (window.showToast) {
-                    window.showToast('Đăng xuất thành công!', 'success');
-                }
                 // Clear all localStorage and sessionStorage
                 localStorage.clear();
                 sessionStorage.clear();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                // Show success message
+                if (window.showToast) {
+                    window.showToast('Đăng xuất thành công!', 'success');
+                }
+                sessionStorage.setItem('logoutSuccess', '1');
+                // Redirect to home page immediately
+                window.location.href = '/';
             } else {
                 throw new Error('Logout failed');
             }
         })
         .catch(error => {
             console.error('Logout error:', error);
+            // Even if API fails, redirect to login
             localStorage.clear();
             sessionStorage.clear();
             if (window.showToast) {
                 window.showToast('Đăng xuất thành công!', 'success');
             }
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            // Redirect immediately even on error
+            window.location.href = '/';
         });
     };
 
@@ -532,7 +564,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const email = document.getElementById('registerEmail').value.trim();
             const password = document.getElementById('registerPassword').value.trim();
             const confirmPassword = document.getElementById('registerConfirmPassword').value.trim();
-            const agreeTerms = document.getElementById('agreeTerms').checked;
+//            const agreeTerms = document.getElementById('agreeTerms').checked;
             
             // Validate
             let isValid = true;
@@ -573,44 +605,44 @@ document.addEventListener('DOMContentLoaded', function() {
                 isValid = false;
             }
             
-            if (!agreeTerms) {
-                showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
-                // Focus và scroll đến checkbox
-                const agreeCheckbox = document.getElementById('agreeTerms');
-                if (agreeCheckbox) {
-                    agreeCheckbox.focus();
-                    agreeCheckbox.scrollIntoView({behavior: 'smooth', block: 'center'});
-                }
-                // Hiển thị warning phía trên form nếu chưa có
-                let warning = document.getElementById('agreeTermsWarning');
-                if (!warning) {
-                    warning = document.createElement('div');
-                    warning.id = 'agreeTermsWarning';
-                    warning.className = 'warning-message';
-                    warning.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Bạn phải đồng ý với điều khoản & chính sách để tiếp tục đăng ký.';
-                    const form = document.getElementById('registerFormElement');
-                    if (form && form.parentNode) {
-                        form.parentNode.insertBefore(warning, form);
-                    }
-                }
-                // Thêm class error cho checkbox container để highlight
-                const checkboxContainer = agreeCheckbox ? agreeCheckbox.closest('.checkbox-group') : null;
-                if (checkboxContainer) {
-                    checkboxContainer.classList.add('error');
-                }
-                isValid = false;
-            } else {
-                // Nếu đã tick thì ẩn warning và error
-                const warning = document.getElementById('agreeTermsWarning');
-                if (warning) warning.remove();
-                hideError('agreeTermsError');
-                // Xóa class error cho checkbox container
-                const agreeCheckbox = document.getElementById('agreeTerms');
-                const checkboxContainer = agreeCheckbox ? agreeCheckbox.closest('.checkbox-group') : null;
-                if (checkboxContainer) {
-                    checkboxContainer.classList.remove('error');
-                }
-            }
+//            if (!agreeTerms) {
+//                showError('agreeTermsError', 'Bạn phải đồng ý với điều khoản & chính sách');
+//                // Focus và scroll đến checkbox
+//                const agreeCheckbox = document.getElementById('agreeTerms');
+//                if (agreeCheckbox) {
+//                    agreeCheckbox.focus();
+//                    agreeCheckbox.scrollIntoView({behavior: 'smooth', block: 'center'});
+//                }
+//                // Hiển thị warning phía trên form nếu chưa có
+//                let warning = document.getElementById('agreeTermsWarning');
+//                if (!warning) {
+//                    warning = document.createElement('div');
+//                    warning.id = 'agreeTermsWarning';
+//                    warning.className = 'warning-message';
+//                    warning.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Bạn phải đồng ý với điều khoản & chính sách để tiếp tục đăng ký.';
+//                    const form = document.getElementById('registerFormElement');
+//                    if (form && form.parentNode) {
+//                        form.parentNode.insertBefore(warning, form);
+//                    }
+//                }
+//                // Thêm class error cho checkbox container để highlight
+//                const checkboxContainer = agreeCheckbox ? agreeCheckbox.closest('.checkbox-group') : null;
+//                if (checkboxContainer) {
+//                    checkboxContainer.classList.add('error');
+//                }
+//                isValid = false;
+//            } else {
+//                // Nếu đã tick thì ẩn warning và error
+//                const warning = document.getElementById('agreeTermsWarning');
+//                if (warning) warning.remove();
+////                hideError('agreeTermsError');
+//                // Xóa class error cho checkbox container
+////                const agreeCheckbox = document.getElementById('agreeTerms');
+//                const checkboxContainer = agreeCheckbox ? agreeCheckbox.closest('.checkbox-group') : null;
+//                if (checkboxContainer) {
+//                    checkboxContainer.classList.remove('error');
+//                }
+//            }
             
             if (isValid) {
                 // Disable submit button

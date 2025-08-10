@@ -1030,17 +1030,17 @@ body.dark-theme .modal,
 }
 body.dark-theme .modal-content,
 .dark-mode .modal-content {
-  background: #495a43 !important;
+  background: #9b9b9b !important;
   color: var(--dm-text-main) !important;
   box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
 }
 body.dark-theme .modal-content h3,
 .dark-mode .modal-content h3 {
-  color: var(--dm-info) !important;
+  color: #065305 !important;
 }
 body.dark-theme .modal-content label,
 .dark-mode .modal-content label {
-  color: var(--dm-text-secondary) !important;
+  color: #000000 !important;
 }
 body.dark-theme .modal-content input,
 body.dark-theme .modal-content textarea,

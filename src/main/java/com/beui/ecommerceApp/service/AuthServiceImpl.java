@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import jakarta.servlet.http.Cookie;
@@ -149,12 +150,25 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ResponseEntity<Map<String, String>> logout(HttpServletResponse response) {
+        // Clear JWT cookie
         Cookie jwtCookie = new Cookie("jwt_token", "");
         jwtCookie.setHttpOnly(true);
         jwtCookie.setSecure(false);
         jwtCookie.setPath("/");
         jwtCookie.setMaxAge(0);
         response.addCookie(jwtCookie);
+        
+        // Clear JSESSIONID cookie
+        Cookie sessionCookie = new Cookie("JSESSIONID", "");
+        sessionCookie.setHttpOnly(true);
+        sessionCookie.setSecure(false);
+        sessionCookie.setPath("/");
+        sessionCookie.setMaxAge(0);
+        response.addCookie(sessionCookie);
+        
+        // Clear SecurityContext
+        SecurityContextHolder.clearContext();
+        
         Map<String, String> responseMap = new HashMap<>();
         responseMap.put("message", "Logout successful");
         return ResponseEntity.ok(responseMap);

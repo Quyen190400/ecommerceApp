@@ -8,6 +8,8 @@
   <link rel="stylesheet" href="/css/auth-forms.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700&family=Roboto&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" th:href="@{/css/footer-pages.css}">
   <link rel="icon" type="image/png" href="/images/logo.png">
   <style>
     html, body { font-family: 'Roboto', 'Noto Serif SC', serif; }
@@ -31,21 +33,12 @@
     body.dark-theme .benefit-banner {
       background: #1a1a1a;
     }
-    
-<!--    body.dark-theme .banner-title {-->
-<!--      color: #ffffff;-->
-<!--      text-shadow: 0 2px 16px rgba(255, 255, 255, 0.1);-->
-<!--    }-->
-    
+
     body.dark-theme .banner-icon {
       color: #6b8e23;
       opacity: 0.4;
     }
-    
-<!--    body.dark-theme .benefit-desc {-->
-<!--      color: #cccccc;-->
-<!--      color: #350c0c;-->
-<!--    }-->
+
     
     body.dark-theme .chip {
       background: #3e5c3a;
@@ -646,30 +639,69 @@ function renderPage() {
 
   filterType.onchange = filterProducts;
   filterOrigin.onchange = filterProducts;
-  // Thử fetch từ backend
-  fetch(`/api/products/benefit/${benefitType}`)
-    .then(res => res.ok ? res.json() : [])
-    .then(data => {
-      if (Array.isArray(data) && data.length > 0) {
-        products = data.map(p => ({
-          id: p.id,
-          name: p.name,
-          price: p.price,
-          image: p.imageUrl ? p.imageUrl : '/images/product-placeholder.jpg',
-          description: p.description || p.shortDescription || '',
-          health_benefit: p.healthBenefit || '',
-          tea_type: p.teaType || '',
-          origin: p.origin || ''
-        }));
-      } else {
+
+  // --- CACHE LOGIC ---
+  const cacheKey = `benefitProducts_${benefitType}`;
+  const cached = localStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      products = JSON.parse(cached);
+      filterProducts();
+      // Đồng thời, vẫn fetch ngầm để làm mới cache nếu có thay đổi (optional, có thể bỏ nếu muốn cache "cứng")
+      fetch(`/api/products/benefit/${benefitType}`)
+        .then(res => res.ok ? res.json() : [])
+        .then(data => {
+          if (Array.isArray(data) && data.length > 0) {
+            const newProducts = data.map(p => ({
+              id: p.id,
+              name: p.name,
+              price: p.price,
+              image: p.imageUrl ? p.imageUrl : '/images/product-placeholder.jpg',
+              description: p.description || p.shortDescription || '',
+              health_benefit: p.healthBenefit || '',
+              tea_type: p.teaType || '',
+              origin: p.origin || ''
+            }));
+            // Nếu dữ liệu mới khác dữ liệu cũ thì cập nhật cache
+            if (JSON.stringify(newProducts) !== cached) {
+              localStorage.setItem(cacheKey, JSON.stringify(newProducts));
+            }
+          }
+        });
+    } catch(e) {
+      // Nếu cache lỗi, xóa cache và fetch lại
+      localStorage.removeItem(cacheKey);
+      fetchAndCacheProducts();
+    }
+  } else {
+    fetchAndCacheProducts();
+  }
+  function fetchAndCacheProducts() {
+    fetch(`/api/products/benefit/${benefitType}`)
+      .then(res => res.ok ? res.json() : [])
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          products = data.map(p => ({
+            id: p.id,
+            name: p.name,
+            price: p.price,
+            image: p.imageUrl ? p.imageUrl : '/images/product-placeholder.jpg',
+            description: p.description || p.shortDescription || '',
+            health_benefit: p.healthBenefit || '',
+            tea_type: p.teaType || '',
+            origin: p.origin || ''
+          }));
+          localStorage.setItem(cacheKey, JSON.stringify(products));
+        } else {
+          products = [];
+        }
+        filterProducts();
+      })
+      .catch(() => {
         products = [];
-      }
-      filterProducts();
-    })
-    .catch(() => {
-      products = [];
-      filterProducts();
-    });
+        filterProducts();
+      });
+  }
 }
 document.addEventListener('DOMContentLoaded', function() {
   renderPage();

@@ -290,10 +290,10 @@
       } else {
         // Nếu không còn Swiper, lấy từ HTML tĩnh (nếu có)
         carts = [
-          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-an-than.jpg" alt="Trà An Thần"></div><div class="guide-content"><h3>Trà An Thần</h3><p>Giúp thư giãn, ngủ ngon, giảm stress và lo âu.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc an thần</span></p><button class="guide-btn" data-benefit="an-than"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
-          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-giam-can.jpg" alt="Trà Giảm Cân"></div><div class="guide-content"><h3>Trà Giảm Cân</h3><p>Hỗ trợ giảm cân, thanh lọc cơ thể, tốt cho sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà xanh giảm cân</span></p><button class="guide-btn" data-benefit="giam-can"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
-          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-thu-gian.jpg" alt="Trà Thảo mộc"></div><div class="guide-content"><h3>Trà Thảo mộc</h3><p>Giúp làm dịu thần kinh, hỗ trợ tiêu hóa, tăng cường sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc nguyên bông</span></p><button class="guide-btn" data-benefit="thao-moc"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`,
-          `<div class="guide-card"><div class="guide-image"><img src="/images/bo-am-tra.jpg" alt="Dụng cụ trà"></div><div class="guide-content"><h3>Dụng cụ trà</h3><p>Bộ ấm chén, phụ kiện trà đạo tinh xảo, nâng tầm trải nghiệm thưởng trà.</p><p class="suggested-product">Gợi ý: <span>Bộ ấm chén Bát Tràng</span></p><button class="guide-btn" data-benefit="dung-cu"><i class="fas fa-eye"></i> Xem sản phẩm</button></div></div>`
+          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-an-than.jpg" alt="Trà An Thần"></div><div class="guide-content"><h3>Trà An Thần</h3><p>Giúp thư giãn, ngủ ngon, giảm stress và lo âu.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc an thần</span></p><button class="guide-btn" data-benefit="an-than"><i class="fas fa-eye" style="margin: 0 8px;"></i> Xem sản phẩm</button></div></div>`,
+          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-giam-can.jpg" alt="Trà Giảm Cân"></div><div class="guide-content"><h3>Trà Giảm Cân</h3><p>Hỗ trợ giảm cân, thanh lọc cơ thể, tốt cho sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà xanh giảm cân</span></p><button class="guide-btn" data-benefit="giam-can"><i class="fas fa-eye"  style="margin: 0 8px;"></i> Xem sản phẩm</button></div></div>`,
+          `<div class="guide-card"><div class="guide-image"><img src="/images/tra-thu-gian.jpg" alt="Trà Thảo mộc"></div><div class="guide-content"><h3>Trà Thảo mộc</h3><p>Giúp làm dịu thần kinh, hỗ trợ tiêu hóa, tăng cường sức khỏe.</p><p class="suggested-product">Gợi ý: <span>Trà hoa cúc nguyên bông</span></p><button class="guide-btn" data-benefit="thao-moc"><i class="fas fa-eye"  style="margin: 0 8px;"></i> Xem sản phẩm</button></div></div>`,
+          `<div class="guide-card"><div class="guide-image"><img src="/images/bo-am-tra.jpg" alt="Dụng cụ trà"></div><div class="guide-content"><h3>Dụng cụ trà</h3><p>Bộ ấm chén, phụ kiện trà đạo tinh xảo, nâng tầm trải nghiệm thưởng trà.</p><p class="suggested-product">Gợi ý: <span>Bộ ấm chén Bát Tràng</span></p><button class="guide-btn" data-benefit="dung-cu"><i class="fas fa-eye"  style="margin: 0 8px;"></i> Xem sản phẩm</button></div></div>`
         ];
       }
       let currentIndex = 0;
@@ -484,14 +484,6 @@
             mobileMenuBtn.addEventListener('click', function() {
                 mobileMenuBtn.classList.toggle('active');
                 mobileMenu.classList.toggle('show');
-            });
-        }
-
-        // Search functionality
-        const searchBtn = document.getElementById('searchBtn');
-        if (searchBtn) {
-            searchBtn.addEventListener('click', function() {
-                alert('Tính năng tìm kiếm sẽ được phát triển!');
             });
         }
 
@@ -806,6 +798,29 @@ if (searchInput) {
 }
 </script>
 <style>
+.contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 24px;
+}
+.contact-item i {
+    font-size: 2rem;
+    color: #2E3D23;
+    min-width: 36px;
+    text-align: center;
+    margin-top: 2px;
+}
+.contact-item h4 {
+    margin: 0 0 4px 0;
+    font-size: 1.15em;
+    color: #2E3D23;
+}
+.contact-item p {
+    margin: 0;
+    color: #555;
+    font-size: 1em;
+}
 </style>
 </body>
 </html> 
